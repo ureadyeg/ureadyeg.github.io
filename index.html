@@ -1110,7 +1110,7 @@ function modal(){
  var h='<div class="ov"><div class="modal"><button class="x" aria-label="Close" onclick="S.modal=false;render()">&times;</button>'+
  '<div class="seg" style="margin:0 0 16px"><button class="'+(am==="in"?"on":"")+'" onclick="keep();S.authmode=\'in\';render()">'+t("signin")+'</button><button class="'+(am==="up"?"on":"")+'" onclick="keep();S.authmode=\'up\';render()">'+t("signup")+'</button></div>';
  if(am==="in"){return h+'<h2>'+t("signin")+'</h2><p class="sub">'+t("signinsub")+'</p>'+
- '<button class="btn" onclick="social(\'Google\')">'+t("google")+'</button>'+
+ '<button class="btn fill" onclick="social(\'Google\')">'+t("google")+'</button>'+
  '<div class="or">'+t("or")+'</div>'+
  '<label class="fl">'+t("email")+'</label><input id="em" dir="ltr" type="email" value="'+esc(S.fe||"")+'">'+
  '<button class="btn fill" style="margin-top:4px" onclick="doSignin()">'+t("sendlink")+'</button><div id="sok" style="margin-top:12px"></div></div></div>'}
@@ -1119,8 +1119,7 @@ function modal(){
  '<div class="role"><button id="rl0" class="'+(ex?'on':'')+'" onclick="pickRole(\'expert\')">'+t("roleexp")+'<small>'+t("expertsub")+'</small></button>'+
  '<button id="rl1" class="'+(S.pick==="user"?'on':'')+'" onclick="pickRole(\'user\')">'+t("user")+'<small>'+t("learnersub")+'</small></button></div>'+
  '<div id="exb" style="display:'+(ex?'block':'none')+'"><label class="fl">'+t("linkedin")+'</label><input id="li" dir="ltr" placeholder="https://www.linkedin.com/in/..." value="'+esc(S.fl||"")+'"><label class="fl">'+t("spec")+'</label><select id="fs" onchange="onOther(\'fs\',\'fo\')"><option value="">'+t("selspec")+'</option>'+SPECS.map(function(x){return '<option value="'+x+'"'+(S.fs===x?' selected':'')+'>'+esc(sp(x))+'</option>'}).join("")+'<option value="other"'+(so?" selected":"")+'>'+t("oth")+'</option></select><input id="fo" style="display:'+(so?'block':'none')+'" placeholder="'+t("typespec")+'" value="'+esc(S.fo||"")+'"><label class="fl">'+t("jtitle")+'</label><input id="fj" value="'+esc(S.fj||"")+'"><div class="seg" style="margin:0 0 12px"><button id="fl0" class="'+(!S.ffl?'on':'')+'" onclick="setFl(false)">'+t("atco")+'</button><button id="fl1" class="'+(S.ffl?'on':'')+'" onclick="setFl(true)">'+t("isfl")+'</button></div><div id="cow" style="display:'+(S.ffl?'none':'block')+'"><label class="fl">'+t("company")+'</label><input id="fc" value="'+esc(S.fc||"")+'"></div></div>'+
-   '<label class="fl">'+t("age")+'</label><select id="ag">'+yrOpts(S.fa)+'</select><label class="fl">'+t("country")+'</label><select id="cn" onchange="onOther(\'cn\',\'cno\')"><option value="">'+t("selcountry")+'</option>'+cOpts(S.fcn,co)+'</select><input id="cno" style="display:'+(co?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(S.fco||"")+'">'+
- '<button class="btn" onclick="social(\'Google\')">'+t("google")+'</button>'+
+ '<button class="btn fill" onclick="social(\'Google\')">'+t("google")+'</button>'+
  '<div class="or">'+t("or")+'</div>'+
  '<label class="fl">'+t("fullname")+'</label><input id="nm" value="'+esc(S.fn||"")+'">'+
  '<label class="fl">'+t("email")+'</label><input id="em" dir="ltr" type="email" value="'+esc(S.fe||"")+'">'+
@@ -1132,11 +1131,7 @@ function doSignin(){var b=document.getElementById("em"),e=b.value.trim(),ok=docu
 function onOther(sel,inp){var a=document.getElementById(sel),i=document.getElementById(inp);if(!a||!i)return;var o=a.value==="other";i.style.display=o?"block":"none";if(o)i.focus();keep()}
 function setFl(v){keep();S.ffl=v;var a=document.getElementById("fl0"),b=document.getElementById("fl1"),c=document.getElementById("cow");if(a)a.className=v?"":"on";if(b)b.className=v?"on":"";if(c)c.style.display=v?"none":"block"}
 function keep(){var a=document.getElementById("nm"),b=document.getElementById("em"),c=document.getElementById("li"),d=document.getElementById("fs"),e=document.getElementById("ff"),f=document.getElementById("fo");if(f)S.fo=f.value;var ga=document.getElementById("ag"),gc=document.getElementById("cn"),gco=document.getElementById("cno");if(ga)S.fa=ga.value;if(gc)S.fcn=gc.value;if(gco)S.fco=gco.value;var g=document.getElementById("fj"),g2=document.getElementById("fjo"),g3=document.getElementById("fc");if(g)S.fj=g.value;if(g2)S.fjo=g2.value;if(g3)S.fc=g3.value;if(a)S.fn=a.value;if(b)S.fe=b.value;if(c)S.fl=c.value;if(d)S.fs=d.value;if(e)S.ff=e.value}
-function commonOK(){var ag=document.getElementById("ag"),cn=document.getElementById("cn"),a=parseInt(ag.value,10);
- if(!(a>=1950&&a<=new Date().getFullYear())){ag.focus();ag.style.borderColor="#b00020";return null}
- if(!cn.value){cn.focus();cn.style.borderColor="#b00020";return null}
- var c=cn.value;if(c==="other"){var co=document.getElementById("cno");if(!co||!co.value.trim()){if(co){co.focus();co.style.borderColor="#b00020"}return null}c=co.value.trim()}
- return {age:String(a),country:c}}
+function commonOK(){return {age:"",country:""}}
 function expertOK(){var li=document.getElementById("li"),fs=document.getElementById("fs");
  if(!/linkedin\.com/i.test(li.value.trim())){li.focus();li.style.borderColor="#b00020";return null}
  if(!fs.value){fs.focus();return null}
