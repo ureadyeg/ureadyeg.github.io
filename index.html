@@ -355,7 +355,7 @@ function sbProfile(){if(!sb)return;try{sb.auth.getSession().then(function(r){var
  else if(p.role!=="admin"&&(!p.age||!p.country||!p.terms_accepted_at)){S.mustComplete="common"}
  render()})})}catch(e){}}
 if(sb){try{sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN")sbProfile()})}catch(e){}}
-sbEvents();sbPosts();sbProfile();
+sbEvents();sbPosts();sbProfile();sbProfileExtras();
 function pubOK(){if(!S.user){openModal();return false}if(S.roleDb==="mentor"||S.roleDb==="admin")return true;if(isExp()||S.roleDb==="mentor_pending"){alert(t("pendok"));return false}alert(t("onlym"));return false}
 sbProfile();
 function setTheme(m){S.theme=m;try{localStorage.setItem("ur_theme",m)}catch(e){}render()}
@@ -683,7 +683,7 @@ function pubCont(tab,p,w){function kv(k,v){return '<div class="kv"><span>'+k+'</
  else if(tab==="sv"){h='<div class="card"><div class="empty">'+t("svcnone")+'</div></div>'}
  else{h='<div class="card"><div class="empty">'+t("norev")+'</div></div>'}
  return h}
-function sbProfile(){if(!sb||!S.uid)return;try{sb.from("profiles").select("uni,major,years,exps,photo,title,company,linkedin_url,spec,freelancer").eq("id",S.uid).maybeSingle().then(function(r){var d=r&&r.data;if(!d)return;S.profile=S.profile||{};["uni","major","years","exps","title","company","spec","freelancer"].forEach(function(k){if((S.profile[k]==null||S.profile[k]==="")&&d[k]!=null&&d[k]!=="")S.profile[k]=d[k]});if(!S.profile.linkedin&&d.linkedin_url)S.profile.linkedin=d.linkedin_url;if(!S.photo&&d.photo)S.photo=d.photo;render()})}catch(e){}}
+function sbProfileExtras(){if(!sb||!S.uid)return;try{sb.from("profiles").select("uni,major,years,exps,photo,title,company,linkedin_url,spec,freelancer").eq("id",S.uid).maybeSingle().then(function(r){var d=r&&r.data;if(!d)return;S.profile=S.profile||{};["uni","major","years","exps","title","company","spec","freelancer"].forEach(function(k){if((S.profile[k]==null||S.profile[k]==="")&&d[k]!=null&&d[k]!=="")S.profile[k]=d[k]});if(!S.profile.linkedin&&d.linkedin_url)S.profile.linkedin=d.linkedin_url;if(!S.photo&&d.photo)S.photo=d.photo;render()})}catch(e){}}
 function sbPosts(){if(!sb)return;try{sb.from("posts").select("*").order("created_at",{ascending:false}).limit(200).then(function(r){if(r&&r.data){S.dbposts=r.data;render()}})}catch(e){}}
 function dbPost(q){return {aid:q.author_id,own:!!(S.uid&&q.author_id===S.uid),real:true,dbid:q.id,id:"db"+q.id,key:"u"+q.author_id,name:q.author_name||t("guser"),hl:q.hl||"",text:q.text,tags:"",img:q.img||"",likes:0,cm:0,time:fmtT(q.created_at),cmt:null,comm:q.community!=null?q.community:null}}
 function fmtT(ts){var loc=L==="ar"?"ar-EG":"en-GB",d=new Date(ts),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"}):d.toLocaleDateString(loc,{day:"numeric",month:"short"})}
