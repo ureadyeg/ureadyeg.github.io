@@ -150,8 +150,9 @@ label.fl{display:block;font-size:13px;font-weight:700;margin:2px 0 6px}
 .tile b{display:block;font-size:14.5px;margin-bottom:6px}
 .prefs{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:0 0 18px}
 .langseg{display:inline-flex;gap:6px}
-.sheet .langseg button{display:inline-block;width:auto;border:1px solid var(--ln);border-bottom:1px solid var(--ln);padding:6px 14px;font-size:12.5px;border-radius:16px;background:var(--card);color:var(--navy);font-weight:700;cursor:pointer}
+.sheet .langseg button{display:inline-flex;align-items:center;width:auto;border:1px solid var(--ln);border-bottom:1px solid var(--ln);padding:6px 14px;font-size:12.5px;border-radius:16px;background:var(--card);color:var(--navy);font-weight:700;cursor:pointer}
 .sheet .langseg button.on{background:var(--navy);color:var(--bg);border-color:var(--navy)}
+.sheet .langseg button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-inline-end:5px}
 .cpills{display:flex;gap:8px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
 .tinyb{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ln);background:var(--card);color:var(--navy);border-radius:10px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;width:auto;line-height:1.3}
 .tinyb svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -1096,15 +1097,14 @@ function doLogin(){var a=document.getElementById("nm"),b=document.getElementById
 function social(p){if(p==="Google"&&sb){try{sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}})}catch(e){alert(t("socsoon"))}}else{alert(t("socsoon"))}}
 function menu(){
  var MOON='<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>',SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>';
- var lg='<div class="langseg"><button class="'+(L==="en"?"on":"")+'" onclick="toggleLang(\'en\')">English</button><button class="'+(L==="ar"?"on":"")+'" onclick="toggleLang(\'ar\')">عربي</button></div>';
- var th='<button class="tinyb" onclick="setTheme(\''+(S.theme==="dark"?"light":"dark")+'\')">'+(S.theme==="dark"?SUN:MOON)+(S.theme==="dark"?t("lights"):t("darks"))+'</button>';
+ var lg='<div class="langseg"><button onclick="setTheme(\''+(S.theme==="dark"?"light":"dark")+'\')">'+(S.theme==="dark"?SUN:MOON)+(S.theme==="dark"?t("lights"):t("darks"))+'</button><button onclick="toggleLang(\''+(L==="ar"?"en":"ar")+'\')">'+(L==="ar"?"English":"عربي")+'</button></div>';
  var top=S.user?'<div class="row" style="justify-content:flex-start;margin-bottom:12px"><div class="av lg">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><div style="min-width:0"><b>'+esc(S.user)+'</b><div dir="ltr" style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis">'+esc(S.email||"")+'</div>'+(roleLbl(S.roleDb)?'<div style="color:var(--mut);font-size:13px">'+roleLbl(S.roleDb)+'</div>':'')+'</div></div>'+(S.profile&&S.profile.spec?'<div class="sub" style="margin:-4px 0 10px">'+esc(sp(S.profile.spec))+'</div>':''):'';
  var it=[];
  if(S.user){it.push(['openProfile(false)',t("profile")]);if(S.roleDb!=="mentor"&&S.roleDb!=="expert"&&S.roleDb!=="admin"&&S.roleDb!=="mentor_pending")it.push(["S.page='mentorcomplete';S.menu=false;render()",t("joinm")]);if(isExp())it.push(["S.page='manage';S.mg=0;S.menu=false;render()",t("manage")]);it.push(['openNotif()',t("notif")]);it.push(["S.page='saved';S.menu=false;render()",t("savedt")])}
  it.push(["S.page='events';S.menu=false;S.view=null;render()",t("events")]);
  it.push(["S.page='interest';S.menu=false;S.view=null;render()",t("changeint2")]);it.push(['openGuide()',t("guide")]);it.push(["S.page='contact';S.menu=false;render()",t("contact")]);
  it.push(S.user?['doLogout()',t("logout")]:['openModal()',t("signin")]);
- return '<div class="menu" onclick="S.menu=false;render()"><div class="sheet" onclick="event.stopPropagation()">'+'<div class="prefs">'+lg+th+'</div>'+top+it.map(function(x){return '<button onclick="'+x[0]+'">'+x[1]+'</button>'}).join("")+'<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);text-align:center;font-size:13px"><a href="terms.html" target="_blank" style="color:var(--mut)">'+t("terms")+'</a><span style="color:var(--mut)"> · </span><a href="privacy.html" target="_blank" style="color:var(--mut)">'+t("privacy")+'</a></div></div></div>';
+ return '<div class="menu" onclick="S.menu=false;render()"><div class="sheet" onclick="event.stopPropagation()">'+'<div class="prefs">'+lg+'</div>'+top+it.map(function(x){return '<button onclick="'+x[0]+'">'+x[1]+'</button>'}).join("")+'<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);text-align:center;font-size:13px"><a href="terms.html" target="_blank" style="color:var(--mut)">'+t("terms")+'</a><span style="color:var(--mut)"> · </span><a href="privacy.html" target="_blank" style="color:var(--mut)">'+t("privacy")+'</a></div></div></div>';
 }
 function ddHtml(){var h='<div class="ddov" onclick="S.dd=false;render()"></div><div class="dd">';
  h+='<div class="ddh" onclick="S.dd=false;openProfile(false)"><div class="av">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><div style="min-width:0"><b>'+esc(S.user)+'</b><div dir="ltr" style="color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis">'+esc(S.email||"")+'</div></div></div>';
