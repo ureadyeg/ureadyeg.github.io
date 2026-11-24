@@ -219,6 +219,14 @@ html[dir="rtl"] .back svg{transform:scaleX(-1)}
 .cropv:active{cursor:grabbing}
 .cropv img{position:absolute;top:0;left:0;max-width:none;transform-origin:0 0;pointer-events:none;-webkit-user-drag:none}
 .cropz{width:100%;margin:16px 0 4px}
+.avwrap{position:relative}
+.ddov{position:fixed;inset:0;z-index:40}
+@keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.dd{position:absolute;top:calc(100% + 10px);inset-inline-end:0;width:240px;background:var(--bg);border:1px solid var(--bd);border-radius:14px;box-shadow:0 14px 40px rgba(15,23,42,.18);padding:7px;z-index:41;animation:pop .18s ease}
+.ddh{display:flex;gap:10px;align-items:center;padding:9px 9px 11px;border-bottom:1px solid var(--bd);margin-bottom:6px;cursor:pointer}
+.ddh b{font-size:14.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+.dd button{display:flex;align-items:center;width:100%;padding:11px 10px;border:0;background:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--navy);border-radius:9px;cursor:pointer;text-align:start}
+.dd button:hover{background:var(--gray)}
 </style>
 </head>
 <body>
@@ -251,7 +259,7 @@ followsoon:["Following will be available soon.","المتابعة هتبقى م�
 explore:["Choose a specialty to explore.","اختار تخصص علشان تستكشف."],nothing:["Nothing here yet.","لسه مفيش حاجة هنا."],
 signjoin:["Sign in to join","سجّل دخولك علشان تنضم"],mkmentor:["Create a mentorship program","اعمل برنامج إرشاد"],mkwork:["Create a workshop or challenge","اعمل ورشة أو تحدي"],
 evsub:["Upcoming events will appear here.","الفعاليات الجاية هتظهر هنا."],noev:["No events yet.","لسه مفيش فعاليات."],signev:["Sign in to join events","سجّل دخولك علشان تشترك في الفعاليات"],mkev:["Create an event","اعمل فعالية"],
-profile:["My Profile","ملفي الشخصي"],settings:["Settings","الإعدادات"],notif:["Notifications","الإشعارات"],help:["Help","المساعدة"],logout:["Log out","تسجيل الخروج"],
+profile:["My Profile","ملفي الشخصي"],settings:["Settings","الإعدادات"],notif:["Notifications","الإشعارات"],help:["Help","المساعدة"],logout:["Log out","تسجيل الخروج"],admc:["Admin console","لوحة الأدمن"],
 view:["View","عرض"],mkfeed:["Offer feedback","تقديم ملاحظات"],mkworkshop:["Create a workshop","اعمل ورشة عمل"],mkchallenge:["Create a challenge","اعمل تحدي"],back:["Back","رجوع"],more:["Show more","شوف أكتر"],less:["Show less","شوف أقل"],about:["About this service","عن الخدمة"],times:["Available times","المواعيد المتاحة"],revs:["Reviews","التقييمات والآراء"],book:["Book this slot","احجز الميعاد ده"],picktime:["Select a time to book","اختار ميعاد للحجز"],booked:["Booking requested. The expert will confirm soon.","طلب الحجز اتبعت، والخبير هيأكده قريب."],rv:["reviews","تقييم"],linkedin:["LinkedIn profile link","لينك بروفايلك على LinkedIn"],spec:["Your specialty","تخصصك"],selspec:["Select your specialty","اختار تخصصك"],field:["Your field of expertise (write it)","مجال خبرتك (اكتبه)"],
 mkmentor:["Add your mentorship program","ضيف برنامج الإرشاد بتاعك"],mkfeed:["Add your feedback service","ضيف خدمة الملاحظات بتاعتك"],mkworkshop:["Add your workshop","ضيف ورشتك"],mkchallenge:["Add your challenge","ضيف تحديك"],
 atitle:["Title","العنوان"],asum:["Short summary","ملخص قصير"],adesc:["Full description","الوصف الكامل"],adate:["Available date and time (optional)","ميعاد متاح (اختياري)"],save:["Publish","نشر"],
@@ -984,6 +992,12 @@ function menu(){
  it.push(S.user?['doLogout()',t("logout")]:['openModal()',t("signin")]);
  return '<div class="menu" onclick="S.menu=false;render()"><div class="sheet" onclick="event.stopPropagation()">'+'<div class="prefs">'+lg+th+'</div>'+top+it.map(function(x){return '<button onclick="'+x[0]+'">'+x[1]+'</button>'}).join("")+'<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);text-align:center;font-size:13px"><a href="terms.html" target="_blank" style="color:var(--mut)">'+t("terms")+'</a><span style="color:var(--mut)"> · </span><a href="privacy.html" target="_blank" style="color:var(--mut)">'+t("privacy")+'</a></div></div></div>';
 }
+function ddHtml(){var h='<div class="ddov" onclick="S.dd=false;render()"></div><div class="dd">';
+ h+='<div class="ddh" onclick="S.dd=false;openProfile(false)"><div class="av">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><div style="min-width:0"><b>'+esc(S.user)+'</b><div dir="ltr" style="color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis">'+esc(S.email||"")+'</div></div></div>';
+ h+='<button onclick="S.dd=false;openProfile(false)">'+t("profile")+'</button>';
+ if(S.roleDb==="admin")h+='<button onclick="location.href=\'admin.html\'">'+t("admc")+'</button>';
+ h+='<button onclick="S.dd=false;doLogout()">'+t("logout")+'</button>';
+ return h+'</div>'}
 function doLogout(){if(sb)try{sb.auth.signOut()}catch(e){}try{localStorage.removeItem("ur_state")}catch(e){}S.photo="";S.user=null;S.role=null;S.roleDb=null;S.profile=null;S.page=null;S.menu=false;S.posts=[];S.follows=null;S.likes=null;S.comments=null;S.cl=null;S.savedP=null;S.savedS=null;S.gj=null;S.gposts=null;S.booked=null;S.notifs=null;S.nid=0;S.spec=null;S.reg=null;S.reqs=null;render()}
 function bodyHtml(){
  if(S.mustComplete==="mentor")return mentorCompletePage();
@@ -1007,9 +1021,9 @@ function bodyHtml(){
 function render(){
  var d=document.documentElement;d.lang=L;d.dir=L==="ar"?"rtl":"ltr";if(d.setAttribute)d.setAttribute("data-theme",S.theme);
  var body=bodyHtml();
- var who=S.user?'<div class="av" onclick="openProfile(false)" style="cursor:pointer">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><button class="pill out" onclick="doLogout()">'+t("logout")+'</button>':'<button class="pill" onclick="openModal()">'+t("signin")+'</button>';
+ var who=S.user?'<div class="avwrap"><div class="av" onclick="S.dd=!S.dd;S.menu=false;render()" style="cursor:pointer">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div>'+(S.dd?ddHtml():'')+'</div>':'<button class="pill" onclick="openModal()">'+t("signin")+'</button>';
  var mn0=document.querySelector("main"),sig=[S.tab,S.page,S.view,!!S.adding,S.fv,S.grp,S.pp,S.edit].join("|"),st0=(S.lastSig===sig&&mn0)?mn0.scrollTop:0;S.lastSig=sig;
- app.innerHTML='<header><div class="brand"><span style="color:var(--green)">U</span>Ready</div><div class="right">'+bell()+who+'<button class="burger" aria-label="Menu" onclick="S.menu=true;render()"><i></i><i></i><i></i></button></div></header>'+
+ app.innerHTML='<header><div class="brand"><span style="color:var(--green)">U</span>Ready</div><div class="right">'+bell()+who+'<button class="burger" aria-label="Menu" onclick="S.menu=true;S.dd=false;render()"><i></i><i></i><i></i></button></div></header>'+
  '<main>'+body+'</main><nav>'+TABS.map(function(k){return '<button class="'+(S.tab===k?'on':'')+'" onclick="S.tab=\''+k+'\';S.view=null;S.adding=null;S.page=null;S.fq=\'\';S.grp=null;S.gcat=null;render()"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span class="nl">'+t(k)+'</span></button>'}).join("")+'</nav>'+(S.menu?menu():'')+(S.modal?modal():'')+(S.cm?cmSheet():'');
  var mn1=document.querySelector("main");if(mn1&&st0)mn1.scrollTop=st0;
  if(mn1){mn1.scrollLeft=0;mn1.onscroll=function(){if(mn1.scrollLeft)mn1.scrollLeft=0};document.documentElement.scrollLeft=0}
