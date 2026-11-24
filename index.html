@@ -215,6 +215,10 @@ html[dir="rtl"] .back svg{transform:scaleX(-1)}
 .cm:first-of-type{border-top:0;margin-top:0;padding-top:0}
 .ok{background:var(--gray);border-radius:10px;padding:14px;font-size:14px;font-weight:700;text-align:center}
 .post p{margin:12px 0 0;line-height:1.6}
+.cropv{position:relative;width:100%;max-width:320px;aspect-ratio:1;margin:6px auto 0;overflow:hidden;border-radius:14px;background:#111;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.cropv:active{cursor:grabbing}
+.cropv img{position:absolute;top:0;left:0;max-width:none;transform-origin:0 0;pointer-events:none;-webkit-user-drag:none}
+.cropz{width:100%;margin:16px 0 4px}
 </style>
 </head>
 <body>
@@ -294,7 +298,7 @@ comments:["Comments","التعليقات"],viewmore:["View more comments","شو�
 changeint2:["Change your interest","غيّر اهتمامك"],
 searchf:["Search in UReady","دوّر في UReady"],
 comm:["Communities","الكوميونيتيز"],
-addphoto:["Add a photo","أضف صورة"],changephoto:["Change photo","غيّر الصورة"],
+addphoto:["Add a photo","أضف صورة"],changephoto:["Change photo","غيّر الصورة"],crop:["Adjust your photo","ظبط صورتك"],crophint:["Drag to move. Pinch or use the slider to zoom.","اسحب الصورة لتحريكها، وقرّب بصباعين أو بالسلايدر."],usephoto:["Use photo","استخدم الصورة"],cancel:["Cancel","إلغاء"],
 likesw:["likes","إعجاب"],membersw:["members","عضو"],
 prevexp:["Previous experience","خبرات سابقة"],addexp:["Add experience","ضيف خبرة"],fromy:["From (year)","من (سنة)"],toy:["To (year, leave empty if current)","إلى (سنة، سيبها فاضية لو لسه شغال)"],presentw:["Present","لحد دلوقتي"],
 guser:["user","مستخدم"],other:["English","عربي"]};
@@ -411,7 +415,28 @@ var SIMG=[mkImg(0),mkImg(1),mkImg(2)],POSTIMG={0:0,1:2,3:1,7:0,9:1};
 function avSrc(idx,name){if(idx!=null&&idx>=0&&SAMP[idx])return SAMP[idx];if(name&&S.user&&name===S.user&&S.photo)return S.photo;return ""}
 function avBox(idx,name,cls,attrs){var src=avSrc(idx,name);return '<div class="av '+(cls||"")+'" '+(attrs||"")+'>'+(src?'<img src="'+src+'" alt="">':ini(name||"?"))+'</div>'}
 function onPhoto(inp){var f=inp.files&&inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){alert(t("imgonly"));inp.value="";return}
- var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),z=256,w=im.width,h=im.height,m=Math.min(w,h);c.width=c.height=z;c.getContext("2d").drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,z,z);S.photo=c.toDataURL("image/jpeg",0.85);if(S.draft)keepP();render()};im.src=rd.result};rd.readAsDataURL(f)}
+ var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){openCrop(im)};im.src=rd.result};rd.readAsDataURL(f);inp.value=""}
+var CROP=null;
+function openCrop(im){
+ var ov=document.createElement("div");ov.className="ov";ov.style.zIndex="60";
+ ov.innerHTML='<div class="modal" style="max-width:400px"><h2>'+t("crop")+'</h2><p class="sub">'+t("crophint")+'</p><div class="cropv" id="cropv"><img alt=""></div><input type="range" class="cropz" id="cropz" min="1" max="5" step="0.01" value="1"><div class="row" style="margin-top:14px"><button class="btn fill" id="cropok">'+t("usephoto")+'</button><button class="btn" id="cropno">'+t("cancel")+'</button></div></div>';
+ document.body.appendChild(ov);
+ var v=document.getElementById("cropv"),img=ov.querySelector("img"),z=document.getElementById("cropz"),V=v.clientWidth,s0=Math.max(V/im.width,V/im.height);
+ CROP={ov:ov,v:v,img:img,im:im,V:V,s:s0,s0:s0,x:0,y:0,pts:{}};
+ img.src=im.src;img.style.width=im.width+"px";img.style.height=im.height+"px";
+ cropSet(s0,(V-im.width*s0)/2,(V-im.height*s0)/2);
+ z.oninput=function(){cropZoom(s0*parseFloat(z.value),V/2,V/2)};
+ v.addEventListener("pointerdown",cropDown);v.addEventListener("pointermove",cropMove);v.addEventListener("pointerup",cropUp);v.addEventListener("pointercancel",cropUp);
+ document.getElementById("cropok").onclick=function(){var k=CROP,c=document.createElement("canvas"),zz=256;c.width=c.height=zz;c.getContext("2d").drawImage(k.im,-k.x/k.s,-k.y/k.s,k.V/k.s,k.V/k.s,0,0,zz,zz);S.photo=c.toDataURL("image/jpeg",0.85);closeCrop();if(S.draft)keepP();render()};
+ document.getElementById("cropno").onclick=closeCrop}
+function cropSet(s,x,y){var k=CROP,i=k.im;k.s=s;k.x=Math.min(0,Math.max(k.V-i.width*s,x));k.y=Math.min(0,Math.max(k.V-i.height*s,y));k.img.style.transform="translate("+k.x+"px,"+k.y+"px) scale("+s+")";var z=document.getElementById("cropz");if(z)z.value=s/k.s0}
+function cropZoom(ns,cx,cy){var k=CROP;ns=Math.min(k.s0*5,Math.max(k.s0,ns));var r=ns/k.s;cropSet(ns,cx-(cx-k.x)*r,cy-(cy-k.y)*r)}
+function cropDown(e){var k=CROP;k.pts[e.pointerId]={x:e.clientX,y:e.clientY};try{k.v.setPointerCapture(e.pointerId)}catch(_){}}
+function cropMove(e){var k=CROP,p=k.pts[e.pointerId];if(!p)return;var ids=Object.keys(k.pts);
+ if(ids.length===1){cropSet(k.s,k.x+e.clientX-p.x,k.y+e.clientY-p.y);p.x=e.clientX;p.y=e.clientY}
+ else if(ids.length===2){var a=k.pts[ids[0]],b=k.pts[ids[1]],d0=Math.hypot(a.x-b.x,a.y-b.y);p.x=e.clientX;p.y=e.clientY;a=k.pts[ids[0]];b=k.pts[ids[1]];var d1=Math.hypot(a.x-b.x,a.y-b.y);if(d0>0&&d1>0){var r=k.v.getBoundingClientRect();cropZoom(k.s*d1/d0,(a.x+b.x)/2-r.left,(a.y+b.y)/2-r.top)}}}
+function cropUp(e){if(CROP)delete CROP.pts[e.pointerId]}
+function closeCrop(){if(CROP&&CROP.ov)CROP.ov.remove();CROP=null}
 function feedPosts(){var out=[],l=ai();
  S.posts.forEach(function(p,k){if(S.spec&&p.spec!==S.spec)return;out.push({own:true,id:"o"+k,name:p.by,hl:p.hl||"",text:p.t,tags:"",likes:0,cm:0,time:t("now"),cmt:null})});
  POSTX.forEach(function(x,i){var pp=PEOPLE[i];if(!pp)return;if(S.spec&&pp[2]!==S.spec)return;var d=PD[i],cp=PEOPLE[(i+3)%10],cd=PD[(i+3)%10];
