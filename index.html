@@ -82,7 +82,7 @@ input::placeholder,textarea::placeholder{color:#8b94a8}
 .tag{display:inline-block;background:var(--gray);color:var(--mut);font-size:11.5px;font-weight:700;border-radius:6px;padding:3px 8px;margin-inline-start:6px}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:30;display:flex;align-items:flex-end;justify-content:center}
 .modal{background:var(--bg);width:100%;max-width:560px;max-height:94%;overflow-y:auto;border-radius:16px 16px 0 0;padding:28px 22px calc(26px + env(safe-area-inset-bottom,0px));position:relative;animation:up .35s ease}
-.lpt,.cmt,.lpn,.lps,.cmn,.pname,.cmb,.lpcomm,.line,[dir=auto]{unicode-bidi:plaintext}.lpt,.cmt{text-align:start}
+.lpt,.cmt,.lpn,.lps,.cmn,.pname,.lpcomm,.line{unicode-bidi:isolate;text-align:start}
 .ownb{display:inline-block;font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:999px;background:#fbeec2;color:#7a5b00;vertical-align:middle;margin-inline-start:4px}
 @keyframes up{from{transform:translateY(100%)}to{transform:none}}
 .x{position:absolute;top:14px;inset-inline-end:16px;width:38px;height:38px;border-radius:50%;border:0;background:var(--gray);color:var(--navy);font-size:22px;cursor:pointer;line-height:1}
@@ -363,6 +363,9 @@ function sbProfile(){if(!sb)return;try{sb.auth.getSession().then(function(r){var
  else if(p.role!=="admin"&&(!p.age||!p.country||!p.terms_accepted_at)){S.mustComplete="common"}
  render();sbProfileExtras();sbReactions()})})}catch(e){}}
 if(sb){try{sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN")sbProfile()})}catch(e){}}
+var FDQ=".lpt,.cmt,.lpn,.lps,.cmn,.pname,.lpcomm,.line",FDT=0;
+function fixDir(){document.querySelectorAll(FDQ).forEach(function(el){var tx=el.textContent||"",ar=(tx.match(/[\u0600-\u06FF\u0750-\u077F]+/g)||[]).length,la=(tx.match(/[A-Za-z]+/g)||[]).length,d=(ar||la)?(ar>=la&&ar>0?"rtl":"ltr"):"";if(d&&el.getAttribute("dir")!==d)el.setAttribute("dir",d)})}
+try{new MutationObserver(function(){if(FDT)return;FDT=requestAnimationFrame(function(){FDT=0;fixDir()})}).observe(document.body,{childList:true,subtree:true,characterData:true})}catch(e){}
 sbEvents();sbPosts();sbProfile();sbProfileExtras();
 function pubOK(){if(!S.user){openModal();return false}if(S.roleDb==="mentor"||S.roleDb==="expert"||S.roleDb==="admin")return true;if(isExp()||S.roleDb==="mentor_pending"){alert(t("pendok"));return false}alert(t("onlym"));return false}
 sbProfile();
