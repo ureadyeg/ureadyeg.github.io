@@ -103,6 +103,7 @@ a{color:var(--navy)}
       <label class="mut">Title (Arabic)<br><input id="ev_ar" dir="rtl" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px"></label>
       <label class="mut">Place (English)<br><input id="ev_pen" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px" placeholder="Zoom / Cairo / ..."></label>
       <label class="mut">Place (Arabic)<br><input id="ev_par" dir="rtl" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px"></label>
+      <label class="mut">Event image<br><input id="ev_img" type="file" accept="image/*" onchange="evImg(this)" style="width:100%;padding:7px;border:1px solid var(--bd);border-radius:8px"><img id="ev_prev" alt="" style="display:none;max-width:100%;max-height:110px;margin-top:6px;border-radius:8px"></label>
     </div>
     <button class="ok act" style="margin-top:12px;padding:10px 22px" onclick="addEvent()">Publish event</button>
   </div>
@@ -110,7 +111,7 @@ a{color:var(--navy)}
     <thead><tr><th>When</th><th>Type</th><th>Title</th><th>Host</th><th>Place</th><th></th></tr></thead>
     <tbody id="evrows"></tbody>
   </table>
-  <p class="mut" style="margin-top:14px">Published events appear on the site's Events page immediately. Only you can post events; mentors cannot.</p>
+  <p class="mut" style="margin-top:14px">Published events appear on the site's Events page immediately. Only the owner account can post events.</p>
   <button class="ghost act" onclick="out()">Sign out</button>
 </div>
 
@@ -189,18 +190,20 @@ function loadEvents(){
     var h="";
     (r.data||[]).forEach(function(e){
       var when=e.starts_at?new Date(e.starts_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
-      h+='<tr><td class="mut" style="white-space:nowrap">'+when+'</td><td>'+(e.online?"Online":"In-person")+'</td><td><b>'+esc(e.title_en)+'</b>'+(e.title_ar?'<br><span class="mut" dir="rtl">'+esc(e.title_ar)+'</span>':'')+'</td><td>'+esc(e.host||"-")+'</td><td>'+esc(e.place_en||"-")+(e.place_ar?' / '+esc(e.place_ar):'')+'</td><td><button class="act danger" onclick="delEvent(\''+e.id+'\')">Delete</button></td></tr>';
+      h+='<tr><td class="mut" style="white-space:nowrap">'+when+'</td><td>'+(e.online?"Online":"In-person")+'</td><td>'+(e.image?'<img src="'+esc(e.image)+'" alt="" style="width:64px;height:40px;object-fit:cover;border-radius:6px;display:block;margin-bottom:4px">':'')+'<b>'+esc(e.title_en)+'</b>'+(e.title_ar?'<br><span class="mut" dir="rtl">'+esc(e.title_ar)+'</span>':'')+'</td><td>'+esc(e.host||"-")+'</td><td>'+esc(e.place_en||"-")+(e.place_ar?' / '+esc(e.place_ar):'')+'</td><td><button class="act danger" onclick="delEvent(\''+e.id+'\')">Delete</button></td></tr>';
     });
     document.getElementById("evrows").innerHTML=h||'<tr><td colspan="6" class="mut" style="text-align:center;padding:24px">No events yet.</td></tr>';
   });
 }
+var EVIMG="";
+function evImg(inp){var f=inp.files&&inp.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var m=900,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);EVIMG=c.toDataURL("image/jpeg",0.82);var p=document.getElementById("ev_prev");p.src=EVIMG;p.style.display="block"};im.src=rd.result};rd.readAsDataURL(f)}
 function addEvent(){
   var en=document.getElementById("ev_en").value.trim(),w=document.getElementById("ev_when").value;
   if(!en||!w){flash("Title (English) and date/time are required.");return}
-  sb.from("events").insert({online:document.getElementById("ev_type").value==="1",starts_at:new Date(w).toISOString(),host:document.getElementById("ev_host").value.trim(),title_en:en,title_ar:document.getElementById("ev_ar").value.trim(),place_en:document.getElementById("ev_pen").value.trim(),place_ar:document.getElementById("ev_par").value.trim()}).then(function(r){
+  sb.from("events").insert({online:document.getElementById("ev_type").value==="1",starts_at:new Date(w).toISOString(),host:document.getElementById("ev_host").value.trim(),title_en:en,title_ar:document.getElementById("ev_ar").value.trim(),place_en:document.getElementById("ev_pen").value.trim(),place_ar:document.getElementById("ev_par").value.trim(),image:EVIMG}).then(function(r){
     if(r.error){flash("Could not publish: "+r.error.message);return}
     flash("Event published.");
-    ["ev_en","ev_ar","ev_host","ev_pen","ev_par","ev_when"].forEach(function(i){document.getElementById(i).value=""});
+    ["ev_en","ev_ar","ev_host","ev_pen","ev_par","ev_when","ev_img"].forEach(function(i){document.getElementById(i).value=""});EVIMG="";document.getElementById("ev_prev").style.display="none";
     loadEvents();
   });
 }
