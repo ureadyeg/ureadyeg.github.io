@@ -382,7 +382,7 @@ if(sb){try{sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN")sbProfi
 var FDQ=".lpt,.cmt,.lpn,.lps,.cmn,.pname,.lpcomm,.line",FDT=0;
 function fixDir(){document.querySelectorAll(FDQ).forEach(function(el){if(el.closest(".phead")){if(el.hasAttribute("dir"))el.removeAttribute("dir");return}var tx=el.textContent||"",ar=(tx.match(/[\u0600-\u06FF\u0750-\u077F]+/g)||[]).length,la=(tx.match(/[A-Za-z]+/g)||[]).length,d=(ar||la)?(ar>=la&&ar>0?"rtl":"ltr"):"";if(d&&el.getAttribute("dir")!==d)el.setAttribute("dir",d)})}
 try{new MutationObserver(function(){if(FDT)return;FDT=requestAnimationFrame(function(){FDT=0;fixDir()})}).observe(document.body,{childList:true,subtree:true,characterData:true})}catch(e){}
-sbEvents();sbPosts();sbProfile();sbProfileExtras();
+sbEvents();sbCImgs();sbPosts();sbProfile();sbProfileExtras();
 function pubOK(){if(!S.user){openModal();return false}if(S.roleDb==="mentor"||S.roleDb==="expert"||S.roleDb==="admin")return true;if(isExp()||S.roleDb==="mentor_pending"){alert(t("pendok"));return false}alert(t("onlym"));return false}
 sbProfile();
 function setTheme(m){S.theme=m;try{localStorage.setItem("ur_theme",m)}catch(e){}render()}
@@ -401,13 +401,13 @@ var GR=[
 ["FMCG Community","كوميونيتي السلع الاستهلاكية","Brands, retail and consumer goods careers.","البراندات والتجزئة والشغل في السلع الاستهلاكية.","ind"],
 ["Telecom Community","كوميونيتي الاتصالات","Telecom industry, roles and trends.","قطاع الاتصالات والوظايف وأحدث الاتجاهات.","ind"],
 ["AI Community","كوميونيتي الذكاء الاصطناعي","Artificial intelligence tools, news and careers.","أدوات الذكاء الاصطناعي وأخباره والشغل فيه.","ind"],
-["Banking & Financial Services","كوميونيتي البنوك والخدمات المالية","Banks, fintech and financial careers.","البنوك والتكنولوجيا المالية والشغل في القطاع المالي.","ind"],
-["Pharmaceuticals","كوميونيتي الأدوية","Pharma companies, medical reps and industry careers.","شركات الأدوية والميديكال ريب والشغل في القطاع.","ind"],
-["Real Estate","كوميونيتي العقارات","Developers, sales and property marketing.","المطورين والمبيعات وتسويق العقارات.","ind"],
-["Retail & E-commerce","كوميونيتي التجزئة والتجارة الإلكترونية","Stores, online selling and marketplaces.","المحلات والبيع أونلاين والمنصات.","ind"],
-["Advertising & Media","كوميونيتي الإعلان والميديا","Agencies, production and media careers.","الوكالات والإنتاج والشغل في الميديا.","ind"],
-["Technology & Software","كوميونيتي التكنولوجيا والسوفتوير","Software companies and tech roles.","شركات السوفتوير والوظايف التقنية.","ind"],
-["Tourism & Hospitality","كوميونيتي السياحة والضيافة","Hotels, travel and tourism careers.","الفنادق والسفر والشغل في السياحة.","ind"],
+["Banking & Financial Services Community","كوميونيتي البنوك والخدمات المالية","Banks, fintech and financial careers.","البنوك والتكنولوجيا المالية والشغل في القطاع المالي.","ind"],
+["Pharmaceuticals Community","كوميونيتي الأدوية","Pharma companies, medical reps and industry careers.","شركات الأدوية والميديكال ريب والشغل في القطاع.","ind"],
+["Real Estate Community","كوميونيتي العقارات","Developers, sales and property marketing.","المطورين والمبيعات وتسويق العقارات.","ind"],
+["Retail & E-commerce Community","كوميونيتي التجزئة والتجارة الإلكترونية","Stores, online selling and marketplaces.","المحلات والبيع أونلاين والمنصات.","ind"],
+["Advertising & Media Community","كوميونيتي الإعلان والميديا","Agencies, production and media careers.","الوكالات والإنتاج والشغل في الميديا.","ind"],
+["Technology & Software Community","كوميونيتي التكنولوجيا والسوفتوير","Software companies and tech roles.","شركات السوفتوير والوظايف التقنية.","ind"],
+["Tourism & Hospitality Community","كوميونيتي السياحة والضيافة","Hotels, travel and tourism careers.","الفنادق والسفر والشغل في السياحة.","ind"],
 ["Marketing Community","كوميونيتي التسويق","Brands, campaigns and careers in marketing.","البراندات والحملات والمسار المهني في التسويق.","fld"],
 ["HR Community","كوميونيتي الموارد البشرية","Hiring, development and people careers.","التوظيف والتطوير والشغل في الموارد البشرية.","fld"],
 ["Finance Community","كوميونيتي المالية","Corporate finance, analysis and careers.","المالية والتحليل والشغل في القطاع.","fld"],
@@ -591,7 +591,7 @@ var CIC=['<svg viewBox="0 0 24 24"><path d="M4 10v4h3l7 4V6L7 10H4z"/><path d="M
 var CICC={ind:'<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px"><path d="M4 21V5l8-2v18M12 21h8V11l-8 2"/><path d="M7 8h1M7 12h1M7 16h1M16 14h1M16 17h1"/></svg>',fld:'<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>',uni:'<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px"><path d="M12 4L2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v5"/></svg>'};
 var GCATS=[["ind","cind","cindd"],["fld","cfld","cfldd"],["uni","cuni","cunid"]];
 function catTag(i){var c=GR[i]&&GR[i][4];return '<span class="tag">'+t(c==='ind'?'catind':c==='fld'?'catfld':'catuni')+'</span>'}
-function cicon(i){var c=GR[i]&&GR[i][4];if(c&&CICC[c])return CICC[c];return CIC[i]||'<svg viewBox="0 0 24 24">'+IC.comm+'</svg>'}
+function cicon(i){var ci=S.cimg&&S.cimg[i];if(ci&&ci.card_img)return '<img src="'+esc(ci.card_img)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;background:#fff">';var c=GR[i]&&GR[i][4];if(c&&CICC[c])return CICC[c];return CIC[i]||'<svg viewBox="0 0 24 24">'+IC.comm+'</svg>'}
 function gCats(){var h='<div class="line" style="margin-bottom:12px">'+t("pick3")+'</div>';GCATS.forEach(function(c){var k=0;GR.forEach(function(g){if(g[4]===c[0])k++});h+='<div class="card catc" onclick="S.gcat=\''+c[0]+'\';render()"><div class="cic big">'+CICC[c[0]]+'</div><div class="ctt" style="font-size:17px">'+t(c[1])+'</div><div class="cds">'+t(c[2])+'</div><div class="line" style="margin-top:8px">'+k+' '+t("catw")+'</div></div>'});return h}
 function glist(mine){var q=(S.fq||"").trim().toLowerCase(),h="",n=0;
  if(!mine&&!q&&S.gcat==null)return gCats();
@@ -601,6 +601,13 @@ function glist(mine){var q=(S.fq||"").trim().toLowerCase(),h="",n=0;
  var head="";if(!mine&&S.gcat!=null){var nm=S.gcat==="ind"?"cind":(S.gcat==="fld"?"cfld":"cuni");head='<button class="back" onclick="S.gcat=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button><h3 style="margin:4px 0 12px">'+t(nm)+'</h3>'}
  return head+(n?h:'<div class="card"><div class="empty">'+t(mine?"nomyg":"grpnone")+'</div></div>')}
 function onG(v){S.gq=v;document.getElementById("glist").innerHTML=glist(false)}
+
+var CET={card:["Change card image","غيّر صورة الكارت"],ban:["Change banner image","غيّر صورة البانر"],rst:["Reset images","رجّع الصور الأصلية"],ttl:["Community images (owner)","صور الكوميونيتي (للمالك)"],fail:["Could not save the image.","معرفتش أحفظ الصورة."]};
+function cet(k){return CET[k][L==="ar"?1:0]}
+function sbCImgs(){if(!sb)return;try{sb.from("community_images").select("*").then(function(r){if(r&&r.data){var m={};r.data.forEach(function(x){m[x.idx]=x});var ch=JSON.stringify(S.cimg)!==JSON.stringify(m);S.cimg=m;if(ch&&!S.evform&&S.tab==="comm")render()}})}catch(e){}}
+function cEdit(i){if(!S.isOwner)return"";return '<div class="card" style="margin:10px 0"><div class="line" style="font-weight:700;margin-bottom:8px">'+cet("ttl")+'</div><div class="row" style="gap:8px;flex-wrap:wrap"><label class="mini" style="cursor:pointer">'+cet("card")+'<input type="file" accept="image/*" style="display:none" onchange="cImgPick(this,'+i+',\'card_img\')"></label><label class="mini" style="cursor:pointer">'+cet("ban")+'<input type="file" accept="image/*" style="display:none" onchange="cImgPick(this,'+i+',\'banner_img\')"></label><button class="mini" onclick="cImgReset('+i+')">'+cet("rst")+'</button></div></div>'}
+function cImgPick(inp,i,col){var f=inp.files&&inp.files[0];if(!f||!/^image\//.test(f.type))return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var W=col==="card_img"?256:1000,H=col==="card_img"?256:333,c=document.createElement("canvas");c.width=W;c.height=H;var g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,W,H);var k=col==="card_img"?Math.min(W/im.width,H/im.height):Math.max(W/im.width,H/im.height);var w=im.width*k,h=im.height*k;g.drawImage(im,(W-w)/2,(H-h)/2,w,h);var row=Object.assign({idx:i,card_img:"",banner_img:""},(S.cimg&&S.cimg[i])||{});delete row.updated_at;row[col]=c.toDataURL(col==="card_img"?"image/png":"image/jpeg",0.85);sb.from("community_images").upsert(row).then(function(r){if(r.error){alert(cet("fail"));return}S.cimg=S.cimg||{};S.cimg[i]=row;render()})};im.src=rd.result};rd.readAsDataURL(f);inp.value=""}
+function cImgReset(i){sb.from("community_images").delete().eq("idx",i).then(function(){if(S.cimg)delete S.cimg[i];render()})}
 function joinG(i){if(!S.user){openModal();return}S.gj=S.gj||{};S.gj[i]=!S.gj[i];rxSet("join",""+i,!!S.gj[i]);render()}
 function onGImg(inp){var f=inp.files&&inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){alert(t("imgonly"));inp.value="";return}
  var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),w=im.width,h=im.height,mw=1080;if(w>mw){h=Math.round(h*mw/w);w=mw}c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);S.gimg=c.toDataURL("image/jpeg",0.8);var p=document.getElementById("gprev");if(p)p.innerHTML='<img class="gprv" src="'+S.gimg+'" alt="">'};im.src=rd.result};rd.readAsDataURL(f)}
@@ -620,9 +627,9 @@ function mkCover(i){var gs=[["#d3f0e0","#a5dcbf"],["#d6e4fb","#b5c6f3"],["#ffecd
 var COVERS=[mkCover(0),mkCover(1),mkCover(2)];
 function memTxt(n){var l=ai(),v=n>=1000?(n/1000).toFixed(1).replace(/\.0$/,"")+(l?" ألف":"K"):String(n);return '<b style="color:var(--navy)">'+v+'</b> '+t("membersw")}
 function groupPage(i){var g=GR[i],joined=S.gj&&S.gj[i];
- var h='<div class="cover"><img src="'+(COVERS[i%3])+'" alt=""><button class="cvb" aria-label="Back" onclick="S.grp=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button></div>';
+ var cb=S.cimg&&S.cimg[i]&&S.cimg[i].banner_img,h='<div class="cover"><img src="'+(cb?esc(cb):COVERS[i%3])+'" alt=""><button class="cvb" aria-label="Back" onclick="S.grp=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button></div>';
  h+='<div class="row" style="margin:16px 0 4px;align-items:center"><h2 style="margin:0;font-size:24px">'+g[ai()]+catTag(i)+'</h2><button class="cjoin'+(joined?' on':'')+'" onclick="joinG('+i+')">'+(joined?t("joinedg"):t("joing"))+'</button></div>';
- h+='<div class="line" style="margin-bottom:6px">'+memTxt((S.gj&&S.gj[i])?1:0)+'</div>';
+ h+='<div class="line" style="margin-bottom:6px">'+memTxt((S.gj&&S.gj[i])?1:0)+'</div>'+cEdit(i);
  if(!S.user)h+='<div class="cmp"><button class="btn fill" onclick="openModal()">'+t("signtopost")+'</button></div>';
  else if(!joined)h+='<div class="cmp"><div class="line" style="text-align:center">'+t("jointopost")+'</div></div>';
  else if(S.gcmpOpen||(S.editing&&S.editing.comm===i))h+='<div class="cmp"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin"><input id="gt" dir="auto" placeholder="'+t("gshare")+'"></div></div><div id="gprev">'+(S.gimg?'<img class="gprv" src="'+S.gimg+'" alt="">':'')+'</div><div class="cmpact"><label class="cmpph">'+ICPH+'<span>'+t("photo")+'</span><input type="file" id="gimg" accept="image/*" style="display:none" onchange="onGImg(this)"></label>'+(S.editing&&S.editing.comm===i?'<button class="btn sm" onclick="S.editing=null;S.gcmpOpen=false;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addGPost('+i+')">'+t("savetxt")+'</button>':'<button class="btn sm" onclick="S.gcmpOpen=false;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addGPost('+i+')">'+t("post")+'</button>')+'</div></div>';
