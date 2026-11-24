@@ -327,7 +327,7 @@ jointonote:["Join to see the steps and get two rounds of feedback from the mento
 astep:["Steps for participants (one per line)","خطوات المشاركين (خطوة في كل سطر)"],
 evon:["Online events","الفعاليات أونلاين"],evin:["Events","الفعاليات"],reserve:["Reserve a spot","احجز مكانك"],reserved:["You are registered","تم تسجيلك"],
 freelancer:["Freelancer","فريلانسر"],atco:["I work at a company","بشتغل في شركة"],isfl:["I am a freelancer","أنا فريلانسر"],
-age:["Age","السن"],country:["Country","الدولة"],selcountry:["Select your country","اختار دولتك"],typecountry:["Type your country","اكتب دولتك"],personal:["Personal info","معلومات شخصية"],
+age:["Birth year","سنة الميلاد"],selyear:["Select year","اختار السنة"],country:["Country","الدولة"],selcountry:["Select your country","اختار دولتك"],typecountry:["Type your country","اكتب دولتك"],personal:["Personal info","معلومات شخصية"],
 manage:["Manage my work","إدارة شغلي"],reqs:["Booking requests","طلبات الحجز"],mysvc:["My services","خدماتي"],approve:["Approve","قبول"],reject:["Reject","رفض"],rejected:["Rejected","مرفوض"],approvedt:["Approved","تم القبول"],
 linkph:["Session link (Zoom, Google Meet or other)","لينك الجلسة (Zoom أو Google Meet أو أي حاجة تانية)"],savelink:["Save link","احفظ اللينك"],linkadded:["Link added","اللينك اتضاف"],
 remtext:["Add your session link. We remind you 24 hours, 3 hours and 1 hour before the session if it is missing.","ضيف لينك الجلسة. هنفكّرك قبل الجلسة بـ 24 ساعة وبـ 3 ساعات وبساعة لو لسه ما ضفتوش."],
@@ -549,17 +549,18 @@ function mentorCompletePage(){var h='<h2>'+t("mctitle")+'</h2><p class="sub">'+t
 '<label class="fl">'+t("jtitle")+'</label><input id="mc_fj">'+
 '<div class="seg" style="margin:0 0 12px"><button id="mc_fl0" class="on" onclick="mcFl(false)">'+t("atco")+'</button><button id="mc_fl1" onclick="mcFl(true)">'+t("isfl")+'</button></div>'+
 '<div id="mc_cow"><label class="fl">'+t("company")+'</label><input id="mc_fc"></div>'+
-'<label class="fl">'+t("age")+'</label><input id="mc_ag" type="number" min="10" max="99" dir="ltr">'+
+'<label class="fl">'+t("age")+'</label><select id="mc_ag">'+yrOpts("")+'</select>'+
 '<label class="fl">'+t("country")+'</label><select id="mc_cn" onchange="document.getElementById(\'mc_cno\').style.display=(this.value===\'other\'?\'block\':\'none\')"><option value="">'+t("selcountry")+'</option>'+cOpts(null,false)+'</select><input id="mc_cno" style="display:none" placeholder="'+t("typecountry")+'">'+
 '<label class="agree"><input id="mc_tc" type="checkbox"><span>'+t("agree")+'</span></label>'+
 '<button class="btn fill" onclick="saveMentor()">'+t("cont")+'</button><div id="mc_ok" style="margin-top:12px"></div></div>';return h}
+function yrOpts(v){var h='<option value="">'+t("selyear")+'</option>',y=new Date().getFullYear();for(var i=y;i>=1950;i--)h+='<option value="'+i+'"'+(String(v)===String(i)?" selected":"")+">"+i+"</option>";return h}
 function completePage(){var h='<h2>'+t("ctitle")+'</h2><p class="sub">'+t("csub")+'</p><div class="card">'+
-'<label class="fl">'+t("age")+'</label><input id="cp_ag" type="number" min="10" max="99" dir="ltr">'+
+'<label class="fl">'+t("age")+'</label><select id="cp_ag">'+yrOpts("")+'</select>'+
 '<label class="fl">'+t("country")+'</label><select id="cp_cn" onchange="document.getElementById(\'cp_cno\').style.display=(this.value===\'other\'?\'block\':\'none\')"><option value="">'+t("selcountry")+'</option>'+cOpts(null,false)+'</select><input id="cp_cno" style="display:none" placeholder="'+t("typecountry")+'">'+
 '<label class="agree"><input id="cp_tc" type="checkbox"><span>'+t("agree")+'</span></label>'+
 '<button class="btn fill" onclick="saveCommon()">'+t("cont")+'</button><div id="cp_ok" style="margin-top:12px"></div></div>';return h}
 function saveCommon(){var ok=document.getElementById("cp_ok");function bad(el){el.focus();el.style.borderColor="#b00020"}
-var ag=document.getElementById("cp_ag"),a=parseInt(ag.value,10);if(!(a>=10&&a<=99)){bad(ag);return}
+var ag=document.getElementById("cp_ag"),a=parseInt(ag.value,10);if(!(a>=1950&&a<=new Date().getFullYear())){bad(ag);return}
 var cn=document.getElementById("cp_cn"),c=cn.value;if(!c){bad(cn);return}if(c==="other"){var co=document.getElementById("cp_cno");if(!co.value.trim()){bad(co);return}c=co.value.trim()}
 if(!document.getElementById("cp_tc").checked){ok.innerHTML='<div class="note">'+t("agree")+'</div>';return}
 if(!sb)return;sb.rpc("submit_common_profile",{p_age:String(a),p_country:c,p_terms:true}).then(function(r){if(r.error){ok.innerHTML='<div class="note">'+t("cfail")+'</div>';return}S.mustComplete=null;S.profile=Object.assign(S.profile||{},{age:String(a),country:c});render()})}
@@ -569,7 +570,7 @@ var li=document.getElementById("mc_li").value.trim();if(!/linkedin\.com/i.test(l
 var fs=document.getElementById("mc_fs"),spv=fs.value;if(!spv){bad(fs);return}if(spv==="other"){var fo=document.getElementById("mc_fo");if(!fo.value.trim()){bad(fo);return}spv=fo.value.trim()}
 var fj=document.getElementById("mc_fj").value.trim();if(!fj){bad(document.getElementById("mc_fj"));return}
 var fl=!!S.mcfl,fc=fl?"":document.getElementById("mc_fc").value.trim();if(!fl&&!fc){bad(document.getElementById("mc_fc"));return}
-var ag=document.getElementById("mc_ag"),a=parseInt(ag.value,10);if(!(a>=10&&a<=99)){bad(ag);return}
+var ag=document.getElementById("mc_ag"),a=parseInt(ag.value,10);if(!(a>=1950&&a<=new Date().getFullYear())){bad(ag);return}
 var cn=document.getElementById("mc_cn"),cc=cn.value;if(!cc){bad(cn);return}if(cc==="other"){var cno=document.getElementById("mc_cno");if(!cno.value.trim()){bad(cno);return}cc=cno.value.trim()}
 if(!document.getElementById("mc_tc").checked){ok.innerHTML='<div class="note">'+t("agree")+'</div>';return}
 if(!sb)return;sb.rpc("submit_mentor_profile",{p_linkedin:li,p_spec:spv,p_title:fj,p_company:fc,p_freelancer:fl,p_age:String(a),p_country:cc,p_terms:true}).then(function(r){if(r.error){ok.innerHTML='<div class="note">'+t("cfail")+'</div>';return}S.roleDb="mentor_pending";S.mustComplete=null;S.profile=Object.assign(S.profile||{},{spec:spv,title:fj,company:fc,freelancer:fl,linkedin:li,age:String(a),country:cc});S.page=null;render();alert(t("pendok"))})}
@@ -816,7 +817,7 @@ var COUNTRIES=[["Egypt","مصر"],["Saudi Arabia","السعودية"],["United A
 function ct(x){var c=COUNTRIES.find(function(k){return k[0]===x});return c?c[ai()]:x}
 function cOpts(sel,oth){return COUNTRIES.map(function(c){return '<option value="'+c[0]+'"'+(!oth&&sel===c[0]?' selected':'')+'>'+c[ai()]+'</option>'}).join("")+'<option value="other"'+(oth?' selected':'')+'>'+t("oth")+'</option>'}
 function ageCountry(d){var oth=d.cOther||(d.country&&!COUNTRIES.some(function(c){return c[0]===d.country}));
- return '<label class="fl">'+t("age")+' *</label><input id="pa" type="number" min="10" max="99" dir="ltr" value="'+esc(d.age||"")+'"><label class="fl">'+t("country")+' *</label><select id="pcn" onchange="cnChange(this.value)"><option value="">'+t("selcountry")+'</option>'+cOpts(d.country,oth)+'</select>'+'<input id="pco" style="display:'+(oth?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(d.country||"")+'">'}
+ return '<label class="fl">'+t("age")+' *</label><select id="pa">'+yrOpts(d.age)+'</select><label class="fl">'+t("country")+' *</label><select id="pcn" onchange="cnChange(this.value)"><option value="">'+t("selcountry")+'</option>'+cOpts(d.country,oth)+'</select>'+'<input id="pco" style="display:'+(oth?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(d.country||"")+'">'}
 function cnChange(v){var o=document.getElementById("pco");if(o){o.style.display=v==="other"?"block":"none";if(v==="other")o.focus()}}
 function jt(x,l){if(l==null)l=ai();return l===1&&JOBS_AR[x]?JOBS_AR[x]:x}
 function ai(){return L==="ar"?1:0}
@@ -962,7 +963,7 @@ function setD(k,v){keepP();S.draft[k]=v;var g=document.getElementById("sg_"+k);i
  if(k==="working"){var ws=document.getElementById("wsec");if(ws)ws.style.display=v?"block":"none"}
  if(k==="freelancer"){var cs=document.getElementById("cosec");if(cs)cs.style.display=v?"none":"block"}}
 function saveProfile(){keepP();var d=S.draft,bad=null;function chk(id,v){var e=document.getElementById(id);if(e&&!String(v==null?"":v).trim()){e.style.borderColor="#b00020";if(!bad)bad=e}}
- chk("pu",d.uni);chk("pm",d.major);chk("pa",d.age);if(d.age&&!(parseInt(d.age,10)>=10&&parseInt(d.age,10)<=99)){var pae=document.getElementById("pa");if(pae){pae.style.borderColor="#b00020";if(!bad)bad=pae}}chk(d.cOther?"pco":"pcn",d.country);var w=isExp()||d.working;if(w){chk(isExp()?"ptx":(d.tOther?"pto":"pt"),d.title);if(!d.freelancer)chk("pc",d.company);chk("py",d.years)}if(isExp()){chk("pl",d.linkedin);if(d.other)chk("pso",d.spec)}
+ chk("pu",d.uni);chk("pm",d.major);chk("pa",d.age);if(d.age&&!(((parseInt(d.age,10)>=10&&parseInt(d.age,10)<=99)||(parseInt(d.age,10)>=1950&&parseInt(d.age,10)<=new Date().getFullYear())))){var pae=document.getElementById("pa");if(pae){pae.style.borderColor="#b00020";if(!bad)bad=pae}}chk(d.cOther?"pco":"pcn",d.country);var w=isExp()||d.working;if(w){chk(isExp()?"ptx":(d.tOther?"pto":"pt"),d.title);if(!d.freelancer)chk("pc",d.company);chk("py",d.years)}if(isExp()){chk("pl",d.linkedin);if(d.other)chk("pso",d.spec)}
  if(w){chk("pjf",d.jobfrom);if(d.jobcur===false)chk("pjo",d.jobto)}
  (d.exps||[]).forEach(function(x,k){if((x.title||"").trim()||(x.company||"").trim()||String(x.from||"").trim()){chk("ext_"+k,x.title);chk("exc_"+k,x.company);chk("exf_"+k,x.from);if(!x.cur)chk("exo_"+k,x.to)}});
  if(bad){bad.focus();return}
@@ -1008,7 +1009,7 @@ function profCont(tab,p,w){function kv(k,v){return '<div class="kv"><span>'+k+'<
   h+='<h3 style="margin-top:6px">'+t("about")+'</h3><div class="card">'+(p.about?'<div dir="auto" style="white-space:pre-wrap;word-break:break-word">'+esc(p.about)+'</div>':'<div class="empty" style="padding:14px">'+t("notset")+'</div>')+'</div>';
   h+='<h3>'+t("experience")+'</h3>'+(exps.length?expList(exps):'<div class="card"><div class="empty" style="padding:14px">'+t("notset")+'</div></div>');
   h+='<h3>'+t("education")+'</h3><div class="card">'+kv(t("uni"),p.uni)+kv(t("major"),p.major)+kv(t("statusq"),t(p.status==="student"?"student":"graduate"))+'</div>';
-  h+='<h3>'+t("personal")+'</h3><div class="card">'+kv(t("age"),p.age)+kv(t("country"),p.country?ct(p.country):"")+'</div>';
+  h+='<h3>'+t("personal")+'</h3><div class="card">'+kv(parseInt(p.age,10)>=1950?t("age"):(L==="ar"?"السن":"Age"),p.age)+kv(t("country"),p.country?ct(p.country):"")+'</div>';
   if(isExp())h+='<h3>'+t("spec")+'</h3><div class="card">'+kv(t("spec"),p.spec?sp(p.spec):"")+(p.linkedin?'<div class="kv"><span>LinkedIn</span><a href="'+esc(p.linkedin)+'" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn" style="display:inline-flex;width:38px;height:38px;border-radius:10px;background:#0a66c2;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V21h-4z"/></svg></a></div>':'')+'</div>';
  }else if(tab==="po"){
   var mine=(S.dbposts||[]).filter(function(q){return S.uid&&q.author_id===S.uid});
@@ -1115,7 +1116,7 @@ function modal(){
  '<div class="role"><button id="rl0" class="'+(ex?'on':'')+'" onclick="pickRole(\'expert\')">'+t("roleexp")+'<small>'+t("expertsub")+'</small></button>'+
  '<button id="rl1" class="'+(S.pick==="user"?'on':'')+'" onclick="pickRole(\'user\')">'+t("user")+'<small>'+t("learnersub")+'</small></button></div>'+
  '<div id="exb" style="display:'+(ex?'block':'none')+'"><label class="fl">'+t("linkedin")+'</label><input id="li" dir="ltr" placeholder="https://www.linkedin.com/in/..." value="'+esc(S.fl||"")+'"><label class="fl">'+t("spec")+'</label><select id="fs" onchange="onOther(\'fs\',\'fo\')"><option value="">'+t("selspec")+'</option>'+SPECS.map(function(x){return '<option value="'+x+'"'+(S.fs===x?' selected':'')+'>'+esc(sp(x))+'</option>'}).join("")+'<option value="other"'+(so?" selected":"")+'>'+t("oth")+'</option></select><input id="fo" style="display:'+(so?'block':'none')+'" placeholder="'+t("typespec")+'" value="'+esc(S.fo||"")+'"><label class="fl">'+t("jtitle")+'</label><input id="fj" value="'+esc(S.fj||"")+'"><div class="seg" style="margin:0 0 12px"><button id="fl0" class="'+(!S.ffl?'on':'')+'" onclick="setFl(false)">'+t("atco")+'</button><button id="fl1" class="'+(S.ffl?'on':'')+'" onclick="setFl(true)">'+t("isfl")+'</button></div><div id="cow" style="display:'+(S.ffl?'none':'block')+'"><label class="fl">'+t("company")+'</label><input id="fc" value="'+esc(S.fc||"")+'"></div></div>'+
-   '<label class="fl">'+t("age")+'</label><input id="ag" type="number" min="10" max="99" dir="ltr" value="'+esc(S.fa||"")+'"><label class="fl">'+t("country")+'</label><select id="cn" onchange="onOther(\'cn\',\'cno\')"><option value="">'+t("selcountry")+'</option>'+cOpts(S.fcn,co)+'</select><input id="cno" style="display:'+(co?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(S.fco||"")+'">'+
+   '<label class="fl">'+t("age")+'</label><select id="ag">'+yrOpts(S.fa)+'</select><label class="fl">'+t("country")+'</label><select id="cn" onchange="onOther(\'cn\',\'cno\')"><option value="">'+t("selcountry")+'</option>'+cOpts(S.fcn,co)+'</select><input id="cno" style="display:'+(co?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(S.fco||"")+'">'+
  '<button class="btn" onclick="social(\'Google\')">'+t("google")+'</button>'+
  '<div class="or">'+t("or")+'</div>'+
  '<label class="fl">'+t("fullname")+'</label><input id="nm" value="'+esc(S.fn||"")+'">'+
@@ -1129,7 +1130,7 @@ function onOther(sel,inp){var a=document.getElementById(sel),i=document.getEleme
 function setFl(v){keep();S.ffl=v;var a=document.getElementById("fl0"),b=document.getElementById("fl1"),c=document.getElementById("cow");if(a)a.className=v?"":"on";if(b)b.className=v?"on":"";if(c)c.style.display=v?"none":"block"}
 function keep(){var a=document.getElementById("nm"),b=document.getElementById("em"),c=document.getElementById("li"),d=document.getElementById("fs"),e=document.getElementById("ff"),f=document.getElementById("fo");if(f)S.fo=f.value;var ga=document.getElementById("ag"),gc=document.getElementById("cn"),gco=document.getElementById("cno");if(ga)S.fa=ga.value;if(gc)S.fcn=gc.value;if(gco)S.fco=gco.value;var g=document.getElementById("fj"),g2=document.getElementById("fjo"),g3=document.getElementById("fc");if(g)S.fj=g.value;if(g2)S.fjo=g2.value;if(g3)S.fc=g3.value;if(a)S.fn=a.value;if(b)S.fe=b.value;if(c)S.fl=c.value;if(d)S.fs=d.value;if(e)S.ff=e.value}
 function commonOK(){var ag=document.getElementById("ag"),cn=document.getElementById("cn"),a=parseInt(ag.value,10);
- if(!(a>=10&&a<=99)){ag.focus();ag.style.borderColor="#b00020";return null}
+ if(!(a>=1950&&a<=new Date().getFullYear())){ag.focus();ag.style.borderColor="#b00020";return null}
  if(!cn.value){cn.focus();cn.style.borderColor="#b00020";return null}
  var c=cn.value;if(c==="other"){var co=document.getElementById("cno");if(!co||!co.value.trim()){if(co){co.focus();co.style.borderColor="#b00020"}return null}c=co.value.trim()}
  return {age:String(a),country:c}}
