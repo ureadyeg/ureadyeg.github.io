@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UReady</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--navy:#0a1f5c;--mut:#5f6b85;--bd:#e5e7e5;--gray:#f0f1f0;--bg:#ffffff;--card:#ffffff;--ln:#d9dcd9;--ink:#1c211d;--onink:#ffffff;--green:#385235;--gdark:#2a3f28;--on:#ffffff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:0;color-scheme:light}
+html[data-theme="dark"]{--navy:#e8ece8;--mut:#9ba39d;--bd:#2a2e2b;--gray:#202422;--bg:#121413;--card:#1a1d1b;--ln:#3a3f3b;--green:#86b57e;--gdark:#a9cfa2;--on:#0c140e;--ink:#e8ece8;--onink:#121413;color-scheme:dark}
+html[data-theme="dark"] .dc{border:1px solid #2f3430}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#7d8b80}
+*{box-sizing:border-box}
+button,input,textarea,select{font-family:inherit}
+html,body{height:100%;margin:0;overflow-x:hidden;overscroll-behavior-x:none}
+body{background:var(--bg);color:var(--navy);font-family:"Plus Jakarta Sans",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto}
+#app{height:100%;display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 6px;background:transparent}
+.brand{font-family:"Plus Jakarta Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:27px;font-weight:800;color:var(--navy);letter-spacing:-1.6px !important;line-height:1;direction:ltr}
+.right{display:flex;align-items:center;gap:9px}
+.lang{background:transparent;border:1px solid var(--ln);color:var(--navy);border-radius:12px;padding:2px 7px;font-size:10px;font-weight:700;cursor:pointer;line-height:1.3;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.user{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;max-width:105px}
+.user span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av{width:38px;height:38px;border-radius:50%;background:var(--gray);border:1px solid var(--bd);color:var(--navy);display:grid;place-items:center;font-weight:700;font-size:15px;flex:none}
+.av.lg{width:56px;height:56px;font-size:20px}
+.burger{width:34px;height:34px;border-radius:50%;background:var(--navy);border:0;padding:0;cursor:pointer;display:grid;place-content:center;gap:4px}
+header .av{width:34px;height:34px;font-size:14px}
+.pill{background:var(--ink);color:var(--onink);border:1.5px solid var(--ink);border-radius:999px;padding:0 16px;height:38px;font-size:13px;font-weight:700;letter-spacing:.2px;cursor:pointer;white-space:nowrap}
+.pill.out{background:var(--card);color:var(--navy);border-color:var(--ln)}
+.bell{position:relative;background:none;border:0;padding:4px;cursor:pointer;color:var(--navy);line-height:0}
+.bell svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.badge{position:absolute;top:-2px;inset-inline-end:-3px;background:var(--green);color:var(--on);font-size:9.5px;font-weight:800;min-width:15px;height:15px;border-radius:8px;display:grid;place-items:center;padding:0 3px;line-height:1}
+.ncard{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.ncard.new{background:var(--gray)}
+.ncard .t{flex:1;font-size:14px;line-height:1.5}
+.ncard small{color:var(--mut);display:block;margin-top:3px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green);margin-top:6px;flex:none}
+.burger i{display:block;width:16px;height:2px;background:var(--bg);border-radius:2px}
+main{flex:1;min-width:0;overflow-y:auto;overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none;touch-action:pan-y;padding:6px 20px 24px}
+.chips.scroll,.seg{touch-action:pan-x pan-y}
+main>*{max-width:100%}
+#app{overflow-x:hidden;background:radial-gradient(150% 34% at 100% 0%,rgba(168,226,192,.7) 0%,rgba(168,226,192,0) 72%)}
+html[data-theme="dark"] #app{background:radial-gradient(150% 34% at 100% 0%,rgba(61,140,100,.28) 0%,rgba(61,140,100,0) 72%)}
+nav{display:flex;gap:4px;background:var(--bg);border-top:1px solid var(--bd);padding:4px 6px}
+nav button{flex:1;height:58px;background:none;border:0;border-radius:10px;padding:4px 2px;color:var(--navy);position:relative;font-size:9px;font-weight:500;cursor:pointer;line-height:1.15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.nl{display:flex;align-items:center;justify-content:center;min-height:20px;text-align:center}
+nav button svg{width:32px;height:32px;padding:3px;box-sizing:border-box;border-radius:9px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--navy);font-weight:700;background:none}
+nav button.on::after{content:"";position:absolute;bottom:1px;inset-inline:26%;height:3px;border-radius:3px;background:var(--ink)}
+nav button.on svg{background:var(--ink);stroke:var(--onink);stroke-width:2}
+h2{font-family:"Plus Jakarta Sans",-apple-system,"Segoe UI",Arial,sans-serif;font-size:25px;margin:0 0 6px;letter-spacing:-.3px}
+h3{font-family:"Plus Jakarta Sans",-apple-system,"Segoe UI",Arial,sans-serif;font-size:18px;margin:30px 0 14px}
+html[lang="ar"] h2,html[lang="ar"] h3,html[lang="ar"] .brand{letter-spacing:0}
+p.sub{color:var(--mut);font-size:14.5px;line-height:1.6;margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(30,90,30,.08)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--card);border:1px solid var(--ln);color:var(--navy);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.chips.scroll{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:max-content;gap:7px;overflow-x:auto;padding-bottom:6px;margin-inline:0;padding-inline:0;scrollbar-width:none}
+.chips.scroll.r2{grid-template-rows:repeat(2,auto)}
+.seg{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;margin:0 0 16px}
+.seg::-webkit-scrollbar{display:none}
+.seg button{flex:1 0 auto;background:none;border:0;border-bottom:3px solid var(--bd);border-radius:0;padding:10px 12px;font-size:15px;font-weight:700;color:var(--mut);white-space:nowrap;cursor:pointer;line-height:1.3}
+.seg button.on{color:var(--navy);border-bottom-color:var(--ink)}
+.chips.scroll::-webkit-scrollbar{display:none}
+.chips.scroll .chip{padding:5px 12px;font-size:12px}
+.chip.on{background:var(--gray);border:1.5px solid var(--navy);color:var(--navy);font-weight:800}
+.btn{background:var(--card);color:var(--navy);border:1.5px solid var(--ln);border-radius:24px;padding:13px 18px;font-size:15px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn.fill{background:var(--ink);border-color:var(--ink);color:var(--onink)}
+.btn.sm{width:auto;padding:9px 18px;font-size:14px}
+header .btn.sm{padding:4px 10px;font-size:11.5px;border-radius:16px;line-height:1.3;background:var(--green);border-color:var(--green);color:#fff}
+.btn.xs{width:auto;padding:7px 18px;font-size:13.5px}
+.empty{text-align:center;color:var(--mut);font-size:14.5px;padding:24px 8px}
+input,textarea{width:100%;border:1px solid var(--ln);background:var(--card);color:var(--navy);border-radius:10px;padding:13px 14px;font-size:15.5px;font-family:inherit;margin-bottom:12px}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--navy)}
+input::placeholder,textarea::placeholder{color:#8b94a8}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.person{display:flex;gap:14px;align-items:flex-start}
+.person .info{flex:1;min-width:0}
+.person b{font-size:15.5px}
+.person .hl{color:var(--mut);font-size:13.5px;line-height:1.5;margin:3px 0 12px}
+.tag{display:inline-block;background:var(--gray);color:var(--mut);font-size:11.5px;font-weight:700;border-radius:6px;padding:3px 8px;margin-inline-start:6px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:30;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--bg);width:100%;max-width:560px;max-height:94%;overflow-y:auto;border-radius:16px 16px 0 0;padding:28px 22px calc(26px + env(safe-area-inset-bottom,0px));position:relative;animation:up .35s ease}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.x{position:absolute;top:14px;inset-inline-end:16px;width:38px;height:38px;border-radius:50%;border:0;background:var(--gray);color:var(--navy);font-size:22px;cursor:pointer;line-height:1}
+.modal h2{font-size:24px;margin-top:4px}
+.role{display:flex;gap:10px;margin:0 0 18px}
+.role button{flex:1;padding:14px 8px;border-radius:12px;border:1px solid var(--ln);background:var(--card);color:var(--navy);font-size:14px;font-weight:700;cursor:pointer;line-height:1.3}
+.role button small{display:block;font-weight:500;color:var(--mut);margin-top:3px;font-size:12px}
+.role button.on{border:2px solid var(--navy);background:var(--gray)}
+.or{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:13px;margin:16px 0}
+.or:before,.or:after{content:"";flex:1;height:1px;background:var(--bd)}
+.menu{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20}
+.sheet{position:absolute;top:0;inset-inline-end:0;width:80%;max-width:310px;height:100%;background:var(--bg);padding:calc(26px + env(safe-area-inset-top,0px)) 22px 22px}
+.sheet button{display:block;width:100%;text-align:start;background:none;border:0;border-bottom:1px solid var(--bd);padding:18px 2px;font-size:16px;font-weight:600;color:var(--navy);cursor:pointer}
+select{width:100%;border:1px solid var(--ln);background:var(--card);color:var(--navy);border-radius:10px;padding:13px 14px;font-size:15.5px;font-family:inherit;margin-bottom:12px}
+label.fl{display:block;font-size:13px;font-weight:700;margin:2px 0 6px}
+.plus{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+.pname{font-size:21px;font-weight:800;margin:0 0 4px}
+.line{color:var(--mut);font-size:14px;line-height:1.5;margin:2px 0}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-top:1px solid var(--bd);font-size:14px}
+.kv:first-of-type{border-top:0}
+.kv span:first-child{color:var(--mut)}
+.kv span:last-child{font-weight:700;text-align:end}
+.note{background:var(--gray);border-radius:10px;padding:14px;font-size:14px;font-weight:600;line-height:1.5;margin-bottom:18px}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.chk{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:14.5px;font-weight:600}
+.chk input{width:auto;margin:0}
+.mini{background:var(--card);border:1px solid var(--ln);color:var(--navy);border-radius:12px;padding:5px 10px;font-size:12.5px;font-weight:600;cursor:pointer}
+.dng{color:#b00020;border-color:#e6b8bf}
+.dc{background:#0b0f0c;color:#fff;border-radius:12px;overflow:hidden;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.dc .band{position:relative;height:118px;background:radial-gradient(circle at 82% 25%,rgba(255,255,255,.10),transparent 46%),radial-gradient(circle at 15% 85%,rgba(120,130,122,.45),transparent 52%),#14201a}
+.dc .pillt{position:absolute;top:14px;inset-inline-end:14px;border:1.5px solid #fff;color:#fff;border-radius:9px;padding:6px 14px;font-size:12.5px;letter-spacing:.6px;text-transform:uppercase}
+.dc .band .av{position:absolute;inset-inline-start:20px;bottom:14px;width:48px;height:48px;border:2px solid #fff;font-size:18px}
+.dc .bd{padding:20px 20px 22px}
+.dc .lab{color:#e6e9e5;font-size:12.5px;letter-spacing:.7px;margin-bottom:10px;text-transform:uppercase}
+.dc .ttl{font-size:21px;font-weight:600;line-height:1.25;margin-bottom:12px}
+.dc .mt{font-size:13.5px;color:#e8ece5;letter-spacing:.2px;line-height:1.6}
+.dc .rate{color:#fff}.dc .rate small{color:#b9c4b4}
+.dc .ba{display:flex;gap:12px;justify-content:space-between;margin-top:20px}
+.dc .lb{background:#e6e9e5;color:#0b0f0c;border:0;border-radius:999px;padding:12px 20px;font-size:13.5px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-transform:uppercase}
+.dc .lb.dis{background:transparent;color:#e6e9e5;border:1.5px solid #e6e9e5}
+.pgap{height:0}
+.lp{margin:0;padding:16px 0 10px;background:transparent;border-bottom:1px solid var(--bd)}
+.lph{display:flex;gap:12px;align-items:center}
+.lph .av,.lpc .av{flex:none}.lph .av{width:50px;height:50px;font-size:17px}.lpc .av{width:36px;height:36px;font-size:14px}
+.lpi{flex:1;min-width:0}
+.lpn{font-weight:600;font-size:15.5px;line-height:1.3}
+.lps{color:var(--mut);font-size:12.5px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.smp{font-size:10.5px;font-weight:600;color:var(--mut);background:var(--gray);border-radius:6px;padding:2px 6px;margin-inline-start:8px;vertical-align:1px}
+.gl{width:12px;height:12px;vertical-align:-1px;fill:none;stroke:currentColor;stroke-width:1.8}
+.lfl{background:none;border:0;color:var(--green);font-weight:700;font-size:14px;cursor:pointer;padding:2px 0;white-space:nowrap}
+.lfl.on{color:var(--mut)}
+.lpt{white-space:pre-wrap;line-height:1.5;font-size:15px;margin-top:12px}
+.lpg{color:var(--green);font-weight:600;font-size:14.5px;line-height:1.6;margin-top:10px}
+.acts{display:flex;align-items:center;gap:26px;margin-top:10px;color:var(--navy)}
+.acts button{display:flex;align-items:center;gap:7px;background:none;border:0;color:inherit;font-size:15px;font-weight:500;cursor:pointer;padding:4px 0}
+.acts button.on{color:var(--navy)}
+.acts svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.lpc{display:flex;gap:10px;margin-top:6px;padding-top:6px}
+.iconb{background:none;border:0;padding:6px;cursor:pointer;color:var(--navy);line-height:0}
+.iconb svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:6px}
+.tile{border:1px solid var(--ln);border-radius:12px;padding:14px;cursor:pointer;background:var(--card);text-align:start;color:var(--navy);font-family:inherit}
+.tile.on{border:1.5px solid var(--navy);background:var(--gray)}
+.tile b{display:block;font-size:14.5px;margin-bottom:6px}
+.prefs{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:0 0 18px}
+.tinyb{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ln);background:var(--card);color:var(--navy);border-radius:10px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;width:auto;line-height:1.3}
+.tinyb svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.seg.sm{display:inline-flex;width:auto;margin:0;padding:3px;gap:2px;border-radius:10px}
+.seg.sm button{flex:none;padding:5px 11px;font-size:12px;border-radius:8px}
+.lpimg{display:block;width:100%;aspect-ratio:3/1;margin:12px 0 0;object-fit:cover;border-radius:14px}
+.gprv{display:block;max-width:100%;max-height:220px;border-radius:10px;margin-top:12px}
+.fbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:150px;height:40px;padding:0 22px;border-radius:999px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-size:14.5px;font-weight:700;cursor:pointer}
+.fbtn.on{background:var(--gray);border-color:var(--ln);color:var(--mut)}
+.svbtn{position:absolute;top:12px;inset-inline-start:14px;width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+.svbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.svbtn.on svg{fill:currentColor}
+.acts button.sv.on svg,.acts button.lk.on svg{fill:currentColor}
+.mini svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px}
+.seg.s3 button{font-size:13.5px;padding:10px 6px}
+.csheet{background:var(--bg);width:100%;max-width:560px;height:82%;border-radius:16px 16px 0 0;display:flex;flex-direction:column;animation:up .3s ease}
+.csh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--bd);font-weight:800;font-size:16px}
+.cslist{flex:1;overflow-y:auto;padding:16px 18px}
+.cmr{display:flex;gap:10px;margin-bottom:16px}
+.cmb{background:var(--gray);border-radius:14px;padding:9px 13px}
+.cmn{font-weight:700;font-size:14px}
+.cmt{font-size:14.5px;line-height:1.5;margin-top:4px}
+.cmm{color:var(--mut);font-size:12px;margin:4px 8px;display:flex;gap:14px;align-items:center}
+.csf{padding:10px 14px;border-top:1px solid var(--bd);display:flex;gap:8px;align-items:center}
+.sbar{position:relative;margin:0 0 4px}
+.sbar input{width:100%;height:40px;margin:0;border-radius:999px;padding-inline-start:40px;padding-inline-end:18px;border:0;background:var(--gray);font-size:15px;color:var(--navy)}
+.sbar svg{position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--navy);fill:none;stroke-width:2;stroke-linecap:round}
+.crow{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.cic{width:60px;height:60px;border-radius:50%;background:#dff3e6;display:grid;place-items:center;flex:none}
+.cic svg{width:30px;height:30px;fill:none;stroke:#2e7d46;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cinfo{flex:1;min-width:0}
+.ctt{font-weight:700;font-size:16.5px;line-height:1.25}
+.cds{color:var(--mut);font-size:13.5px;line-height:1.4;margin-top:3px}
+.cjoin{flex:none;border:1.5px solid #7cc79a;background:transparent;color:#2e7d46;border-radius:999px;padding:9px 20px;font-size:14px;font-weight:700;cursor:pointer}
+.cjoin.on{border-color:var(--ln);color:var(--mut);background:var(--gray)}
+html[data-theme="dark"] .cic{background:#1b3a2b}
+html[data-theme="dark"] .cic svg{stroke:#6fe0a0}
+html[data-theme="dark"] .cjoin{border-color:#3f8a62;color:#6fe0a0}
+.cover{position:relative;margin:-6px -20px 0;height:150px;overflow:hidden}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.cvb{position:absolute;top:12px;inset-inline-start:14px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(10,31,92,.55);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+.cvb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+html[dir="rtl"] .cvb svg{transform:scaleX(-1)}
+.cmp{padding:14px 0;border-bottom:1px solid var(--bd)}
+.cmprow{display:flex;gap:10px;align-items:center}
+.cmpin{flex:1;position:relative;background:var(--gray);border-radius:999px;display:flex;align-items:center;padding-inline:16px 46px}
+.cmpin input{margin:0;border:0;background:transparent;height:46px;padding:0;font-size:15px;width:100%;min-width:0;text-overflow:ellipsis}
+.cmpph{position:absolute;inset-inline-end:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--navy);line-height:0}
+.xp{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--bd)}
+.xp:first-child{border-top:0;padding-top:0}
+.xp:last-child{padding-bottom:0}
+.xpd{width:10px;height:10px;border-radius:50%;background:var(--navy);margin-top:6px;flex:none}
+.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.link{background:none;border:0;color:var(--navy);font-weight:800;font-size:14px;padding:6px 0;cursor:pointer;text-decoration:underline}
+.back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--navy);font-weight:700;font-size:14.5px;padding:0 0 14px;cursor:pointer}
+.back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+html[dir="rtl"] .back svg{transform:scaleX(-1)}
+.rate{font-size:13px;font-weight:700;color:var(--navy)}.rate small{color:var(--mut);font-weight:500}
+.stitle{font-weight:800;font-size:15.5px;margin:6px 0 4px}
+.sum{color:var(--mut);font-size:13.5px;line-height:1.5;margin-bottom:8px}
+.slots{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.slot{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:9px 12px;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;text-align:center;line-height:1.35}
+.slot.on{background:var(--gray);border:1.5px solid var(--navy);color:var(--navy);font-weight:800}
+.cm{border-top:1px solid var(--bd);padding:14px 0 2px;margin-top:12px}
+.cm:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.ok{background:var(--gray);border-radius:10px;padding:14px;font-size:14px;font-weight:700;text-align:center}
+.post p{margin:12px 0 0;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var SPECS=["Marketing","Trade Marketing","Business Development","Supply Chain","Sales","Finance","Banking","Data Analytics","HR","Technology","Design","Operations"];
+var SPEC_AR={"Marketing":"التسويق","Trade Marketing":"تسويق المبيعات (Trade Marketing)","Business Development":"تطوير الأعمال","Supply Chain":"سلاسل الإمداد","Sales":"المبيعات","Finance":"المالية","Banking":"الخدمات المصرفية","Data Analytics":"تحليل البيانات","HR":"الموارد البشرية","Technology":"التكنولوجيا","Design":"التصميم","Operations":"العمليات"};
+var PEOPLE=[
+["Nour Hassan","Senior Brand Manager, FMCG","Marketing","نور حسن","مديرة علامة تجارية أولى، سلع استهلاكية"],
+["Karim Adel","Head of Trade Marketing, Multinational","Trade Marketing","كريم عادل","رئيس تسويق المبيعات، شركة متعددة الجنسيات"],
+["Mariam Samir","Business Development Lead","Business Development","مريم سمير","قائدة تطوير الأعمال"],
+["Omar Fathy","Supply Chain Planning Manager","Supply Chain","عمر فتحي","مدير تخطيط سلاسل الإمداد"],
+["Salma Youssef","Regional Sales Manager","Sales","سلمى يوسف","مديرة مبيعات إقليمية"],
+["Youssef Nabil","Corporate Banking Associate Director","Banking","يوسف نبيل","مدير مساعد، الخدمات المصرفية للشركات"],
+["Hana Mostafa","Finance Business Partner","Finance","هنا مصطفى","شريك أعمال مالي"],
+["Ahmed Tarek","Senior Data Analyst","Data Analytics","أحمد طارق","محلل بيانات أول"],
+["Laila Ibrahim","Talent Acquisition Manager","HR","ليلى إبراهيم","مديرة استقطاب المواهب"],
+["Mina Georgy","Product Designer","Design","مينا جورجي","مصمم منتجات"]];
+var T={
+feed:["Feed","الفيد"],mentor:["Mentorship & Feedback","الإرشاد والملاحظات"],work:["Workshops & Challenges","ورش العمل والتحديات"],events:["Events","الفعاليات"],
+signin:["Sign in","تسجيل الدخول"],join:["Join UReady","انضم لـ UReady"],
+joinsub:["Sign in to follow experts and take part. You can keep browsing without an account.","سجّل دخولك علشان تتابع الخبراء وتشارك. وتقدر تكمّل تتصفح من غير حساب."],
+learner:["Learner","متعلّم"],learnersub:["Learn and get feedback","اتعلّم وخد ملاحظات"],
+expert:["Expert or Mentor","خبير أو مرشد"],expertsub:["Share and guide others","شارك خبرتك وساعد غيرك"],
+google:["Continue with Google","كمّل بحساب Google"],apple:["Continue with Apple","كمّل بحساب Apple"],
+or:["or use your email","أو كمّل بالإيميل"],fullname:["Full name","الاسم الكامل"],email:["Email address","الإيميل"],cont:["Continue","كمّل"],
+interest:["What are you interested in?","إيه التخصص اللي مهتم بيه؟"],interestsub:["Pick a specialty to see experts in that field.","اختار تخصص علشان تشوف الخبراء في المجال ده."],
+search:["Search specialties","دوّر على تخصص"],expin:["Experts in ","خبراء في "],sugg:["Suggested experts","خبراء مقترحين"],
+noexp:["No experts in this specialty yet.","لسه مفيش خبراء في التخصص ده."],follow:["Follow","تابِع"],sample:["Sample","نموذج"],posts:["Posts","المنشورات"],
+share:["Write something...","اكتب حاجة..."],post:["Post","نشر"],
+nospec:["No specialty found for ","مفيش تخصص بالاسم ده "],usecustom:["as my interest","كاهتمامي"],use:["Use ","استخدم "],
+followsoon:["Following will be available soon.","المتابعة هتبقى متاحة قريب."],soon:["Coming soon","قريب"],
+explore:["Choose a specialty to explore.","اختار تخصص علشان تستكشف."],nothing:["Nothing here yet.","لسه مفيش حاجة هنا."],
+signjoin:["Sign in to join","سجّل دخولك علشان تنضم"],mkmentor:["Create a mentorship program","اعمل برنامج إرشاد"],mkwork:["Create a workshop or challenge","اعمل ورشة أو تحدي"],
+evsub:["Upcoming events will appear here.","الفعاليات الجاية هتظهر هنا."],noev:["No events yet.","لسه مفيش فعاليات."],signev:["Sign in to join events","سجّل دخولك علشان تشترك في الفعاليات"],mkev:["Create an event","اعمل فعالية"],
+profile:["My Profile","ملفي الشخصي"],settings:["Settings","الإعدادات"],notif:["Notifications","الإشعارات"],help:["Help","المساعدة"],logout:["Log out","تسجيل الخروج"],
+view:["View","عرض"],mkfeed:["Offer feedback","تقديم ملاحظات"],mkworkshop:["Create a workshop","اعمل ورشة عمل"],mkchallenge:["Create a challenge","اعمل تحدي"],back:["Back","رجوع"],more:["Show more","شوف أكتر"],less:["Show less","شوف أقل"],about:["About this service","عن الخدمة"],times:["Available times","المواعيد المتاحة"],revs:["Reviews","التقييمات والآراء"],book:["Book this slot","احجز الميعاد ده"],picktime:["Select a time to book","اختار ميعاد للحجز"],booked:["Booking requested. The expert will confirm soon.","طلب الحجز اتبعت، والخبير هيأكده قريب."],rv:["reviews","تقييم"],linkedin:["LinkedIn profile link","لينك بروفايلك على LinkedIn"],spec:["Your specialty","تخصصك"],selspec:["Select your specialty","اختار تخصصك"],field:["Your field of expertise (write it)","مجال خبرتك (اكتبه)"],
+mkmentor:["Add your mentorship program","ضيف برنامج الإرشاد بتاعك"],mkfeed:["Add your feedback service","ضيف خدمة الملاحظات بتاعتك"],mkworkshop:["Add your workshop","ضيف ورشتك"],mkchallenge:["Add your challenge","ضيف تحديك"],
+atitle:["Title","العنوان"],asum:["Short summary","ملخص قصير"],adesc:["Full description","الوصف الكامل"],adate:["Available date and time (optional)","ميعاد متاح (اختياري)"],save:["Publish","نشر"],
+following:["Following","بتتابعه"],newt:["New","جديد"],notimes:["No times added yet.","لسه ما اتضافتش مواعيد."],norev:["No reviews yet.","لسه مفيش تقييمات."],yourf:["Experts in your field","خبراء في مجالك"],
+editp:["Edit profile","تعديل الملف"],statusq:["I am a","أنا"],student:["Student","طالب"],graduate:["Graduate","خريج"],uni:["University","الجامعة"],major:["Major","التخصص الدراسي"],
+working:["I currently work","بشتغل حاليًا"],yes:["Yes","أيوه"],no:["No","لا"],jtitle:["Job title","المسمى الوظيفي"],company:["Company","الشركة"],years:["Years of experience","سنوات الخبرة"],
+experience:["Experience","الخبرة"],education:["Education","التعليم"],yrs:["years","سنوات"],saveprofile:["Save profile","حفظ الملف"],at:["at","في"],notset:["Not added yet","لسه ما اتضافش"],
+noteexp:["Complete your profile (university, major, job title, company and years of experience) before you can add services or posts.","كمّل بروفايلك (الجامعة، التخصص، المسمى الوظيفي، الشركة، وسنين الخبرة) علشان تقدر تضيف خدمات وبوستات."],
+notel:["Complete your profile (university and major, plus your job if you work) before you book.","كمّل بروفايلك (الجامعة والتخصص، وشغلك لو بتشتغل) قبل ما تحجز."],
+notec:["Complete your profile so others know who you are.","كمّل بروفايلك علشان الناس تتعرف عليك."],incomplete:["Your profile is incomplete.","بروفايلك لسه ناقص."],
+oth:["Other","أخرى"],typespec:["Type your specialty","اكتب تخصصك"],inw:["in","في"],
+seljob:["Select your job title","اختار مسماك الوظيفي"],othjob:["Other job","وظيفة أخرى"],typejob:["Type your job title","اكتب مسماك الوظيفي"],
+guide:["About the services","اتعرف على الخدمات"],guidesub:["A quick guide to what you can do on UReady.","دليل سريع لكل اللي تقدر تعمله على UReady."],
+nonotif:["No notifications yet. Follow experts to hear when they post or add something new.","لسه مفيش إشعارات. تابع الخبراء علشان تعرف لما ينزلوا بوست أو يضيفوا حاجة جديدة."],now:["Just now","دلوقتي"],
+topicq:["What would you like to discuss? Write the topic or points so your mentor can prepare.","عايز تناقش إيه؟ اكتب الموضوع أو النقط علشان المرشد يجهز."],
+fbq:["What do you want feedback on? (CV, LinkedIn profile, presentation...)","عايز ملاحظات على إيه؟ (سي في، بروفايل LinkedIn، بريزنتيشن...)"],
+linkq:["Link to your file (Google Drive, LinkedIn...)","لينك الملف (Google Drive أو LinkedIn ...)"],sendreq:["Send booking request","ابعت طلب الحجز"],
+joinc:["Join the challenge","انضم للتحدي"],steps:["Your steps","خطواتك"],
+fbrounds:["You joined. You get two rounds of feedback from the mentor: the first on your first version, the second after your edits.","اشتركت. هتاخد جولتين ملاحظات من المرشد: الأولى على نسختك الأولى، والتانية بعد ما تعدّل."],
+jointonote:["Join to see the steps and get two rounds of feedback from the mentor.","انضم علشان تشوف الخطوات وتاخد جولتين ملاحظات من المرشد."],
+astep:["Steps for participants (one per line)","خطوات المشاركين (خطوة في كل سطر)"],
+evon:["Online events","الفعاليات أونلاين"],evin:["Events","الفعاليات"],reserve:["Reserve a spot","احجز مكانك"],reserved:["You are registered","تم تسجيلك"],
+freelancer:["Freelancer","فريلانسر"],atco:["I work at a company","بشتغل في شركة"],isfl:["I am a freelancer","أنا فريلانسر"],
+age:["Age","السن"],country:["Country","الدولة"],selcountry:["Select your country","اختار دولتك"],typecountry:["Type your country","اكتب دولتك"],personal:["Personal info","معلومات شخصية"],
+manage:["Manage my work","إدارة شغلي"],reqs:["Booking requests","طلبات الحجز"],mysvc:["My services","خدماتي"],approve:["Approve","قبول"],reject:["Reject","رفض"],rejected:["Rejected","مرفوض"],approvedt:["Approved","تم القبول"],
+linkph:["Session link (Zoom, Google Meet or other)","لينك الجلسة (Zoom أو Google Meet أو أي حاجة تانية)"],savelink:["Save link","احفظ اللينك"],linkadded:["Link added","اللينك اتضاف"],
+remtext:["Add your session link. We remind you 24 hours, 3 hours and 1 hour before the session if it is missing.","ضيف لينك الجلسة. هنفكّرك قبل الجلسة بـ 24 ساعة وبـ 3 ساعات وبساعة لو لسه ما ضفتوش."],
+addtime:["Add a time","ضيف ميعاد"],editb:["Edit","تعديل"],delb:["Delete","امسح"],editsvc:["Edit service","تعديل الخدمة"],price:["Price (EGP)","السعر (بالجنيه المصري)"],free:["Make it free","خليها مجانية"],
+dur:["Session duration (minutes)","مدة الجلسة (بالدقائق)"],addtimes:["Available times","المواعيد المتاحة"],addanother:["Add another time","ضيف ميعاد تاني"],noservices:["You have no services yet.","لسه معندكش خدمات."],norequests:["No requests yet.","لسه مفيش طلبات."],
+total:["Total","الإجمالي"],paym:["Payment method","طريقة الدفع"],paynote:["Payment will be activated soon. Nothing is charged now.","الدفع هيشتغل قريب. مش هيتخصم منك أي مبلغ دلوقتي."],
+pay1:["Card","بطاقة"],pay2:["Mobile wallet","محفظة إلكترونية"],pay3:["InstaPay","إنستاباي"],filef:["Upload your file (PDF, Word or PowerPoint)","ارفع ملفك (PDF أو Word أو PowerPoint)"],
+linkwait:["The session link will appear here once the mentor adds it.","لينك الجلسة هيظهر هنا بعد ما المرشد يضيفه."],statusw:["Waiting for the mentor's approval","في انتظار موافقة المرشد"],
+nlink:["A booking was approved. Add your session link.","اتوافق على حجز. ضيف لينك الجلسة."],minw:["min","دقيقة"],egp:["EGP","ج.م"],freet:["Free","مجاني"],addnew:["Add a new service","ضيف خدمة جديدة"],
+groups:["Communities","الكوميونيتيز"],searchg:["Search communities","دوّر على كوميونيتي"],joing:["Join","انضم"],joinedg:["Joined","انضممت"],nogposts:["No posts yet. Posts from this community will appear here.","لسه مفيش بوستات. بوستات الكوميونيتي هتظهر هنا."],grpnone:["No communities found.","مفيش كوميونيتيز مطابقة."],
+upc:["Upcoming","جاية"],learnm:["Learn more","اعرف أكتر"],regb:["Register","سجّل"],regd:["Registered","اتسجلت"],bookb:["Book","احجز"],evd1:["Hosted by ","بتقدمها "],evd2:[". Details and the joining link are sent after you register.","، والتفاصيل ولينك الانضمام هيوصلوك بعد التسجيل."],evon2:["Online event","فعالية أونلاين"],evin2:["Event","فعالية"],noposts:["No posts yet.","لسه مفيش بوستات."],
+lsph:["Search by name or specialty","دوّر بالاسم أو التخصص"],svcs:["Services","الخدمات"],svcnone:["This expert has not added services yet.","الخبير ده لسه ما ضافش خدمات."],
+light:["Light mode","وضع فاتح"],dark:["Dark mode","وضع داكن"],lights:["Light","فاتح"],darks:["Dark","داكن"],
+yourg:["Your communities","الكوميونيتيز بتاعتي"],allg:["All communities","كل الكوميونيتيز"],nomyg:["You have not joined any community yet.","لسه ما انضمتش لأي كوميونيتي."],browseg:["Browse all communities","شوف كل الكوميونيتيز"],gshare:["Write something...","اكتب حاجة..."],photo:["Photo","صورة"],jointopost:["Join this community to post.","انضم للكوميونيتي علشان تنزل بوست."],signtopost:["Sign in to post","سجّل دخولك علشان تنزل بوست"],imgonly:["Please choose an image file.","اختار ملف صورة لو سمحت."],
+savedt:["Saved","المحفوظات"],emptysaved:["Nothing saved yet. Tap the bookmark icon on posts and services to keep them here.","لسه مفيش حاجة محفوظة. دوس على أيقونة الحفظ في البوستات والخدمات وهتلاقيها هنا."],contact:["Contact us","تواصل معنا"],contactsub:["Questions, support or complaints? Message us and we will reply.","عندك سؤال أو شكوى أو محتاج مساعدة؟ ابعتلنا وهنرد عليك."],wa:["Chat on WhatsApp","كلمنا على واتساب"],wanote:["The chat link will be connected soon.","لينك المحادثة هيتربط قريب."],saveb:["Save","حفظ"],savedb:["Saved","اتحفظ"],
+learnq:["What do you want to know about this field?","عايز تعرف إيه عن المجال ده؟"],mklearn:["Add your Learn from session","ضيف جلسة اتعلّم من"],cjoined:["You joined. Complete the steps below and build real skills from this challenge.","اشتركت. اعمل الخطوات دي وابني مهارات حقيقية من التحدي ده."],cjoin:["Join to see the steps and build skills from this company challenge.","انضم علشان تشوف الخطوات وتبني مهارات من تحدي الشركة ده."],pay4:["Fawry","فوري"],
+overview:["Overview","نظرة عامة"],ratingsT:["Ratings","التقييمات"],overall:["Overall rating","التقييم العام"],
+changeint:["Change interest","غيّر اهتمامك"],addcmt:["Add a comment...","اكتب تعليق..."],send:["Send","ابعت"],
+comments:["Comments","التعليقات"],viewmore:["View more comments","شوف تعليقات أكتر"],likec:["Like","إعجاب"],nocm:["No comments yet. Write the first one.","لسه مفيش تعليقات. اكتب أول تعليق."],signcm:["Sign in to comment","سجّل دخولك علشان تعلّق"],
+changeint2:["Change your interest","غيّر اهتمامك"],
+searchf:["Search in UReady","دوّر في UReady"],
+comm:["Communities","الكوميونيتيز"],
+addphoto:["Add a photo","أضف صورة"],changephoto:["Change photo","غيّر الصورة"],
+likesw:["likes","إعجاب"],membersw:["members","عضو"],
+prevexp:["Previous experience","خبرات سابقة"],addexp:["Add experience","ضيف خبرة"],fromy:["From (year)","من (سنة)"],toy:["To (year, leave empty if current)","إلى (سنة، سيبها فاضية لو لسه شغال)"],presentw:["Present","لحد دلوقتي"],
+guser:["user","مستخدم"],other:["English","عربي"]};
+var IC={
+feed:'<rect x="3" y="4" width="14" height="16" rx="2"/><path d="M17 9h3v8a3 3 0 0 1-3 3"/><path d="M7 8h6M7 12h6M7 16h4"/>',
+mentor:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4.5 2 4.5 4.5"/>',
+work:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M3 13h18"/>',
+events:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+comm:'<circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.3"/><circle cx="18.5" cy="10" r="2.3"/><path d="M6.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5M1.5 18c0-2 1.5-3.7 4-3.9M22.5 18c0-2-1.5-3.7-4-3.9"/>'};
+var TABS=["feed","comm","work","mentor"];
+var L="en";try{var sv=localStorage.getItem("ur_lang");if(sv)L=sv;else if((navigator.language||"").toLowerCase().indexOf("ar")===0)L="ar"}catch(e){}
+var S={user:null,email:null,role:null,tab:"feed",spec:null,q:"",menu:false,modal:false,pick:"learner",posts:[],f_mentor:null,f_work:null,fn:"",fe:""};
+var app=document.getElementById("app");
+S.theme="light";try{var th0=localStorage.getItem("ur_theme");if(th0)S.theme=th0;else if(typeof window!=="undefined"&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)S.theme="dark"}catch(e){}
+var PKEYS=["user","email","role","profile","photo","posts","follows","likes","comments","cl","savedP","savedS","gj","gposts","booked","notifs","nid","spec","reg"];
+function persist(){try{var o={};PKEYS.forEach(function(k){if(S[k]!==undefined&&S[k]!==null)o[k]=S[k]});localStorage.setItem("ur_state",JSON.stringify(o))}catch(e){}}
+function restore(){try{var o=JSON.parse(localStorage.getItem("ur_state")||"{}");PKEYS.forEach(function(k){if(o[k]!==undefined&&o[k]!==null)S[k]=o[k]})}catch(e){}}
+restore();
+function setTheme(m){S.theme=m;try{localStorage.setItem("ur_theme",m)}catch(e){}render()}
+function t(k){return T[k][L==="ar"?1:0]}
+function sp(s){return L==="ar"&&SPEC_AR[s]?SPEC_AR[s]:s}
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function ini(n){return esc((n||"?").trim()[0].toUpperCase())}
+function chips(sel,fn,list,cls){return '<div class="chips'+(cls?' '+cls:'')+'">'+list.map(function(s){return '<button class="chip'+(sel===s?' on':'')+'" onclick="'+fn+'(\''+s.replace(/['\\]/g,"")+'\')">'+esc(sp(s))+'</button>'}).join("")+'</div>'}
+function isExp(){return S.role==="expert"}
+function openModal(){S.modal=true;S.menu=false;render()}
+function toggleLang(l){if(S.modal)keep();if(S.page==="profile"&&S.edit)keepP();L=l;try{localStorage.setItem("ur_lang",L)}catch(e){}render()}
+function matches(q){return SPECS.filter(function(s){return !q||s.toLowerCase().indexOf(q)>-1||sp(s).toLowerCase().indexOf(q)>-1})}
+var GR=[["Marketing Community","كوميونيتي التسويق","Brands, campaigns and careers in marketing.","البراندات والحملات والمسار المهني في التسويق."],["AI Community","كوميونيتي الذكاء الاصطناعي","Artificial intelligence tools, news and careers.","أدوات الذكاء الاصطناعي وأخباره والشغل فيه."],["Telecom Community","كوميونيتي الاتصالات","Telecom industry, roles and trends.","قطاع الاتصالات والوظايف وأحدث الاتجاهات."]];
+var POSTX=[
+["Brand building starts with listening. Before you plan a campaign, spend a week reading what consumers actually say.\n\nWhat was the best consumer insight you ever worked with?","بناء البراند بيبدأ بالسمع. قبل ما تخطط لأي حملة، اقعد أسبوع واقرا الناس بتقول إيه فعلًا.\n\nإيه أحسن إنسايت عن المستهلك اشتغلت عليه؟","#marketing #branding #fmcg",128,14,"2d","من يومين"],
+["Shelf execution beats a great plan on paper. Walk three stores this week and note what your shopper really sees.","تنفيذ الرف أهم من أي خطة حلوة على الورق. زور تلات محلات الأسبوع ده وسجّل المتسوق بيشوف إيه فعلًا.","#trade_marketing #retail #fmcg",86,9,"3d","من 3 أيام"],
+["Your first partnership pitch should fit on one page: who it helps, what it costs, and what happens next.","أول عرض ليك لأي شراكة لازم يكفيه صفحة واحدة: مين المستفيد، وبكام، وإيه الخطوة الجاية.","#business_development #partnerships",64,7,"4d","من 4 أيام"],
+["Forecast accuracy improves when sales and supply planners meet every week. Ten minutes is enough.","دقة التوقعات بتتحسن لما فريق المبيعات وفريق تخطيط الإمداد يتقابلوا كل أسبوع. عشر دقايق كفاية.","#supply_chain #planning #logistics",97,11,"5d","من 5 أيام"],
+["Great sales calls are mostly good questions. Before you pitch, try asking one more.","مكالمات المبيعات الناجحة أغلبها أسئلة كويسة. قبل ما تعرض، جرّب تسأل سؤال زيادة.","#sales #key_accounts #career",143,18,"1w","من أسبوع"],
+["Preparing for banking graduate programs? Know your numbers, and know why this bank.","بتجهّز لبرامج الخريجين في البنوك؟ اعرف أرقامك، واعرف ليه البنك ده بالذات.","#banking #graduate_programs #interview",71,8,"1w","من أسبوع"],
+["A clean model beats a clever one. Label inputs, separate assumptions and check your totals.","الموديل المرتب أحسن من الموديل الذكي. سمّي المدخلات، وافصل الافتراضات، وراجع الإجماليات.","#finance #excel #modelling",59,5,"2w","من أسبوعين"],
+["Before building a dashboard, write down the one decision it should help someone make.","قبل ما تبني أي داشبورد، اكتب القرار الوحيد اللي المفروض تساعد حد ياخده.","#data_analytics #dashboards",88,10,"2w","من أسبوعين"],
+["Your CV has six seconds. Lead with results, not responsibilities.","الـ CV بتاعك قدامه ست ثواني. ابدأ بالنتايج مش بالمسؤوليات.","#hr #cv_tips #recruitment",210,26,"3d","من 3 أيام"],
+["A portfolio with four strong projects beats ten average ones. Tell the story behind each.","بورتفوليو بأربع مشاريع قوية أحسن من عشرة عاديين. احكي القصة اللي ورا كل مشروع.","#design #portfolio #ux",102,12,"4d","من 4 أيام"]];
+var CMT=["Great point, thanks for sharing this with the community.","نقطة حلوة، شكرًا إنك شاركتها مع المجتمع."];
+var POSTREG={};
+var ICB='<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>';
+var ICL='<svg viewBox="0 0 24 24"><path d="M7 11v9H4v-9h3zm0 0l4-8c1.5 0 2.5 1 2.5 2.5V9H19a1.5 1.5 0 0 1 1.5 1.8l-1.3 7A2 2 0 0 1 17.2 19H7"/></svg>',ICC='<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg>',ICR='<svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4M21 7H8a4 4 0 0 0-4 4v1M7 21l-4-4 4-4M3 17h13a4 4 0 0 0 4-4v-1"/></svg>',ICS='<svg viewBox="0 0 24 24"><path d="M21 3L3 11l7 3 3 7 8-18z"/></svg>',ICG='<svg class="gl" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>';
+var AVS=[["#e8bd98","#2b1b12","#cfe8da","#0a1f5c","long",0,0],["#d9a77c","#1c1c1c","#d9e5f7","#385235","short",0,1],["#f1c9a5","#8aa89a","#f6e3c8","#7a8b99","hijab",0,0],["#c58c62","#1c1c1c","#e4dcf7","#0a1f5c","short",1,0],["#f5d5b8","#3a2417","#f7d9d9","#385235","long",0,0],["#e0b08a","#2b1b12","#d6efef","#0a1f5c","short",0,0],["#e8bd98","#b78d8f","#cfe8da","#5b4b8a","hijab",0,0],["#a8714a","#1c1c1c","#f6e3c8","#385235","curly",0,1],["#f1c9a5","#5a3a22","#d9e5f7","#b5651d","long",0,0],["#d9a77c","#2b1b12","#e4dcf7","#0a1f5c","short",1,0],["#e0b08a","#2b1b12","#d6efef","#0a1f5c","short",0,0]];
+function mkAv(a){var sk=a[0],hr=a[1],bg=a[2],sh=a[3],st=a[4],gl=a[5],bd=a[6];
+ var q='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="'+bg+'"/>';
+ if(st==="long")q+='<path d="M30 48C26 20 74 20 70 48L72 76L28 76Z" fill="'+hr+'"/>';
+ if(st==="hijab")q+='<path d="M27 52C24 18 76 18 73 52C73 70 62 80 50 80C38 80 27 70 27 52Z" fill="'+hr+'"/>';
+ q+='<path d="M12 100C14 78 30 70 50 70C70 70 86 78 88 100Z" fill="'+sh+'"/><rect x="44" y="58" width="12" height="14" rx="5" fill="'+sk+'"/><ellipse cx="50" cy="44" rx="15" ry="17" fill="'+sk+'"/>';
+ if(st==="short")q+='<path d="M34 42C32 24 68 24 66 42C62 34 38 34 34 42Z" fill="'+hr+'"/>';
+ if(st==="long")q+='<path d="M34 40C34 26 66 26 66 40C58 34 42 34 34 40Z" fill="'+hr+'"/>';
+ if(st==="curly")q+='<g fill="'+hr+'"><circle cx="38" cy="30" r="8"/><circle cx="50" cy="26" r="9"/><circle cx="62" cy="30" r="8"/><circle cx="34" cy="38" r="6"/><circle cx="66" cy="38" r="6"/></g>';
+ if(st==="hijab")q+='<path d="M33 40C34 26 66 26 67 40C60 34 40 34 33 40Z" fill="'+hr+'"/>';
+ if(bd)q+='<path d="M36 50C38 64 62 64 64 50C60 56 40 56 36 50Z" fill="'+hr+'"/>';
+ q+='<circle cx="44" cy="44" r="1.8" fill="#2b2b2b"/><circle cx="56" cy="44" r="1.8" fill="#2b2b2b"/><path d="M44 54C47 57 53 57 56 54" stroke="#7a3b2e" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+ if(gl)q+='<g fill="none" stroke="#222" stroke-width="1.4"><circle cx="44" cy="44" r="5"/><circle cx="56" cy="44" r="5"/><path d="M49 44H51"/></g>';
+ return 'data:image/svg+xml;utf8,'+encodeURIComponent(q+'</svg>')}
+var SAMP=AVS.map(mkAv);
+function mkImg(k){var bg=["#dcebe3","#e3e9f4","#f1e9dd"][k],W=[60,95,120,80,110,70,100,55,90,75];
+ var q='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 175"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+bg+'"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs><rect width="400" height="175" fill="url(#g)"/>';
+ if(k===0){q+='<rect x="118" y="26" width="172" height="104" rx="7" fill="#16202b"/>';var cl=["#5ad1a1","#7aa7ff","#f2c14e","#e07a8a"];for(var j=0;j<9;j++)q+='<rect x="130" y="'+(38+j*10)+'" width="'+W[j]+'" height="4" rx="2" fill="'+cl[j%4]+'"/>';
+  q+='<path d="M98 134H312L302 150H108Z" fill="#c4cbd2"/><rect x="40" y="108" width="26" height="34" rx="4" fill="#b98a62"/><ellipse cx="46" cy="96" rx="9" ry="20" fill="#5fae7d" transform="rotate(-20 46 96)"/><ellipse cx="60" cy="94" rx="9" ry="21" fill="#4a9a6b" transform="rotate(18 60 94)"/><ellipse cx="53" cy="88" rx="8" ry="22" fill="#6bbd8a"/>'}
+ if(k===1){q+='<rect x="60" y="22" width="280" height="112" rx="9" fill="#fff" stroke="#cdd5dc"/><rect x="80" y="40" width="70" height="46" rx="4" fill="#ffe08a"/><rect x="160" y="40" width="70" height="46" rx="4" fill="#bfe3d0"/><rect x="240" y="40" width="70" height="46" rx="4" fill="#cdd8f6"/><rect x="80" y="98" width="150" height="5" rx="2" fill="#cfd6dc"/><rect x="80" y="110" width="110" height="5" rx="2" fill="#cfd6dc"/><circle cx="150" cy="158" r="12" fill="#d9a77c"/><path d="M130 175c2-12 8-16 20-16s18 4 20 16z" fill="#385235"/><circle cx="250" cy="158" r="12" fill="#c58c62"/><path d="M230 175c2-12 8-16 20-16s18 4 20 16z" fill="#0a1f5c"/>'}
+ if(k===2){q+='<rect x="0" y="120" width="400" height="55" fill="#e6d6bf"/><rect x="90" y="80" width="130" height="62" rx="5" fill="#fff" stroke="#cdd5dc" transform="rotate(-6 155 111)"/><rect x="104" y="96" width="80" height="4" rx="2" fill="#cfd6dc" transform="rotate(-6 155 111)"/><rect x="104" y="108" width="100" height="4" rx="2" fill="#cfd6dc" transform="rotate(-6 155 111)"/><rect x="250" y="96" width="34" height="38" rx="6" fill="#fff" stroke="#cdd5dc"/><path d="M284 106c14 0 14 18 0 18" fill="none" stroke="#cdd5dc" stroke-width="5"/><rect x="256" y="102" width="22" height="6" fill="#8b5e3c"/>'}
+ return 'data:image/svg+xml;utf8,'+encodeURIComponent(q+'</svg>')}
+var SIMG=[mkImg(0),mkImg(1),mkImg(2)],POSTIMG={0:0,1:2,3:1,7:0,9:1};
+function avSrc(idx,name){if(idx!=null&&idx>=0&&SAMP[idx])return SAMP[idx];if(name&&S.user&&name===S.user&&S.photo)return S.photo;return ""}
+function avBox(idx,name,cls,attrs){var src=avSrc(idx,name);return '<div class="av '+(cls||"")+'" '+(attrs||"")+'>'+(src?'<img src="'+src+'" alt="">':ini(name||"?"))+'</div>'}
+function onPhoto(inp){var f=inp.files&&inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){alert(t("imgonly"));inp.value="";return}
+ var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),z=256,w=im.width,h=im.height,m=Math.min(w,h);c.width=c.height=z;c.getContext("2d").drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,z,z);S.photo=c.toDataURL("image/jpeg",0.85);if(S.draft)keepP();render()};im.src=rd.result};rd.readAsDataURL(f)}
+function feedPosts(){var out=[],l=ai();
+ S.posts.forEach(function(p,k){if(S.spec&&p.spec!==S.spec)return;out.push({own:true,id:"o"+k,name:p.by,hl:p.hl||"",text:p.t,tags:"",likes:0,cm:0,time:t("now"),cmt:null})});
+ POSTX.forEach(function(x,i){var pp=PEOPLE[i];if(S.spec&&pp[2]!==S.spec)return;var d=PD[i],cp=PEOPLE[(i+3)%10],cd=PD[(i+3)%10];
+  out.push({own:false,idx:i,id:"s"+i,key:pp[0],name:l?pp[3]:pp[0],hl:d[6+l]+" "+t("at")+" "+d[4+l],text:x[l],tags:x[2],img:(POSTIMG[i]!=null?SIMG[POSTIMG[i]]:""),likes:x[3],cm:x[4],time:x[5+l],cmt:{idx:(i+3)%10,name:l?cp[3]:cp[0],hl:cd[6+l]+" "+t("at")+" "+cd[4+l],text:CMT[l]}})});
+ var fq=(S.fq||"").trim().toLowerCase();
+ if(fq)out=out.filter(function(p){var hay=(p.name+" "+p.hl+" "+p.text+" "+(p.idx!=null?PEOPLE[p.idx][2]+" "+sp(PEOPLE[p.idx][2]):"")).toLowerCase();return hay.indexOf(fq)>-1});
+ return out}
+function postHtml(p){var fl=!p.own&&S.follows&&S.follows[p.key],liked=S.likes&&S.likes[p.id],lk=p.likes+(liked?1:0),copen=S.cOpen&&S.cOpen[p.id],cl=(S.comments&&S.comments[p.id])||[];
+ POSTREG[p.id]=p;var sv=S.savedP&&S.savedP[p.id],oc=p.own?'openProfile(false)':'openPerson('+p.idx+')',h='<div class="lp"><div class="lph">'+avBox(p.idx,p.name,"",'onclick="'+oc+'" style="cursor:pointer"')+'<div class="lpi"><div class="lpn" onclick="'+oc+'" style="cursor:pointer">'+esc(p.name)+(p.own?'':'<span class="smp">'+t("sample")+'</span>')+'</div><div class="lps">'+p.time+(p.hl?' · '+esc(p.hl):'')+'</div></div>'+(p.own?'':'<button class="lfl'+(fl?' on':'')+'" onclick="follow(\''+p.key+'\')">'+(fl?t("following"):'+ '+t("follow"))+'</button>')+'</div>';
+ h+='<div class="lpt">'+esc(p.text)+'</div>'+(p.img?'<img class="lpimg" src="'+p.img+'" alt="">':'');
+ h+='<div class="acts"><button id="lkb_'+p.id+'" data-b="'+p.likes+'" class="lk'+(liked?' on':'')+'" onclick="likePost(\''+p.id+'\')">'+ICL+'<span>'+lk+'</span></button><button onclick="openCm(\''+p.id+'\')">'+ICC+'<span>'+(p.cm+cl.length)+'</span></button><button id="svb_'+p.id+'" class="sv'+(sv?' on':'')+'" style="margin-inline-start:auto" onclick="saveP(\''+p.id+'\')">'+ICB+'</button></div>';
+ var tc=topCm(p);if(tc)h+='<div class="lpc" onclick="openCm(\''+p.id+'\')" style="cursor:pointer">'+avBox(tc.idx,tc.name,"")+'<div class="lpi"><div class="cmb"><div class="cmn">'+esc(tc.name)+'</div><div class="cmt">'+esc(tc.text)+'</div></div><div class="cmm"><span>'+(tc.time||"")+'</span>'+(tc.lk?'<span>'+tc.lk+' '+t("likesw")+'</span>':'')+'</div></div></div>';
+ return h+'</div>'}
+function cmtRow(c){return '<div class="lpc"><div class="av">'+ini(c.name)+'</div><div class="lpi"><div class="lpn" style="font-size:14.5px">'+esc(c.name)+'</div>'+(c.hl?'<div class="lps">'+esc(c.hl)+'</div>':'')+'<div style="margin-top:6px;font-size:14.5px;line-height:1.5">'+esc(c.text)+'</div></div></div>'}
+function commentsHtml(p,cl){var h='';if(p.cmt)h+=cmtRow(p.cmt);cl.forEach(function(c){h+=cmtRow(c)});
+ return h+'<div class="lpc"><div class="av">'+(S.user?ini(S.user):'?')+'</div><div class="lpi"><div class="row" style="gap:8px"><input id="ci_'+p.id+'" placeholder="'+t("addcmt")+'" style="margin:0"><button class="btn fill sm" onclick="addCmt(\''+p.id+'\')">'+t("send")+'</button></div></div></div>'}
+function toggleC(id){S.cOpen=S.cOpen||{};S.cOpen[id]=!S.cOpen[id];render()}
+var CMTP=[["Great point, thanks for sharing.","نقطة حلوة، شكرًا إنك شاركتها."],["This is exactly what I needed to hear today.","ده بالظبط اللي كنت محتاج أسمعه النهارده."],["Could you share more about how you started?","ممكن تحكي أكتر إزاي بدأت؟"],["Saving this for later.","هحفظه وأرجعله بعدين."],["Agree 100%. This changed how I work.","متفق معاك 100%. ده غيّر طريقة شغلي."],["Very helpful, especially for fresh graduates.","مفيد جدًا، خصوصًا للخريجين الجداد."],["Would love to join a session on this.","نفسي أحضر جلسة عن الموضوع ده."],["Well said!","كلام جميل!"]];
+var CMTT=["2h","5h","1d","2d","3d","4d","5d","1w"],CMTTA=["من ساعتين","من 5 ساعات","من يوم","من يومين","من 3 أيام","من 4 أيام","من 5 أيام","من أسبوع"];
+function genCms(p){var out=[],l=ai(),n=p.cm||0,base=p.idx!=null?p.idx:0;
+ for(var k=0;k<n;k++){var pi=(base+k+1)%10,pp=PEOPLE[pi],d=PD[pi];out.push({idx:pi,name:l?pp[3]:pp[0],hl:d[6+l]+" "+t("at")+" "+d[4+l],text:CMTP[(base+k)%CMTP.length][l],time:(l?CMTTA:CMTT)[k%8],lk:(((base+2)*(k+3)*7)%11)%9,k:k})}
+ return out}
+function topCm(p){var all=[];genCms(p).forEach(function(c){all.push({c:c,key:p.id+"_"+c.k})});((S.comments&&S.comments[p.id])||[]).forEach(function(c,k){all.push({c:c,key:p.id+"_u"+k})});
+ if(!all.length)return null;var best=null,bl=-1;all.forEach(function(x){var lk=(x.c.lk||0)+((S.cl&&S.cl[x.key])?1:0);if(lk>bl){bl=lk;best={c:x.c,lk:lk}}});
+ var o=best.c;return {idx:o.idx,name:o.name,text:o.text,time:o.time,lk:best.lk}}
+function crow(c,key){var lk=S.cl&&S.cl[key];return '<div class="cmr">'+avBox(c.idx,c.name,"",'style="width:38px;height:38px;font-size:15px;flex:none"')+'<div style="min-width:0;flex:1"><div class="cmb"><div class="cmn">'+esc(c.name)+'</div>'+(c.hl?'<div class="lps" style="font-size:12px">'+esc(c.hl)+'</div>':'')+'<div class="cmt">'+esc(c.text)+'</div></div><div class="cmm"><span>'+(c.time||t("now"))+'</span><button class="link" id="cl_'+key+'" data-b="'+(c.lk||0)+'" style="font-size:12px;padding:0;text-decoration:none;'+(lk?'':'color:var(--mut)')+'" onclick="likeCm(\''+key+'\')">'+t("likec")+(((c.lk||0)+(lk?1:0))?' · '+((c.lk||0)+(lk?1:0)):'')+'</button></div></div></div>'}
+function cmSheet(){var p=POSTREG[S.cm];if(!p)return "";var mine=(S.comments&&S.comments[p.id])||[],gen=genCms(p),show=gen.length,total=gen.length+mine.length;
+ var list=mine.map(function(c,k){return {c:c,k:k}}).reverse().map(function(x){return crow(x.c,p.id+"_u"+x.k)}).join("")+gen.slice(0,show).map(function(c){return crow(c,p.id+"_"+c.k)}).join("");
+ 
+ if(!total)list='<div class="empty">'+t("nocm")+'</div>';
+ var foot=S.user?''+avBox(null,S.user,"",'style="width:36px;height:36px;font-size:14px;flex:none"')+'<input id="cmi" placeholder="'+t("addcmt")+'" style="margin:0"><button class="btn fill sm" onclick="addCmt()">'+t("send")+'</button>':'<button class="btn fill" onclick="openModal()">'+t("signcm")+'</button>';
+ return '<div class="ov" style="z-index:25" onclick="S.cm=null;render()"><div class="csheet" onclick="event.stopPropagation()"><div class="csh"><span>'+t("comments")+' ('+total+')</span><button class="x" style="position:static" onclick="S.cm=null;render()">&times;</button></div><div class="cslist">'+list+'</div><div class="csf">'+foot+'</div></div></div>'}
+function likeCm(k){S.cl=S.cl||{};S.cl[k]=!S.cl[k];var e=document.getElementById("cl_"+k);if(e){var n=(parseInt(e.getAttribute("data-b"),10)||0)+(S.cl[k]?1:0);e.textContent=t("likec")+(n?" · "+n:"");e.style.color=S.cl[k]?"var(--navy)":"var(--mut)"}else render()}
+function openCm(id){S.cm=id;S.cmShow=5;render()}
+function addCmt(){if(!S.user){openModal();return}var e=document.getElementById("cmi"),v=e?e.value.trim():"";if(!v)return;var id=S.cm;S.comments=S.comments||{};(S.comments[id]=S.comments[id]||[]).push({name:S.user,hl:(S.profile&&S.profile.title)?jt(S.profile.title):"",text:v,time:t("now")});S.cmFocus=true;render()}
+function saveP(id){if(!S.user){openModal();return}S.savedP=S.savedP||{};if(S.savedP[id])delete S.savedP[id];else{var p=POSTREG[id];S.savedP[id]=p.own?{own:true,name:p.name,hl:p.hl,text:p.text,img:p.img||""}:{idx:p.idx}}var sb=document.getElementById("svb_"+id);if(sb&&S.page!=="saved")sb.className="sv"+(S.savedP[id]?" on":"");else render()}
+function saveS(i){if(!S.user){openModal();return}S.savedS=S.savedS||{};S.savedS[i]=!S.savedS[i];render()}
+function svBtn(i){return '<button class="svbtn'+(S.savedS&&S.savedS[i]?' on':'')+'" aria-label="Save" onclick="saveS('+i+')">'+ICB+'</button>'}
+function savedPage(){var h=backBtn()+'<h2>'+t("savedt")+'</h2><p class="sub"></p>',ps=Object.keys(S.savedP||{}),ss=Object.keys(S.savedS||{}).filter(function(k){return S.savedS[k]&&!SV[k].deleted});
+ if(!ps.length&&!ss.length)return h+'<div class="card"><div class="empty">'+t("emptysaved")+'</div></div>';
+ if(ss.length){h+='<h3>'+t("svcs")+'</h3>';ss.forEach(function(k){h+=svcCard(+k)})}
+ if(ps.length){h+='<h3>'+t("posts")+'</h3>';ps.forEach(function(id){var e=S.savedP[id],p;if(e.own)p={own:true,id:id,name:e.name,hl:e.hl,text:e.text,tags:"",likes:0,cm:0,time:t("now"),cmt:null,img:e.img};else{p=samplePost(e.idx,"");p.id=id}h+=postHtml(p)})}
+ return h}
+function contactPage(){var h=backBtn()+'<h2>'+t("contact")+'</h2><p class="sub">'+t("contactsub")+'</p><div class="note">'+t("wa")+' - '+t("wanote")+'</div>';return h}
+function likePost(id){if(!S.user){openModal();return}S.likes=S.likes||{};S.likes[id]=!S.likes[id];var b=document.getElementById("lkb_"+id);if(b){var base=parseInt(b.getAttribute("data-b"),10)||0;b.className="lk"+(S.likes[id]?" on":"");b.innerHTML=ICL+"<span>"+(base+(S.likes[id]?1:0))+"</span>"}else render()}
+function dcard(o){return '<div class="dc"><div class="band">'+(o.av||'')+(o.save||'')+'<span class="pillt">'+o.pill+'</span></div><div class="bd"><div class="lab">'+o.label+'</div><div class="ttl">'+o.title+'</div>'+(o.meta||[]).map(function(x){return '<div class="mt">'+x+'</div>'}).join("")+(o.extra?'<div class="mt" style="margin-top:12px;opacity:.85">'+o.extra+'</div>':'')+'<div class="ba"><button class="lb" onclick="'+o.f1+'">'+o.b1+'</button><button class="lb'+(o.dis?' dis':'')+'" onclick="'+o.f2+'">'+o.b2+'</button></div></div></div>'}
+function feedTop(){return '<div class="sbar">'+SIC+'<input id="fq" placeholder="'+t("searchf")+'" value="'+esc(S.fq||"")+'" oninput="onF(this.value)"></div>'}
+function commTop(){return '<div class="sbar">'+SIC+'<input id="fq" placeholder="'+t("searchg")+'" value="'+esc(S.fq||"")+'" oninput="onF(this.value)"></div>'}
+function commPage(){return S.grp!=null?groupsView():commTop()+groupsView()}
+function eventsPage(){return backBtn()+events()}
+function postsHtml(){var lst=feedPosts(),h="";if(!lst.length)h='<div class="card"><div class="empty">'+t("noposts")+'</div></div>';lst.forEach(function(p){h+=postHtml(p)});return h}
+function onF(v){S.fq=v;if(S.tab==="comm"){var g=document.getElementById("glist");if(g)g.innerHTML=glist(!!S.gmine)}else{var p=document.getElementById("plist");if(p)p.innerHTML=postsHtml()}}
+function feedSeg(){var g=S.fv==="groups";return '<div class="seg" style="margin:0 0 16px"><button class="'+(!g?'on':'')+'" onclick="S.fv=\'feed\';S.grp=null;S.fq=\'\';render()">'+t("feed")+'</button><button class="'+(g?'on':'')+'" onclick="S.fv=\'groups\';S.grp=null;S.fq=\'\';render()">'+t("groups")+'</button></div>'}
+var GSP={0:[0,1],1:[7,9],2:[3,5]};
+var ICPH='<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 16l-5-5-8 8"/></svg>';
+function samplePost(i,pfx){var l=ai(),pp=PEOPLE[i],x=POSTX[i],d=PD[i],cp=PEOPLE[(i+3)%10],cd=PD[(i+3)%10];
+ return {own:false,idx:i,id:pfx+i,key:pp[0],name:l?pp[3]:pp[0],hl:d[6+l]+" "+t("at")+" "+d[4+l],text:x[l],tags:x[2],img:(POSTIMG[i]!=null?SIMG[POSTIMG[i]]:""),likes:x[3],cm:x[4],time:x[5+l],cmt:{idx:(i+3)%10,name:l?cp[3]:cp[0],hl:cd[6+l]+" "+t("at")+" "+cd[4+l],text:CMT[l]}}}
+var CIC=['<svg viewBox="0 0 24 24"><path d="M4 10v4h3l7 4V6L7 10H4z"/><path d="M17 9c1.3.8 2 1.8 2 3s-.7 2.2-2 3"/><path d="M6 14l1 5h2l-1-4"/></svg>','<svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 4v3M12 4v3M15 4v3M9 17v3M12 17v3M15 17v3M4 9h3M4 12h3M4 15h3M17 9h3M17 12h3M17 15h3"/></svg>','<svg viewBox="0 0 24 24"><path d="M12 11l-4 10M12 11l4 10M9.5 17h5"/><circle cx="12" cy="9" r="1.6"/><path d="M8.6 6.6a4.2 4.2 0 0 0 0 4.8M15.4 6.6a4.2 4.2 0 0 1 0 4.8M6.2 4.6a7.4 7.4 0 0 0 0 8.8M17.8 4.6a7.4 7.4 0 0 1 0 8.8"/></svg>'];
+function cicon(i){return CIC[i]||'<svg viewBox="0 0 24 24">'+IC.comm+'</svg>'}
+function glist(mine){var q=(S.fq||"").trim().toLowerCase(),h="",n=0;
+ GR.forEach(function(g,i){if(mine&&!(S.gj&&S.gj[i]))return;if(q&&g[0].toLowerCase().indexOf(q)<0&&g[1].indexOf(q)<0)return;n++;
+  var jd=S.gj&&S.gj[i];
+  h+='<div class="crow" onclick="S.grp='+i+';render()"><div class="cic">'+cicon(i)+'</div><div class="cinfo"><div class="ctt">'+g[ai()]+'</div><div class="cds">'+g[2+ai()]+'</div></div><button class="cjoin'+(jd?' on':'')+'" onclick="event.stopPropagation();joinG('+i+')">'+(jd?t("joinedg"):t("joing"))+'</button></div>'});
+ return n?h:'<div class="card"><div class="empty">'+t(mine?"nomyg":"grpnone")+'</div></div>'}
+function onG(v){S.gq=v;document.getElementById("glist").innerHTML=glist(false)}
+function joinG(i){if(!S.user){openModal();return}S.gj=S.gj||{};S.gj[i]=!S.gj[i];render()}
+function onGImg(inp){var f=inp.files&&inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){alert(t("imgonly"));inp.value="";return}
+ var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),w=im.width,h=im.height,mw=1080;if(w>mw){h=Math.round(h*mw/w);w=mw}c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);S.gimg=c.toDataURL("image/jpeg",0.8);var p=document.getElementById("gprev");if(p)p.innerHTML='<img class="gprv" src="'+S.gimg+'" alt="">'};im.src=rd.result};rd.readAsDataURL(f)}
+function addGPost(i){var tx=document.getElementById("gt"),v=tx?tx.value.trim():"";if(!v&&!S.gimg)return;
+ S.gposts=S.gposts||{};(S.gposts[i]=S.gposts[i]||[]).unshift({by:S.user,hl:(S.profile&&S.profile.title)?jt(S.profile.title)+(S.profile.freelancer?" · "+t("freelancer"):(S.profile.company?" "+t("at")+" "+S.profile.company:"")):"",text:v,img:S.gimg||""});S.gimg="";render()}
+var GN=[12400,8700,3200];
+function mkCover(i){var gs=[["#d3f0e0","#a5dcbf"],["#d6e4fb","#b5c6f3"],["#ffecd0","#f5cd96"]][i%3],q='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+gs[0]+'"/><stop offset="1" stop-color="'+gs[1]+'"/></linearGradient></defs><rect width="400" height="150" fill="url(#c)"/><circle cx="350" cy="20" r="70" fill="#fff" opacity=".25"/><circle cx="30" cy="140" r="60" fill="#fff" opacity=".2"/>';
+ if(i===0){q+='<path d="M120 70L220 40V112L120 92Z" fill="#fff" opacity=".95"/><rect x="96" y="68" width="34" height="28" rx="7" fill="#2e7d46"/><path d="M236 58c20 10 20 32 0 42M254 46c30 18 30 54 0 72" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" opacity=".9"/><rect x="300" y="86" width="14" height="34" rx="3" fill="#2e7d46" opacity=".5"/><rect x="322" y="68" width="14" height="52" rx="3" fill="#2e7d46" opacity=".65"/><rect x="344" y="48" width="14" height="72" rx="3" fill="#2e7d46" opacity=".8"/>'}
+ else if(i===1){q+='<rect x="160" y="36" width="80" height="80" rx="14" fill="#fff" opacity=".95"/><rect x="184" y="60" width="32" height="32" rx="7" fill="#3a5aa0"/><path d="M180 28v8M200 28v8M220 28v8M180 116v8M200 116v8M220 116v8M152 56h8M152 76h8M152 96h8M240 56h8M240 76h8M240 96h8" stroke="#3a5aa0" stroke-width="4" stroke-linecap="round"/><g stroke="#fff" stroke-width="2.5" opacity=".9"><path d="M60 40L110 76L60 112M340 40L290 76L340 112"/></g><g fill="#fff"><circle cx="60" cy="40" r="7"/><circle cx="110" cy="76" r="7"/><circle cx="60" cy="112" r="7"/><circle cx="340" cy="40" r="7"/><circle cx="290" cy="76" r="7"/><circle cx="340" cy="112" r="7"/></g>'}
+ else{q+='<path d="M200 52L170 128M200 52L230 128M180 100H220" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" opacity=".95"/><circle cx="200" cy="46" r="8" fill="#b9650f"/><g fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".9"><path d="M176 34a34 34 0 0 0 0 24M224 34a34 34 0 0 1 0 24"/><path d="M158 22a60 60 0 0 0 0 48M242 22a60 60 0 0 1 0 48"/></g><path d="M0 150Q100 118 200 140T400 128V150Z" fill="#fff" opacity=".4"/>'}
+ return 'data:image/svg+xml;utf8,'+encodeURIComponent(q+'</svg>')}
+var COVERS=[mkCover(0),mkCover(1),mkCover(2)];
+function memTxt(n){var l=ai(),v=n>=1000?(n/1000).toFixed(1).replace(/\.0$/,"")+(l?" ألف":"K"):String(n);return '<b style="color:var(--navy)">'+v+'</b> '+t("membersw")}
+function groupPage(i){var g=GR[i],joined=S.gj&&S.gj[i];
+ var h='<div class="cover"><img src="'+(COVERS[i]||COVERS[0])+'" alt=""><button class="cvb" aria-label="Back" onclick="S.grp=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button></div>';
+ h+='<div class="row" style="margin:16px 0 4px;align-items:center"><h2 style="margin:0;font-size:24px">'+g[ai()]+'</h2><button class="cjoin'+(joined?' on':'')+'" onclick="joinG('+i+')">'+(joined?t("joinedg"):t("joing"))+'</button></div>';
+ h+='<div class="line" style="margin-bottom:6px">'+memTxt(GN[i]||0)+' <span class="tag">'+t("sample")+'</span></div>';
+ if(!S.user)h+='<div class="cmp"><button class="btn fill" onclick="openModal()">'+t("signtopost")+'</button></div>';
+ else if(!joined)h+='<div class="cmp"><div class="line" style="text-align:center">'+t("jointopost")+'</div></div>';
+ else h+='<div class="cmp"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin"><input id="gt" placeholder="'+t("gshare")+'"><label class="cmpph" aria-label="Photo">'+ICPH+'<input type="file" id="gimg" accept="image/*" style="display:none" onchange="onGImg(this)"></label></div></div><div id="gprev">'+(S.gimg?'<img class="gprv" src="'+S.gimg+'" alt="">':'')+'</div><div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn fill sm" onclick="addGPost('+i+')">'+t("post")+'</button></div></div>';
+ var out=[];(S.gposts&&S.gposts[i]||[]).forEach(function(p,k){out.push({own:true,id:"g"+i+"_"+k,name:p.by,hl:p.hl||"",text:p.text,tags:"",likes:0,cm:0,time:t("now"),cmt:null,img:p.img})});
+ (GSP[i]||[]).forEach(function(pi){out.push(samplePost(pi,"g"+i+"s"))});
+ out.forEach(function(p){h+=postHtml(p)});
+ return h}
+function groupsView(){
+ if(S.grp!=null)return groupPage(S.grp);
+ var any=Object.keys(S.gj||{}).some(function(k){return S.gj[k]}),tab=S.gtab||(any?"mine":"all");
+ var h='<div class="seg" style="margin:0 0 16px"><button class="'+(tab==="mine"?'on':'')+'" onclick="S.gtab=\'mine\';render()">'+t("yourg")+'</button><button class="'+(tab==="all"?'on':'')+'" onclick="S.gtab=\'all\';render()">'+t("allg")+'</button></div>';
+ S.gmine=(tab==="mine");
+ if(tab==="all")return h+'<div id="glist">'+glist(false)+'</div>';
+ h+='<div id="glist">'+glist(true)+'</div>';
+ if(!any)h+='<button class="btn" onclick="S.gtab=\'all\';render()">'+t("browseg")+'</button>';
+ return h}
+function feed(){
+ var h=feedTop();
+ if(S.user&&isExp()){h+='<div class="cmp"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin" style="padding-inline:16px"><input id="pt" placeholder="'+t("share")+'"></div></div><div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn fill sm" onclick="addPost()">'+t("post")+'</button></div></div>'}
+ if(!S.spec){
+  h+='<h2>'+t("interest")+'</h2><p class="sub">'+t("interestsub")+'</p>';
+  h+='<input id="sq" placeholder="'+t("search")+'" value="'+esc(S.q)+'" oninput="onQ(this.value)">';
+  var q=S.q.trim().toLowerCase(),list=matches(q);
+  h+='<div id="chipbox">'+chipBox(list,q)+'</div>';
+ }
+  h+='<div class="pgap"></div><div id="plist">'+postsHtml()+'</div>';
+ return h;
+}
+function chipBox(list,q,ns){
+ var h=chips(S.spec,'setSpec',list,ns?'':'scroll');
+ if(q&&!matches(q).length)h='<div class="empty" style="padding:10px 0">'+t("nospec")+'“'+esc(S.q.trim())+'”.</div>';
+ if(q&&!SPECS.some(function(s){return s.toLowerCase()===q||sp(s).toLowerCase()===q}))h+='<div style="margin-top:12px"><button class="btn sm" onclick="useCustom()">'+t("use")+'“'+esc(S.q.trim())+'” '+t("usecustom")+'</button></div>';
+ return h;
+}
+function onQ(v){S.q=v;var q=v.trim().toLowerCase();var list=matches(q);document.getElementById("chipbox").innerHTML=chipBox(list,q,S.page==="interest")}
+function useCustom(){S.spec=S.q.trim();S.q="";if(S.page==="interest"){S.page=null;S.tab="feed";S.fv="feed"}render()}
+function interestPage(){var q=(S.q||"").trim().toLowerCase(),list=matches(q);if(S.spec&&SPECS.indexOf(S.spec)<0)list.unshift(S.spec);
+ return backBtn()+'<h2>'+t("interest")+'</h2><p class="sub">'+t("interestsub")+'</p><input id="sq" placeholder="'+t("search")+'" value="'+esc(S.q||"")+'" oninput="onQ(this.value)"><div id="chipbox">'+chipBox(list,q,true)+'</div>'}
+function setSpec(s){if(S.page==="interest"){S.spec=s;S.q="";S.page=null;S.tab="feed";S.fv="feed";S.grp=null;render();return}S.spec=(S.spec===s)?null:s;render()}
+function follow(k){if(!S.user){openModal();return}S.follows=S.follows||{};S.follows[k]=!S.follows[k];S.notifs=S.notifs||[];
+ if(S.follows[k]){var idx=PEOPLE.findIndex(function(p){return p[0]===k}),si=SV.findIndex(function(v){return v[2]===idx});S.nid=(S.nid||0)+2;
+  S.notifs.unshift({id:S.nid,who:k,kind:"post",u:true});if(si>=0)S.notifs.unshift({id:S.nid-1,who:k,kind:"svc",svc:si,u:true})}
+ else S.notifs=S.notifs.filter(function(n){return n.who!==k});
+ render()}
+var SVT={mentor0:["mentorship program","برنامج إرشاد جديد"],mentor1:["feedback service","خدمة ملاحظات جديدة"],work0:["workshop","ورشة جديدة"],work1:["challenge","تحدي جديد"],mentor2:["learn-from session","جلسة تعلّم جديدة"],work2:["company challenge","تحدي جديد من شركة"]};
+function unread(){return (S.notifs||[]).filter(function(n){return n.u}).length}
+function bell(){if(!S.user)return "";var c=unread();return '<button class="bell" aria-label="Notifications" onclick="openNotif()"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>'+(c?'<span class="badge">'+c+'</span>':'')+'</button>'}
+function openNotif(){S.newIds=(S.notifs||[]).filter(function(n){return n.u}).map(function(n){return n.id});(S.notifs||[]).forEach(function(n){n.u=false});S.page="notif";S.menu=false;S.view=null;S.adding=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
+function notifText(n){if(n.kind==="sys")return t("nlink");var idx=PEOPLE.findIndex(function(p){return p[0]===n.who}),p=PEOPLE[idx],nm=L==="ar"?p[3]:p[0];
+ if(n.kind==="svc"){var v=SV[n.svc],ty=SVT[v[0]+v[1]],ti=v[3+ai()];return L==="ar"?"اتنشر "+ty[1]+" من "+nm+": "+ti:nm+" added a new "+ty[0]+": "+ti}
+ return L==="ar"?"اتنشر بوست جديد من "+nm+" في "+sp(p[2]):nm+" shared a new post in "+sp(p[2])}
+function openNotifItem(id){var n=(S.notifs||[]).find(function(x){return x.id===id});if(!n)return;S.page=null;
+ if(n.kind==="sys"){S.page="manage";S.mg=0}
+ else if(n.kind==="svc"){var v=SV[n.svc];S.tab=v[0];S["s_"+v[0]]=v[1];S.view=n.svc}
+ else{var p=PEOPLE.find(function(x){return x[0]===n.who});S.tab="feed";S.spec=p[2];S.view=null}
+ render();var m=document.querySelector("main");if(m)m.scrollTop=0}
+function backBtn(){return '<button class="back" onclick="S.page=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button>'}
+function notifPage(){var h=backBtn()+'<h2>'+t("notif")+'</h2><p class="sub"></p>',ns=S.notifs||[];
+ if(!ns.length)return h+'<div class="card"><div class="empty">'+t("nonotif")+'</div></div>';
+ ns.forEach(function(n){var p=n.kind==="sys"?null:PEOPLE.find(function(x){return x[0]===n.who}),nm=p?(L==="ar"?p[3]:p[0]):"U",isNew=(S.newIds||[]).indexOf(n.id)>-1;
+  h+='<div class="card ncard'+(isNew?' new':'')+'" onclick="openNotifItem('+n.id+')">'+avBox(p?PEOPLE.indexOf(p):null,nm,"")+'<div class="t">'+esc(notifText(n))+'<small>'+t("now")+'</small></div>'+(isNew?'<span class="dot"></span>':'')+'</div>'});
+ return h}
+var GD=[["Feedback","الملاحظات","Book an expert to review your CV, LinkedIn profile or presentation. When you book, you upload your file and they give you their feedback.","احجز مع خبير يراجعلك السي في أو بروفايل LinkedIn أو البريزنتيشن. وقت الحجز بترفع ملفك وهو بيديك ملاحظاته."],
+["1-to-1 Mentorship","إرشاد واحد لواحد","A one-to-one session with a mentor on a specific topic. The mentor sets the specialty they are strong in. When you book, you write the topic or points you want to discuss so the mentor can prepare.","جلسة واحد لواحد مع مرشد في موضوع معين. المرشد هو اللي بيحدد التخصص اللي هو شاطر فيه. وقت الحجز بتكتب الموضوع أو النقط اللي عايز تتكلم فيها علشان المرشد يجهز."],
+["Learn from","اتعلّم من","Ask someone with real experience about their field, such as HR or freelancing. Learn what the field is, what people do in it, how to grow, which courses to take, the best companies and the skills you need.","اسأل حد عنده خبرة حقيقية عن مجاله، زي الموارد البشرية أو الفريلانس. هتعرف المجال ده إيه، وبيشتغلوا فيه إيه، وإزاي تتطور، وتاخد كورسات إيه، وأحسن الشركات فيه، والمهارات اللي المفروض تبقى عندك."],
+["Workshops","ورش العمل","A small group of 3 to 6 people learns something the mentor chooses, for example building a brand from scratch. It can be one session of a few hours or several sessions, as the mentor decides.","مجموعة صغيرة من 3 لـ 6 أشخاص بيتعلموا حاجة المرشد بيحددها، زي إنك تبني براند من الصفر. ممكن تبقى جلسة واحدة كام ساعة، أو كذا جلسة، على حسب المرشد."],
+["Companies challenges","تحديات الشركات","Companies post real challenges or projects. You join and complete them. It helps young people develop and learn new skills from real work.","الشركات بتعرض تحديات أو مشاريع حقيقية، وإنت بتشترك فيها وتنفذها. ودي بتساعد الشباب يتطوروا ويتعلموا مهارات جديدة من شغل حقيقي."],
+["Challenges","التحديات","A mentor publishes a task, for example create your own product. Anyone can join. After you join, you get the steps and what you need to prepare, such as a product name and colors. You do it, get a first round of feedback, improve, then get a second round.","المرشد بيحط مهمة، زي إنك تعمل منتج بنفسك، وأي حد يقدر يشترك. بعد ما تشترك بتلاقي الخطوات والحاجات اللي لازم تجهزها، زي اسم المنتج والألوان. بتنفذ المهمة وتاخد ملاحظات أولى، وبعد ما تعدّل بتاخد ملاحظات تانية."],
+["Events","الفعاليات","Join online events or in-person events hosted by experts.","اشترك في فعاليات أونلاين أو حضورية بيقدمها الخبراء."]];
+function openGuide(){S.page="guide";S.menu=false;S.view=null;S.adding=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
+function guidePage(){var h=backBtn()+'<h2>'+t("guide")+'</h2><p class="sub">'+t("guidesub")+'</p>';
+ GD.forEach(function(g){h+='<div class="card"><div class="stitle" style="margin-top:0">'+g[ai()]+'</div><div style="line-height:1.65;font-size:14.5px">'+g[2+ai()]+'</div></div>'});return h}
+function addPost(){if(!profileOK()){openProfile(true,"noteexp");return}var v=document.getElementById("pt").value.trim();if(!v)return;S.posts.unshift({by:S.user,hl:(S.profile&&S.profile.title)?jt(S.profile.title)+(S.profile.freelancer?" · "+t("freelancer"):(S.profile.company?" "+t("at")+" "+S.profile.company:"")):"",t:v,spec:(S.profile&&S.profile.spec)||S.spec||"General"});render()}
+var SUBS={mentor:[["1-to-1 Mentorship","إرشاد واحد لواحد"],["Feedback","الملاحظات"],["Learn from","اتعلّم من"]],work:[["Workshops","ورش العمل"],["Challenges","التحديات"],["Companies challenges","تحديات الشركات"]]};
+var SORD={mentor:[0,1,2],work:[0,2,1]};
+var CREATE={mentor:["mkmentor","mkfeed","mklearn"],work:["mkworkshop","mkchallenge","mkchallenge"]};
+var SV=[
+["mentor",0,0,"Break into brand management","ادخل مجال إدارة البراندات","Six weekly sessions on building a brand career.","ست جلسات أسبوعية تبني بيها مسارك في البراندات.","We will map your strengths to brand roles, review your CV, and practice case interviews. You leave with a clear plan for your first FMCG role.","هنربط نقط قوتك بوظايف البراندات، وهنراجع السي في بتاعك، وهنتدرب على مقابلات الحالات. وتخرج بخطة واضحة لأول وظيفة ليك في السلع الاستهلاكية.",4.9,32],
+["work",0,1,"Trade marketing in a day","تسويق المبيعات في يوم واحد","A hands-on workshop on shelf, price and promotion.","ورشة عملية عن الرف والسعر والعروض.","We cover channel strategy, in-store execution and promo planning using real retail examples. Bring a laptop; you will build a simple trade plan during the session.","هنغطي استراتيجية القنوات والتنفيذ جوه المحلات وتخطيط العروض بأمثلة حقيقية. هات لابتوب معاك، وهتبني خطة تجارية بسيطة أثناء الورشة.",4.8,57],
+["mentor",1,2,"Pitch and BD portfolio feedback","ملاحظات على عرضك وبورتفوليو تطوير الأعمال","Get direct feedback on your pitch or case study.","خد ملاحظات مباشرة على عرضك أو دراسة الحالة.","Send your deck or case study and we will go through it together, slide by slide. Expect honest notes on structure, numbers and storytelling.","ابعت العرض أو دراسة الحالة وهنراجعها مع بعض سلايد سلايد. هتاخد ملاحظات صريحة عن البناء والأرقام وطريقة الحكي.",4.7,21],
+["work",1,3,"Supply chain challenge","تحدي سلاسل الإمداد","A two-week case challenge with real constraints.","تحدي حالة لمدة أسبوعين بقيود حقيقية.","Teams solve a demand planning and inventory problem and present to a panel. The best solutions get feedback and a spotlight on the platform.","الفرق بتحل مشكلة تخطيط الطلب والمخزون وبتعرضها على لجنة. أحسن الحلول بتاخد ملاحظات وبتتعرض على المنصة.",4.8,40],
+["mentor",0,4,"Sales career mentoring","إرشاد مهني في المبيعات","One-to-one guidance from field to management.","توجيه واحد لواحد من الميدان لحد الإدارة.","We talk about how to start in sales, build a track record and move into key accounts or management. Questions about interviews and negotiation are welcome.","هنتكلم عن إزاي تبدأ في المبيعات وتبني سجل إنجازات وتنقل لإدارة العملاء الكبار أو للإدارة. وأسئلة المقابلات والتفاوض مرحب بيها.",4.9,48],
+["work",0,5,"Banking interview workshop","ورشة مقابلات القطاع المصرفي","Prepare for graduate banking programs.","جهّز نفسك لبرامج الخريجين في البنوك.","A practical session on technical questions, case discussions and how banks assess candidates. Includes a live mock interview with feedback.","جلسة عملية عن الأسئلة الفنية ومناقشة الحالات وإزاي البنوك بتقيّم المتقدمين، وفيها مقابلة تجريبية مباشرة مع ملاحظات.",4.6,36],
+["mentor",1,6,"Financial model review","مراجعة الموديل المالي بتاعك","Detailed feedback on your Excel model.","ملاحظات تفصيلية على الموديل بتاعك في إكسل.","Share your model and we will check structure, assumptions and presentation. You get a written list of fixes and best practices.","شارك الموديل بتاعك وهنراجع الهيكل والافتراضات والعرض. وهتاخد قايمة مكتوبة بالتعديلات وأحسن الممارسات.",4.8,18],
+["work",1,7,"Data analytics case challenge","تحدي حالة في تحليل البيانات","Analyse a dataset and present insights.","حلل بيانات وقدّم أفكار مفيدة.","You receive a business dataset, find the story in it and present recommendations. Suitable for beginners with basic Excel or SQL.","هتستلم بيانات شركة، وتطلّع منها القصة وتقدم توصيات. مناسب للمبتدئين اللي عارفين إكسل أو SQL على قد الحاجة.",4.7,29],
+["mentor",0,8,"HR career and CV mentoring","إرشاد مهني وسي في في الموارد البشرية","Plan your path in HR and talent.","اعمل خطة لمسارك في الموارد البشرية والمواهب.","We review your CV, discuss HR paths such as recruitment and business partnering, and plan your next steps.","هنراجع السي في بتاعك ونتكلم عن مسارات الموارد البشرية زي الاستقطاب وشراكة الأعمال، ونحط خطواتك الجاية.",4.8,25],
+["work",0,9,"Portfolio design workshop","ورشة بناء بورتفوليو التصميم","Build a portfolio that gets noticed.","ابني بورتفوليو يلفت الانتباه.","Learn how to pick projects, tell the story behind each one and present them clearly. Bring two projects to work on.","اتعلم إزاي تختار المشاريع وتحكي قصة كل واحد وتعرضها بوضوح. هات معاك مشروعين نشتغل عليهم.",4.9,44]];
+var GEN={workc:["This challenge is posted by a company. Completing it helps you build real skills you can use at work.","التحدي ده شركة هي اللي ناشراه. لما تخلصه بتبني مهارات حقيقية تفيدك في الشغل."],mentor:["Sessions are one-to-one and online. Come with your questions and any material you want reviewed.","الجلسات واحد لواحد وأونلاين. جهّز أسئلتك وأي حاجة عايز تراجعها."],work:["The session is interactive and small-group. You will practise during the session and receive take-home material.","الجلسة تفاعلية بمجموعة صغيرة. هتتدرب فيها وهتاخد مواد تراجعها بعد كده."]};
+SV.push(
+["mentor",2,8,"Learn from an HR professional","اتعلّم من متخصصة في الموارد البشرية","Ask about HR: what the field is and how to grow in it.","اسأل عن الموارد البشرية: المجال ده إيه وإزاي تتطور فيه.","A practical Q&A about working in HR: what the field covers, what people do day to day, the best courses to start with, which companies hire graduates, and the skills that matter.","جلسة أسئلة وأجوبة عملية عن الشغل في الموارد البشرية: المجال بيشمل إيه، وبيعملوا إيه يوميًا، وأحسن الكورسات للبداية، والشركات اللي بتوظف خريجين، والمهارات المهمة.",4.8,19],
+["mentor",2,9,"Learn from a freelance designer","اتعلّم من مصمم فريلانسر","Ask about freelancing in design: clients, pricing and growth.","اسأل عن الفريلانس في التصميم: العملاء والتسعير والنمو.","Find out what freelancing really looks like: how to find your first clients, how to price your work, which courses and tools help, and the skills you need to grow without a company behind you.","اعرف الفريلانس شكله إيه فعلًا: تلاقي أول عملاء إزاي، وتسعّر شغلك إزاي، وإيه الكورسات والأدوات اللي تفيدك، والمهارات اللي تحتاجها علشان تكبر من غير شركة وراك.",4.7,14],
+["mentor",2,3,"Learn from a supply chain planner","اتعلّم من مخطط سلاسل إمداد","Ask about supply chain: roles, skills and the best companies.","اسأل عن سلاسل الإمداد: الوظايف والمهارات وأحسن الشركات.","Learn what supply chain covers, what planners do every day, which courses to take first, which companies are best to start in, and the skills you should build.","اعرف سلاسل الإمداد بتشمل إيه، والمخططين بيعملوا إيه كل يوم، وتبدأ بأنهي كورسات، وإيه أحسن الشركات للبداية، والمهارات اللي تبنيها.",4.8,17],
+["mentor",2,7,"Learn from a data analyst","اتعلّم من محلل بيانات","Ask about data analytics: how to start and what to learn.","اسأل عن تحليل البيانات: تبدأ إزاي وتتعلم إيه.","Ask about the field in plain words: what analysts do, the courses and tools worth learning first, good companies for graduates, and how to grow your skills step by step.","اسأل عن المجال ببساطة: المحللين بيعملوا إيه، والكورسات والأدوات اللي تستاهل تبدأ بيها، وشركات مناسبة للخريجين، وإزاي تطور مهاراتك خطوة خطوة.",4.7,22],
+["work",2,-1,"Launch a snack brand concept","اطلق فكرة براند سناكس","Design a product concept for a new snack brand.","صمم فكرة منتج لبراند سناكس جديد.","Delta Foods invites you to create a concept for a new snack brand: the audience, the name, the packaging idea and a one-page launch plan. It helps you practise brand thinking on a real brief.","دلتا فودز بتدعوك تعمل فكرة لبراند سناكس جديد: الجمهور والاسم وفكرة التغليف وخطة إطلاق في صفحة واحدة. ده بيساعدك تمارس تفكير البراندات على مهمة حقيقية.",0,0,["Delta Foods","Company","Marketing","دلتا فودز","شركة"],[],{title:"Hiring company",company:"",field:"Marketing"},[],{price:0,free:true,dur:0},""],
+["work",2,-1,"Plan a shelf layout for a new product","خطط ترتيب الرف لمنتج جديد","Decide where a new product should go on the shelf.","قرر المنتج الجديد يتحط فين على الرف.","Nile Retail Group shares a real brief: place a new product in a store, explain your choices and suggest a simple promotion. You build trade marketing skills from real retail thinking.","مجموعة النيل للتجزئة بتشارك مهمة حقيقية: حط منتج جديد في محل، واشرح اختياراتك، واقترح عرض بسيط. بتبني مهارات تسويق المبيعات من تفكير حقيقي في التجزئة.",0,0,["Nile Retail Group","Company","Trade Marketing","مجموعة النيل للتجزئة","شركة"],[],{title:"Hiring company",company:"",field:"Trade Marketing"},[],{price:0,free:true,dur:0},""],
+["work",2,-1,"Find insights in a sales dataset","طلّع أفكار من بيانات مبيعات","Analyse sales data and present three useful insights.","حلل بيانات مبيعات وقدّم تلات أفكار مفيدة.","Lotus Analytics gives you a retail sales dataset. Clean it, find the story in it and present your recommendations. You practise analysis and communication on realistic data.","لوتس أناليتكس بتديك بيانات مبيعات تجزئة. نضفها وطلّع منها القصة وقدّم توصياتك. هتمارس التحليل والتواصل على بيانات واقعية.",0,0,["Lotus Analytics","Company","Data Analytics","لوتس أناليتكس","شركة"],[],{title:"Hiring company",company:"",field:"Data Analytics"},[],{price:0,free:true,dur:0},""]);
+SV[14].sample=SV[15].sample=SV[16].sample=true;
+var CM=[["Sara M.","سارة م.","Very clear and practical. I left with a concrete plan.","واضح وعملي جدًا وخرجت بخطة محددة.",5],["Mostafa K.","مصطفى ك.","Great energy and honest feedback.","طاقة حلوة وملاحظات صريحة.",5],["Dina A.","دينا أ.","Helpful, though I would have liked more time.","مفيدة، بس كنت عايز وقت أطول.",4]];
+var PD=[
+["Ain Shams University","جامعة عين شمس","Business Administration","إدارة الأعمال","Delta Foods","دلتا فودز","Senior Brand Manager","مدير علامة تجارية أول",15,"Brand management","إدارة العلامات التجارية"],
+["Cairo University","جامعة القاهرة","Marketing","التسويق","Nile Retail Group","مجموعة النيل للتجزئة","Head of Trade Marketing","رئيس تسويق المبيعات",12,"Trade marketing and retail","تسويق المبيعات والتجزئة"],
+["The American University in Cairo","الجامعة الأمريكية بالقاهرة","Economics","الاقتصاد","Pyramid Business Partners","بيراميد لشراكات الأعمال","Business Development Lead","قائدة تطوير الأعمال",9,"Business development","تطوير الأعمال"],
+["Alexandria University","جامعة الإسكندرية","Industrial Engineering","الهندسة الصناعية","Horus Logistics","حورس للوجستيات","Supply Chain Planning Manager","مدير تخطيط سلاسل الإمداد",11,"Demand planning and inventory","تخطيط الطلب والمخزون"],
+["German University in Cairo","الجامعة الألمانية بالقاهرة","Business Administration","إدارة الأعمال","Sphinx Distribution","سفنكس للتوزيع","Regional Sales Manager","مديرة مبيعات إقليمية",10,"Sales and key accounts","المبيعات والعملاء الرئيسيون"],
+["Ain Shams University","جامعة عين شمس","Accounting","المحاسبة","Cairo Gulf Bank","بنك القاهرة الخليج","Corporate Banking Associate Director","مدير مساعد الخدمات المصرفية للشركات",14,"Corporate banking","الخدمات المصرفية للشركات"],
+["Cairo University","جامعة القاهرة","Accounting","المحاسبة","Alex Capital Advisory","الإسكندرية كابيتال للاستشارات","Finance Business Partner","شريك أعمال مالي",8,"Financial planning and modelling","التخطيط والنمذجة المالية"],
+["Helwan University","جامعة حلوان","Statistics","الإحصاء","Lotus Analytics","لوتس أناليتكس","Senior Data Analyst","محلل بيانات أول",7,"Business analytics","تحليلات الأعمال"],
+["Mansoura University","جامعة المنصورة","Psychology","علم النفس","Papyrus Talent","بابيروس للمواهب","Talent Acquisition Manager","مديرة استقطاب المواهب",13,"Recruitment and talent","الاستقطاب والمواهب"],
+["Helwan University","جامعة حلوان","Graphic Design","التصميم الجرافيكي","Oasis Studio","واحة ستوديو","Product Designer","مصمم منتجات",6,"Product and UX design","تصميم المنتجات وتجربة المستخدم"]];
+function detailsOf(v){if(v[2]>=0){var d=PD[v[2]],l=ai();return {uni:d[l],major:d[2+l],company:d[4+l],title:d[6+l],years:d[8],field:d[9+l]}}return v[13]||{}}
+function provBlock(v){var d=detailsOf(v),ls=[];
+ if(d.freelancer)ls.push(jt(d.title||"")+" · "+t("freelancer"));else if(d.title||d.company)ls.push(jt(d.title||"")+(d.company?(d.title?" "+t("at")+" ":"")+d.company:""));
+ if(d.uni||d.major)ls.push([d.uni,d.major].filter(Boolean).join(" · "));
+ var y=(d.years!==""&&d.years!=null)?d.years+" "+t("yrs")+(d.field?" "+t("inw")+" "+d.field:""):(d.field||"");if(y)ls.push(y);
+ return '<div class="hl" style="margin-bottom:8px">'+ls.map(esc).join("<br>")+'</div>'}
+var JOBS=["Brand Manager","Marketing Specialist","Trade Marketing Manager","Business Development Manager","Sales Manager","Supply Chain Planner","Finance Analyst","Banker","Data Analyst","HR Specialist","Software Engineer","Designer","Operations Manager","Consultant","Entrepreneur"];
+var JOBS_AR={"Hiring company":"شركة بتوظف","Brand Manager":"مدير علامة تجارية","Marketing Specialist":"أخصائي تسويق","Trade Marketing Manager":"مدير تسويق المبيعات","Business Development Manager":"مدير تطوير الأعمال","Sales Manager":"مدير مبيعات","Supply Chain Planner":"مخطط سلاسل الإمداد","Finance Analyst":"محلل مالي","Banker":"مصرفي","Data Analyst":"محلل بيانات","HR Specialist":"أخصائي موارد بشرية","Software Engineer":"مهندس برمجيات","Designer":"مصمم","Operations Manager":"مدير عمليات","Consultant":"مستشار","Entrepreneur":"رائد أعمال"};
+var COUNTRIES=[["Egypt","مصر"],["Saudi Arabia","السعودية"],["United Arab Emirates","الإمارات"],["Kuwait","الكويت"],["Qatar","قطر"],["Jordan","الأردن"],["Lebanon","لبنان"],["Morocco","المغرب"]];
+function ct(x){var c=COUNTRIES.find(function(k){return k[0]===x});return c?c[ai()]:x}
+function cOpts(sel,oth){return COUNTRIES.map(function(c){return '<option value="'+c[0]+'"'+(!oth&&sel===c[0]?' selected':'')+'>'+c[ai()]+'</option>'}).join("")+'<option value="other"'+(oth?' selected':'')+'>'+t("oth")+'</option>'}
+function ageCountry(d){var oth=d.cOther||(d.country&&!COUNTRIES.some(function(c){return c[0]===d.country}));
+ return '<label class="fl">'+t("age")+' *</label><input id="pa" type="number" min="10" max="99" dir="ltr" value="'+esc(d.age||"")+'"><label class="fl">'+t("country")+' *</label><select id="pcn" onchange="cnChange(this.value)"><option value="">'+t("selcountry")+'</option>'+cOpts(d.country,oth)+'</select>'+'<input id="pco" style="display:'+(oth?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(d.country||"")+'">'}
+function cnChange(v){var o=document.getElementById("pco");if(o){o.style.display=v==="other"?"block":"none";if(v==="other")o.focus()}}
+function jt(x,l){if(l==null)l=ai();return l===1&&JOBS_AR[x]?JOBS_AR[x]:x}
+function ai(){return L==="ar"?1:0}
+function pick2(a,i){return a[i*2+ai()]}
+var SVP={10:[200,45],11:[250,45],12:[200,45],13:[200,45],14:[0,0],15:[0,0],16:[0,0],0:[400,60],1:[250,120],2:[200,30],3:[150,0],4:[350,60],5:[300,120],6:[250,45],7:[150,0],8:[300,60],9:[350,120]};
+function pinfo(i){var v=SV[i];if(v[15])return v[15];var d=SVP[i]||[300,60];return {price:d[0],free:d[0]===0,dur:d[1]}}
+function pfmt(i,noDur){var p=pinfo(i),a=p.free?t("freet"):(L==="ar"?p.price+" "+t("egp"):t("egp")+" "+p.price);if(p.dur&&!noDur)a+=" · "+p.dur+" "+t("minw");return a}
+function avOf(v,n,cls){if(v[16])return '<div class="av '+cls+'"><img src="'+v[16]+'" alt=""></div>';return avBox(v[2]>=0?v[2]:null,n,cls)}
+function fmtSlot(iso){var d=new Date(iso),loc=L==="ar"?"ar-EG":"en-GB";return d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"})+" · "+d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"})}
+function mine(v){return v[2]<0&&v[11]&&v[11][0]===S.user&&!v.deleted}
+function rate(v,n){if(!n)return '<span class="rate"><small>'+t("newt")+'</small></span>';return '<span class="rate">★ '+v.toFixed(1)+' <small>('+n+')</small></span>'}
+function personOf(v){return v[2]>=0?PEOPLE[v[2]]:v[11]}
+function svcCard(i){var v=SV[i],p=personOf(v),n=L==="ar"?p[3]:p[0],d=detailsOf(v);
+ var l2=d.freelancer?(jt(d.title||"")+" · "+t("freelancer")):(jt(d.title||"")+(d.company?" "+t("at")+" "+d.company:""));
+ return dcard({pill:pfmt(i,true),label:SUBS[v[0]][v[1]][ai()]+((v[2]>=0||v.sample)?' · '+t("sample"):''),title:esc(v[3+ai()]),av:avOf(v,n,""),save:svBtn(i),meta:[esc(n),esc(l2),rate(v[9],v[10])+(pinfo(i).dur?' · '+pinfo(i).dur+' '+t("minw"):'')],f1:'openSvc('+i+')',b1:t("learnm"),f2:'openSvc('+i+')',b2:t("bookb")})}
+var SIC='<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',XIC='<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+function lmatch(v,q){if(!q)return true;var p=personOf(v),a=[p[0],p[3],p[2],sp(p[2])].join(" ").toLowerCase();return a.indexOf(q)>-1}
+function lres(kind){var f=S["f_"+kind],sub=S["s_"+kind]||0,opts=SUBS[kind],q=((S.lq&&S.lq[kind])||"").trim().toLowerCase(),h='<h3>'+opts[sub][ai()]+(f?' · '+esc(sp(f)):'')+'</h3>',n=0;
+ SV.forEach(function(v,i){if(v[0]===kind&&v[1]===sub&&!v.deleted&&(!f||personOf(v)[2]===f)&&lmatch(v,q)){h+=svcCard(i);n++}});
+ if(!n)h+='<div class="card"><div class="empty">'+t("nothing")+'</div></div>';
+ if(!S.user)h+='<button class="btn fill" onclick="openModal()">'+t("signjoin")+'</button>';
+ return h}
+function lsug(kind){var q=((S.lq&&S.lq[kind])||"").trim().toLowerCase(),out=[],seen={};
+ SPECS.forEach(function(x){if(!q||x.toLowerCase().indexOf(q)>-1||sp(x).toLowerCase().indexOf(q)>-1)out.push(sp(x))});
+ SV.forEach(function(v){if(v.deleted||v[0]!==kind)return;var p=personOf(v);if(q&&(p[0].toLowerCase().indexOf(q)>-1||p[3].toLowerCase().indexOf(q)>-1))out.push(ai()?p[3]:p[0])});
+ out=out.filter(function(x){if(seen[x])return false;seen[x]=1;return true}).slice(0,6);
+ return out.length?'<div class="chips" style="margin:0 0 14px">'+out.map(function(x){return '<button class="chip" onclick="setLQ(\''+kind+'\',this.textContent)">'+esc(x)+'</button>'}).join("")+'</div>':''}
+function onL(kind,v){S.lq=S.lq||{};S.lq[kind]=v;var a=document.getElementById("lsug"),b=document.getElementById("lres");if(a)a.innerHTML=lsug(kind);if(b)b.innerHTML=lres(kind)}
+function setLQ(kind,v){var e=document.getElementById("lq");if(e)e.value=v;onL(kind,v)}
+function toggleLS(kind){S.lsOpen=S.lsOpen||{};S.lsOpen[kind]=!S.lsOpen[kind];if(!S.lsOpen[kind]){S.lq=S.lq||{};S.lq[kind]=""}render();var e=document.getElementById("lq");if(e)e.focus()}
+function listing(kind){
+ var f=S["f_"+kind],sub=S["s_"+kind]||0,opts=SUBS[kind],open=S.lsOpen&&S.lsOpen[kind];
+ var h='<div class="row"><h2 style="margin:0">'+t(kind)+'</h2><button class="iconb" aria-label="Search" onclick="toggleLS(\''+kind+'\')">'+(open?XIC:SIC)+'</button></div><p class="sub" style="margin-top:6px">'+t("explore")+'</p>';
+ if(open)h+='<input id="lq" placeholder="'+t("lsph")+'" value="'+esc((S.lq&&S.lq[kind])||"")+'" oninput="onL(\''+kind+'\',this.value)"><div id="lsug">'+lsug(kind)+'</div>';
+ h+=chips(f,'pickF'+kind,SPECS,'scroll r2');
+ h+='<div class="seg s3">'+SORD[kind].map(function(i){return '<button class="'+(sub===i?'on':'')+'" onclick="pickS(\''+kind+'\','+i+')">'+opts[i][ai()]+'</button>'}).join("")+'</div>';
+ if(S.user&&isExp())h+='<button class="btn fill" style="margin-top:16px" onclick="startAdd(\''+kind+'\','+sub+')"><svg class="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'+t(CREATE[kind][sub])+'</button>';
+ return h+'<div id="lres">'+lres(kind)+'</div>';
+}
+function openSvc(i){S.view=i;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
+function slotsFor(i){var v=SV[i];if(v[2]<0){var loc0=L==="ar"?"ar-EG":"en-GB";return (v[12]||[]).map(function(iso,k){var d=new Date(iso);return {id:"c"+k,day:d.toLocaleDateString(loc0,{weekday:"short",day:"numeric",month:"short"}),time:d.toLocaleTimeString(loc0,{hour:"numeric",minute:"2-digit"})}})}
+ var base=[2+i%3,6+i%3,10,14+i%2,19,24,29],hs=[[19,30],[18,0],[20,0]],loc=L==="ar"?"ar-EG":"en-GB",out=[];
+ base.forEach(function(off,k){var d=new Date();d.setDate(d.getDate()+off);d.setHours(hs[k%3][0],hs[k%3][1],0,0);
+  out.push({id:off+"-"+k,day:d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"}),time:d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"})})});return out}
+var NOTE={mentor2:["Ask someone with real experience about their field: what it is, what they do, how to grow in it, which courses to take, the best companies and the skills you need.","اسأل حد عنده خبرة حقيقية عن مجاله: هو إيه، وبيشتغلوا فيه إيه، وإزاي تتطور، وإيه الكورسات المناسبة، وأحسن الشركات، والمهارات اللي تحتاجها."],work2:["A challenge posted by a company. Join, complete it and build real skills.","تحدي شركة ناشراه. اشترك وخلصه وابني مهارات حقيقية."],mentor0:["One-to-one session on a specific topic. You tell the mentor what you would like to discuss when you book.","جلسة واحد لواحد عن موضوع معين. بتكتب للمرشد عايز تناقش إيه وقت الحجز."],mentor1:["Send your CV, LinkedIn profile or presentation and get the expert's feedback.","ابعت السي في أو بروفايل LinkedIn أو البريزنتيشن وخد ملاحظات الخبير."],work0:["A small group of 3 to 6 people learns something the mentor sets, in one session or several.","مجموعة صغيرة من 3 لـ 6 أشخاص بيتعلموا موضوع المرشد بيحدده، في جلسة واحدة أو كذا جلسة."],work1:["A task anyone can join. You get the steps, then two rounds of feedback from the mentor.","مهمة أي حد يقدر يشترك فيها. بتاخد الخطوات وبعدها جولتين ملاحظات من المرشد."]};
+var STEPS={3:[["Pick a product and write its name and category.","Estimate weekly demand for the next 8 weeks.","Propose safety stock and reorder points.","Prepare a one-page summary of your plan."],["اختار منتج واكتب اسمه وفئته.","قدّر الطلب الأسبوعي للـ 8 أسابيع الجايين.","اقترح مخزون الأمان ونقاط إعادة الطلب.","جهّز ملخص من صفحة واحدة لخطتك."]],7:[["Download the dataset from the link the mentor shares.","Clean the data and note any problems you found.","Find three insights that matter for the business.","Prepare a short slide deck with your recommendations."],["نزّل البيانات من اللينك اللي المرشد هيبعته.","نضّف البيانات وسجّل أي مشاكل لقيتها.","طلّع تلات أفكار مهمة للشغل.","جهّز عرض قصير بتوصياتك."]]};
+STEPS[14]=[["Pick your audience and describe them in two lines.","Suggest a name and a one-line promise.","Sketch the packaging idea.","Write a one-page launch plan and submit it."],["اختار جمهورك ووصفه في سطرين.","اقترح اسم ووعد في سطر واحد.","ارسم فكرة التغليف.","اكتب خطة إطلاق في صفحة واحدة وابعتها."]];
+STEPS[15]=[["Choose the store type and the product.","Draw the shelf and mark where the product goes.","Explain your choice in three points.","Suggest one simple promotion and submit your plan."],["اختار نوع المحل والمنتج.","ارسم الرف وحدد مكان المنتج.","اشرح اختيارك في تلات نقط.","اقترح عرض بسيط وابعت خطتك."]];
+STEPS[16]=[["Open the dataset and clean any errors.","Find three insights that matter for sales.","Make a simple chart for each insight.","Prepare a short summary with recommendations."],["افتح البيانات ونضف أي أخطاء.","طلّع تلات أفكار مهمة للمبيعات.","اعمل رسمة بسيطة لكل فكرة.","جهّز ملخص قصير بالتوصيات."]];
+function stepsFor(i){var v=SV[i];if(v[14]&&v[14].length)return v[14];return STEPS[i]?STEPS[i][ai()]:[]}
+function detail(i){
+ var v=SV[i],p=personOf(v),n=L==="ar"?p[3]:p[0],kind=v[0],key=kind+v[1],isCh=kind==="work"&&v[1]>0,bk=S.booked&&S.booked[i],pi=pinfo(i);
+ var txt=v[7+ai()]+" "+GEN[key==="work2"?"workc":kind][ai()],open=S.more&&S.more[i];
+ var h='<button class="back" onclick="S.view=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button>';
+ h+='<div class="card person"'+(v[2]>=0?' onclick="openPerson('+v[2]+')" style="cursor:pointer"':'')+'>'+avOf(v,n,"lg")+'<div class="info"><b>'+esc(n)+'</b>'+((v[2]>=0||v.sample)?'<span class="tag">'+t("sample")+'</span>':'')+provBlock(v)+rate(v[9],v[10])+'</div></div>';
+ h+='<h2>'+esc(v[3+ai()])+'</h2><div class="line" style="font-weight:800;color:var(--navy);margin:4px 0 6px">'+pfmt(i)+'</div><button class="mini" style="margin-bottom:10px" onclick="saveS('+i+')">'+ICB+' '+t(S.savedS&&S.savedS[i]?"savedb":"saveb")+'</button><p class="sub" style="margin-top:6px">'+NOTE[key][ai()]+'</p><h3 style="margin-top:18px">'+t("about")+'</h3><div class="'+(open?'':'clamp')+'" style="line-height:1.65;font-size:14.5px">'+esc(txt)+'</div>';
+ h+='<button class="link" onclick="S.more=S.more||{};S.more['+i+']=!S.more['+i+'];render()">'+t(open?"less":"more")+'</button>';
+ if(!isCh){
+  var sl0=slotsFor(i);h+='<h3>'+t("times")+'</h3>'+(sl0.length?'':'<p class="sub">'+t("notimes")+'</p>')+'<div class="slots">'+sl0.map(function(sl){return '<button class="slot'+(S.slot===sl.id&&S.slotFor===i?' on':'')+'" onclick="S.slot=\''+sl.id+'\';S.slotFor='+i+';render()">'+sl.day+'<br>'+sl.time+'</button>'}).join("")+'</div>';
+ }
+ if(bk){
+  h+='<div class="ok">'+t("booked")+'<div class="line" style="font-weight:500;margin-top:8px">'+t("statusw")+'</div>'+(bk.topic?'<div class="line" style="font-weight:500;margin-top:8px">'+esc(bk.topic)+'</div>':'')+(bk.file?'<div class="line" style="font-weight:600;margin-top:6px">'+esc(bk.file)+'</div>':'')+'</div>';
+  if(isCh)h+='<h3>'+t("steps")+'</h3><div class="card"><ol style="margin:0;padding-inline-start:22px;line-height:1.75;font-size:14.5px">'+stepsFor(i).map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ol></div><div class="ok">'+t(key==="work2"?"cjoined":"fbrounds")+'</div>';
+  else h+='<div class="card"><div class="line">'+t("linkwait")+'</div></div>';
+ }else if(S.bk===i){
+  h+='<div class="card"><div class="line" style="font-weight:800;margin-bottom:12px">'+t("total")+': '+pfmt(i,true)+'</div>'+
+   ((key==="mentor0"||key==="mentor2")?'<label class="fl">'+t(key==="mentor2"?"learnq":"topicq")+'</label><textarea id="bt" rows="3"></textarea>':'')+
+   (key==="mentor1"?'<label class="fl">'+t("fbq")+'</label><textarea id="bt" rows="2"></textarea><label class="fl">'+t("filef")+'</label><input id="bf" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx">':'')+
+   (pi.free?'':'<label class="fl">'+t("paym")+'</label><select id="bp"><option>'+t("pay3")+'</option><option>'+t("pay4")+'</option></select><div class="line" style="margin-bottom:12px">'+t("paynote")+'</div>')+
+   '<button class="btn fill" onclick="sendBook('+i+')">'+t("sendreq")+'</button></div>';
+ }else if(isCh)h+='<div class="note" style="margin-top:14px">'+t(key==="work2"?"cjoin":"jointonote")+'</div><button class="btn fill" onclick="book('+i+')">'+t("joinc")+'</button>';
+ else h+='<button class="btn fill" onclick="book('+i+')">'+(S.slotFor===i&&S.slot?t("book"):t("picktime"))+'</button>';
+ h+='<h3>'+t("revs")+'</h3><div class="card">'+(v[10]===0?'<div class="empty" style="padding:6px">'+t("norev")+'</div>':rate(v[9],v[10])+' <span class="tag">'+t("sample")+'</span>'+CM.map(function(c,k){return '<div class="cm"><b>'+c[ai()]+'</b> <span class="rate">★ '+(k===2?4:5)+'</span><div style="margin-top:6px;line-height:1.55;font-size:14px">'+c[2+ai()]+'</div></div>'}).join(""))+'</div>';
+ return h;
+}
+function startAdd(k,sub,ed){if(!profileOK()){openProfile(true,"noteexp");return}
+ if(appStatus()!=="approved"){S.page="pending";S.menu=false;S.view=null;render();return}
+ var v=ed!=null?SV[ed]:null,pp=S.profile||{},pi=ed!=null?pinfo(ed):null;
+ S.adding={kind:k,sub:sub,edit:ed!=null?ed:null,from:S.page};
+ S.af=v?{title:v[3],sum:v[5],desc:v[7],spec:v[11][2],price:String(pi.price),free:pi.free,dur:String(pi.dur||""),slots:(v[12]||[]).slice(),steps:(v[14]||[]).join("\n")}:{title:"",sum:"",desc:"",spec:pp.spec||SPECS[0],price:"",free:false,dur:"60",slots:[""],steps:""};
+ render();var m=document.querySelector("main");if(m)m.scrollTop=0}
+function addForm(){var a=S.adding,f=S.af,o=SUBS[a.kind][a.sub][ai()],isCh=a.kind==="work"&&a.sub>0,list=SPECS.indexOf(f.spec)<0?SPECS.concat([f.spec]):SPECS;
+ var h='<button class="back" onclick="S.adding=null;S.af=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button><h2>'+t(a.edit!=null?"editsvc":CREATE[a.kind][a.sub])+'</h2><p class="sub">'+o+'</p>';
+ h+='<label class="fl">'+t("atitle")+' *</label><input id="at" value="'+esc(f.title)+'" oninput="S.af.title=this.value">';
+ h+='<label class="fl">'+t("asum")+'</label><input id="as" value="'+esc(f.sum)+'" oninput="S.af.sum=this.value">';
+ h+='<label class="fl">'+t("adesc")+'</label><textarea id="ad" rows="5" oninput="S.af.desc=this.value">'+esc(f.desc)+'</textarea>';
+ h+='<label class="fl">'+t("spec")+'</label><select id="asp" onchange="S.af.spec=this.value">'+list.map(function(x){return '<option value="'+esc(x)+'"'+(x===f.spec?' selected':'')+'>'+esc(sp(x))+'</option>'}).join("")+'</select>';
+ h+='<label class="chk"><input type="checkbox" '+(f.free?'checked':'')+' onchange="S.af.free=this.checked;render()">'+t("free")+'</label>';
+ if(!f.free)h+='<label class="fl">'+t("price")+' *</label><input id="pr" type="number" min="1" dir="ltr" value="'+esc(f.price)+'" oninput="S.af.price=this.value">';
+ if(!isCh)h+='<label class="fl">'+t("dur")+'</label><input id="du" type="number" min="5" dir="ltr" value="'+esc(f.dur)+'" oninput="S.af.dur=this.value">';
+ if(isCh)h+='<label class="fl">'+t("astep")+'</label><textarea id="ast" rows="4" oninput="S.af.steps=this.value">'+esc(f.steps)+'</textarea>';
+ if(!isCh){h+='<label class="fl">'+t("addtimes")+'</label>';f.slots.forEach(function(x,k){h+='<div class="row" style="margin-bottom:10px"><input type="datetime-local" dir="ltr" style="margin:0" value="'+esc(x)+'" oninput="S.af.slots['+k+']=this.value"><button class="mini dng" onclick="S.af.slots.splice('+k+',1);render()">&times;</button></div>'});
+  h+='<button class="btn sm" style="margin-bottom:16px" onclick="S.af.slots.push(\'\');render()">+ '+t("addanother")+'</button>'}
+ return h+'<button class="btn fill" onclick="saveAdd()">'+t("save")+'</button>'}
+function saveAdd(){var a=S.adding,f=S.af,isCh=a.kind==="work"&&a.sub>0;
+ if(!f.title.trim()){var e=document.getElementById("at");if(e){e.focus();e.style.borderColor="#b00020"}return}
+ if(!f.free&&!(parseFloat(f.price)>0)){var e2=document.getElementById("pr");if(e2){e2.focus();e2.style.borderColor="#b00020"}return}
+ var ti=f.title.trim(),su=f.sum.trim()||ti,de=f.desc.trim()||su,steps=f.steps.split("\n").map(function(x){return x.trim()}).filter(Boolean),slots=isCh?[]:f.slots.filter(Boolean);
+ var pi={price:f.free?0:Math.round(parseFloat(f.price)),free:!!f.free,dur:isCh?0:(parseInt(f.dur,10)||0)};
+ var pp=S.profile||{},co0=pp.freelancer?T.freelancer[0]:pp.company,co1=pp.freelancer?T.freelancer[1]:pp.company,
+ hl=[jt(pp.title,0),co0,pp.years!==""&&pp.years!=null?pp.years+" "+T.yrs[0]:""].filter(Boolean).join(" · "),hlA=[jt(pp.title,1),co1,pp.years!==""&&pp.years!=null?pp.years+" "+T.yrs[1]:""].filter(Boolean).join(" · ");
+ var det={title:pp.title,company:pp.company,freelancer:pp.freelancer,uni:pp.uni,major:pp.major,years:pp.years,field:pp.spec?sp(pp.spec):pp.field};
+ if(a.edit!=null){var v=SV[a.edit];v[3]=v[4]=ti;v[5]=v[6]=su;v[7]=v[8]=de;v[11][2]=f.spec;v[12]=slots;v[14]=steps;v[15]=pi;v[16]=S.photo||v[16]||""}
+ else SV.push([a.kind,a.sub,-1,ti,ti,su,su,de,de,0,0,[S.user,hl,f.spec,S.user,hlA],slots,det,steps,pi,S.photo||""]);
+ var from=a.from;S.adding=null;S.af=null;
+ if(from==="manage"){S.page="manage";S.mg=1}else{S.f_mentor=S.f_work=null;S["s_"+a.kind]=a.sub}
+ render()}
+function pendingReqs(){return (S.reqs||[]).filter(function(x){return x.status==="pending"}).length}
+function seedReqs(){if(S.reqs)return;S.reqs=[{id:1,name:"Mona Adel",key:"mentor0",off:3,h:19,m:0,topic:"I want advice on moving from sales into marketing.",status:"pending",link:""},{id:2,name:"Hassan Ali",key:"mentor1",off:5,h:18,m:0,topic:"Please review my CV for graduate programs.",file:"Hassan_CV.pdf",status:"pending",link:""},{id:3,name:"Nada Samy",key:"work0",off:8,h:20,m:0,topic:"",status:"approved",link:""}]}
+function reqType(k){var m={mentor0:1,mentor1:0,work0:3};return GD[m[k]][ai()]}
+function reqWhen(x){var d=new Date();d.setDate(d.getDate()+x.off);d.setHours(x.h,x.m,0,0);return fmtSlot(d.toISOString())}
+function reqAct(id,st){var x=S.reqs.find(function(q){return q.id===id});x.status=st;if(st==="approved"){S.nid=(S.nid||0)+1;S.notifs=S.notifs||[];S.notifs.unshift({id:S.nid,kind:"sys",key:"link",u:true})}render()}
+function saveLink(id){var x=S.reqs.find(function(q){return q.id===id}),e=document.getElementById("rl"+id);if(!e.value.trim()){e.focus();e.style.borderColor="#b00020";return}x.link=e.value.trim();render()}
+function addSlotTo(i){var e=document.getElementById("ns"+i);if(!e||!e.value)return;SV[i][12]=SV[i][12]||[];SV[i][12].push(e.value);render()}
+function rmSlot(i,k){SV[i][12].splice(k,1);render()}
+function delSvc(i){SV[i].deleted=true;render()}
+function managePage(){seedReqs();var tab=S.mg||0,pr=pendingReqs();
+ var h=backBtn()+'<h2>'+t("manage")+'</h2><p class="sub"></p><div class="seg" style="margin:0 0 16px"><button class="'+(tab===0?'on':'')+'" onclick="S.mg=0;render()">'+t("reqs")+(pr?' ('+pr+')':'')+'</button><button class="'+(tab===1?'on':'')+'" onclick="S.mg=1;render()">'+t("mysvc")+'</button></div>';
+ if(tab===0){
+  if(!S.reqs.length)return h+'<div class="card"><div class="empty">'+t("norequests")+'</div></div>';
+  S.reqs.forEach(function(x){h+='<div class="card"><div class="row" style="align-items:flex-start"><div><b>'+esc(x.name)+'</b><div class="line">'+reqType(x.key)+'</div><div class="line">'+reqWhen(x)+'</div></div><span class="tag" style="margin:0">'+t("sample")+'</span></div>'+(x.topic?'<div style="margin-top:10px;line-height:1.55;font-size:14px">'+esc(x.topic)+'</div>':'')+(x.file?'<div class="line" style="font-weight:700;margin-top:6px">'+esc(x.file)+'</div>':'');
+   if(x.status==="pending")h+='<div class="row" style="margin-top:14px"><button class="btn fill sm" style="flex:1" onclick="reqAct('+x.id+',\'approved\')">'+t("approve")+'</button><button class="btn sm dng" style="flex:1" onclick="reqAct('+x.id+',\'rejected\')">'+t("reject")+'</button></div>';
+   else if(x.status==="rejected")h+='<div style="margin-top:12px"><span class="tag" style="margin:0">'+t("rejected")+'</span></div>';
+   else h+='<div style="margin-top:12px"><span class="tag" style="margin:0">'+t("approvedt")+'</span></div>'+(x.link?'<div class="line" style="margin-top:10px;font-weight:700">'+t("linkadded")+'</div><div class="line" dir="ltr" style="word-break:break-all">'+esc(x.link)+'</div>':'<div class="note" style="margin:12px 0 10px">'+t("remtext")+'</div><input id="rl'+x.id+'" dir="ltr" placeholder="'+t("linkph")+'"><button class="btn fill sm" onclick="saveLink('+x.id+')">'+t("savelink")+'</button>');
+   h+='</div>'});
+  return h}
+ h+='<div class="card"><div class="stitle" style="margin-top:0">'+t("addnew")+'</div><div class="chips"><button class="chip" onclick="startAdd(\'mentor\',0)">+ '+SUBS.mentor[0][ai()]+'</button><button class="chip" onclick="startAdd(\'mentor\',1)">+ '+SUBS.mentor[1][ai()]+'</button><button class="chip" onclick="startAdd(\'mentor\',2)">+ '+SUBS.mentor[2][ai()]+'</button><button class="chip" onclick="startAdd(\'work\',0)">+ '+SUBS.work[0][ai()]+'</button><button class="chip" onclick="startAdd(\'work\',1)">+ '+SUBS.work[1][ai()]+'</button></div></div>';
+ var n=0;SV.forEach(function(v,i){if(!mine(v))return;n++;var isCh=v[0]==="work"&&v[1]>0;
+  h+='<div class="card"><span class="tag" style="margin:0">'+SUBS[v[0]][v[1]][ai()]+'</span><div class="stitle">'+esc(v[3])+'</div><div class="line" style="font-weight:700">'+pfmt(i)+'</div>';
+  if(!isCh){h+='<div class="slots" style="margin-top:12px;margin-bottom:8px">'+(v[12]||[]).map(function(x,k){return '<span class="slot" style="cursor:default">'+fmtSlot(x)+' <button class="mini dng" style="padding:0 7px;margin-inline-start:6px" onclick="rmSlot('+i+','+k+')">&times;</button></span>'}).join("")+'</div><div class="row"><input id="ns'+i+'" type="datetime-local" dir="ltr" style="margin:0"><button class="mini" onclick="addSlotTo('+i+')">'+t("addtime")+'</button></div>'}
+  h+='<div class="row" style="margin-top:14px;justify-content:flex-start"><button class="mini" onclick="startAdd(\''+v[0]+'\','+v[1]+','+i+')">'+t("editb")+'</button><button class="mini dng" onclick="delSvc('+i+')">'+t("delb")+'</button></div></div>'});
+ if(!n)h+='<div class="card"><div class="empty">'+t("noservices")+'</div></div>';
+ return h}
+function appStatus(){if(!S.user||!isExp())return "";var a=(S.apps||[]).find(function(x){return x.key===S.appKey});return a?a.status:"approved"}
+function profileOK(){var p=S.profile;if(!p||!p.uni||!p.major||!p.age||!p.country)return false;if((isExp()||p.working)&&(!p.title||(!p.company&&!p.freelancer)||p.years===""||p.years==null))return false;return true}
+function openProfile(edit,note){S.page="profile";S.edit=!!edit;S.draft=Object.assign({status:"graduate",working:isExp(),years:""},S.profile||{});S.draft.exps=((S.profile&&S.profile.exps)||[]).map(function(x){return Object.assign({},x)});S.pnote=note||null;S.menu=false;S.view=null;S.adding=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
+function keepP(){var d=S.draft,ids={pu:"uni",pm:"major",pc:"company",py:"years",pl:"linkedin"};for(var k in ids){var e=document.getElementById(k);if(e)d[ids[k]]=e.value}var pa=document.getElementById("pa");if(pa)d.age=pa.value;var pcn2=document.getElementById("pcn");if(pcn2){if(pcn2.value==="other"){var pco2=document.getElementById("pco");d.cOther=true;d.country=pco2?pco2.value:(d.country||"")}else{d.cOther=false;d.country=pcn2.value}}var jx=document.getElementById("ptx");if(jx){d.title=jx.value;d.tOther=false}var jb=document.getElementById("pt");if(jb){if(jb.value==="other"){var pj=document.getElementById("pto");d.tOther=true;d.title=pj?pj.value:(d.title||"")}else{d.tOther=false;d.title=jb.value}}var q=document.getElementById("ps");if(q){if(q.value==="other"){var po=document.getElementById("pso");d.other=true;d.spec=po?po.value:(d.spec||"")}else{d.other=false;d.spec=q.value}}}
+function jobChange(v){var o=document.getElementById("pto");if(o){o.style.display=v==="other"?"block":"none";if(v==="other")o.focus()}}
+function specChange(v){var o=document.getElementById("pso");if(o){o.style.display=v==="other"?"block":"none";if(v==="other")o.focus()}}
+function setD(k,v){keepP();S.draft[k]=v;var g=document.getElementById("sg_"+k);if(g)[].forEach.call(g.children,function(b){b.className=b.getAttribute("data-v")===String(v)?"on":""});
+ if(k==="working"){var ws=document.getElementById("wsec");if(ws)ws.style.display=v?"block":"none"}
+ if(k==="freelancer"){var cs=document.getElementById("cosec");if(cs)cs.style.display=v?"none":"block"}}
+function saveProfile(){keepP();var d=S.draft,bad=null;function chk(id,v){var e=document.getElementById(id);if(e&&!String(v==null?"":v).trim()){e.style.borderColor="#b00020";if(!bad)bad=e}}
+ chk("pu",d.uni);chk("pm",d.major);chk("pa",d.age);if(d.age&&!(parseInt(d.age,10)>=10&&parseInt(d.age,10)<=99)){var pae=document.getElementById("pa");if(pae){pae.style.borderColor="#b00020";if(!bad)bad=pae}}chk(d.cOther?"pco":"pcn",d.country);var w=isExp()||d.working;if(w){chk(isExp()?"ptx":(d.tOther?"pto":"pt"),d.title);if(!d.freelancer)chk("pc",d.company);chk("py",d.years)}if(isExp()){chk("pl",d.linkedin);if(d.other)chk("pso",d.spec)}
+ if(bad){bad.focus();return}
+ if(d.freelancer)d.company="";d.exps=(d.exps||[]).filter(function(x){return (x.title||"").trim()||(x.company||"").trim()});d.working=w;S.profile=d;if(isExp()&&d.spec)S.spec=d.spec;S.edit=false;S.pnote=null;render()}
+function segBtns(k,cur,opts){return '<div class="seg" id="sg_'+k+'" style="margin:0 0 14px">'+opts.map(function(o){var val=String(o[0]).replace(/'/g,"");return '<button data-v="'+val+'" class="'+(String(cur)===val?'on':'')+'" onclick="setD(\''+k+'\','+o[0]+')">'+o[1]+'</button>'}).join("")+'</div>'}
+function expsForm(){var d=S.draft;d.exps=d.exps||[];return d.exps.map(function(x,k){return '<div class="card" style="padding:14px"><label class="fl">'+t("jtitle")+'</label><input value="'+esc(x.title||"")+'" oninput="S.draft.exps['+k+'].title=this.value"><label class="fl">'+t("company")+'</label><input value="'+esc(x.company||"")+'" oninput="S.draft.exps['+k+'].company=this.value"><div class="row" style="gap:10px;align-items:flex-start"><div style="flex:1;min-width:0"><label class="fl">'+t("fromy")+'</label><input type="number" dir="ltr" value="'+esc(x.from||"")+'" oninput="S.draft.exps['+k+'].from=this.value"></div><div style="flex:1;min-width:0"><label class="fl">'+t("toy")+'</label><input type="number" dir="ltr" value="'+esc(x.to||"")+'" oninput="S.draft.exps['+k+'].to=this.value"></div></div><button class="mini dng" onclick="rmExp('+k+')">'+t("delb")+'</button></div>'}).join("")}
+function addExp(){S.draft.exps=S.draft.exps||[];S.draft.exps.push({title:"",company:"",from:"",to:""});var e=document.getElementById("exlist");if(e)e.innerHTML=expsForm()}
+function rmExp(k){S.draft.exps.splice(k,1);var e=document.getElementById("exlist");if(e)e.innerHTML=expsForm()}
+function profileForm(){var d=S.draft,toth=d.tOther||(d.title&&JOBS.indexOf(d.title)<0),oth=d.other||(d.spec&&SPECS.indexOf(d.spec)<0),w=isExp()||d.working,h='<button class="back" onclick="S.page=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button><h2>'+t("editp")+'</h2><p class="sub"></p>';
+ if(S.pnote)h+='<div class="note">'+t(S.pnote)+'</div>';
+ h+='<div class="row" style="justify-content:flex-start;gap:14px;margin:0 0 18px">'+avBox(null,S.user,"lg")+'<label class="mini" style="cursor:pointer">'+t(S.photo?"changephoto":"addphoto")+'<input type="file" accept="image/*" style="display:none" onchange="onPhoto(this)"></label></div>';
+ h+='<label class="fl">'+t("statusq")+'</label>'+segBtns("status",d.status,[["'student'",t("student")],["'graduate'",t("graduate")]]);
+ h+='<label class="fl">'+t("uni")+' *</label><input id="pu" value="'+esc(d.uni||"")+'"><label class="fl">'+t("major")+' *</label><input id="pm" value="'+esc(d.major||"")+'">';
+ h+=ageCountry(d);
+ if(!isExp())h+='<label class="fl">'+t("working")+'</label>'+segBtns("working",!!d.working,[["true",t("yes")],["false",t("no")]]);
+ h+='<div id="wsec" style="display:'+(w?'block':'none')+'"><label class="fl">'+t("jtitle")+' *</label>'+(isExp()?'<input id="ptx" value="'+esc(d.title||"")+'">':'<select id="pt" onchange="jobChange(this.value)"><option value="">'+t("seljob")+'</option>'+JOBS.map(function(x){return '<option value="'+x+'"'+(!toth&&d.title===x?' selected':'')+'>'+esc(jt(x))+'</option>'}).join("")+'<option value="other"'+(toth?' selected':'')+'>'+t("othjob")+'</option></select><input id="pto" style="display:'+(toth?'block':'none')+'" placeholder="'+t("typejob")+'" value="'+esc(d.title||"")+'">');
+ h+=segBtns("freelancer",!!d.freelancer,[["false",t("atco")],["true",t("isfl")]]);
+ h+='<div id="cosec" style="display:'+(d.freelancer?'none':'block')+'"><label class="fl">'+t("company")+' *</label><input id="pc" value="'+esc(d.company||"")+'"></div>';
+ h+='<label class="fl">'+t("years")+' *</label><input id="py" type="number" min="0" max="60" dir="ltr" value="'+esc(d.years==null?"":d.years)+'"></div>';
+ if(isExp())h+='<label class="fl">'+t("spec")+'</label><select id="ps" onchange="specChange(this.value)">'+SPECS.map(function(x){return '<option value="'+x+'"'+(!oth&&d.spec===x?' selected':'')+'>'+esc(sp(x))+'</option>'}).join("")+'<option value="other"'+(oth?' selected':'')+'>'+t("oth")+'</option></select>'+'<input id="pso" style="display:'+(oth?'block':'none')+'" placeholder="'+t("typespec")+'" value="'+esc(d.spec||"")+'">'+'<label class="fl">'+t("linkedin")+' *</label><input id="pl" dir="ltr" value="'+esc(d.linkedin||"")+'">';
+ h+='<h3>'+t("prevexp")+'</h3><div id="exlist">'+expsForm()+'</div><button class="btn sm" style="margin-bottom:18px" onclick="addExp()">+ '+t("addexp")+'</button>';
+ return h+'<button class="btn fill" onclick="saveProfile()">'+t("saveprofile")+'</button>'}
+function profileView(){var p=S.profile||{},w=isExp()||p.working,l=ai();
+ var head=w&&p.title?esc(jt(p.title))+(p.freelancer?" · "+t("freelancer"):(p.company?" "+t("at")+" "+esc(p.company):"")):t(p.status==="student"?"student":"graduate");
+ var edu=[p.uni,p.major].filter(Boolean).map(esc).join(" · ");
+ var h='<div class="card" style="text-align:center;padding:26px 18px">'+avBox(null,S.user,"lg",'style="margin:0 auto 12px;width:76px;height:76px;font-size:28px"')+'<div class="pname">'+esc(S.user)+'</div><div class="line" style="font-weight:700;color:var(--navy)">'+head+'</div>'+(edu?'<div class="line">'+edu+'</div>':'')+'<div style="margin-top:10px"><span class="tag" style="margin:0">'+t(isExp()?"expert":"learner")+'</span><span class="tag">'+t(p.status==="student"?"student":"graduate")+'</span>'+(w&&p.years!==""&&p.years!=null?'<span class="tag">'+esc(p.years)+' '+t("yrs")+'</span>':'')+'</div><div style="margin-top:16px"><button class="btn sm" onclick="openProfile(true)">'+t("editp")+'</button></div></div>';
+ if(!profileOK())h+='<div class="note">'+t("incomplete")+' '+t(isExp()?"noteexp":"notel")+'</div>';
+ function kv(k,v){return '<div class="kv"><span>'+k+'</span><span>'+(v?esc(v):t("notset"))+'</span></div>'}
+ h+='<h3 style="margin-top:8px">'+t("experience")+'</h3><div class="card">'+(w?kv(t("jtitle"),jt(p.title))+kv(t("company"),p.freelancer?t("freelancer"):p.company)+kv(t("years"),p.years===""||p.years==null?"":p.years+" "+T.yrs[l]):kv(t("experience"),"")) +'</div>';
+ if(p.exps&&p.exps.length)h+='<h3>'+t("prevexp")+'</h3>'+expList(p.exps);
+ h+='<h3>'+t("education")+'</h3><div class="card">'+kv(t("uni"),p.uni)+kv(t("major"),p.major)+kv(t("statusq"),t(p.status==="student"?"student":"graduate"))+'</div>';
+ h+='<h3>'+t("personal")+'</h3><div class="card">'+kv(t("age"),p.age)+kv(t("country"),p.country?ct(p.country):"")+'</div>';
+ if(isExp())h+='<h3>'+t("spec")+'</h3><div class="card">'+kv(t("spec"),p.spec?sp(p.spec):"")+(p.linkedin?'<div class="kv"><span>LinkedIn</span><span dir="ltr"><a href="'+esc(p.linkedin)+'" target="_blank" rel="noopener" style="color:var(--navy)">'+esc(p.linkedin.replace(/^https?:\/\/(www\.)?/,""))+'</a></span></div>':'')+'</div>';
+ if(S.posts&&S.posts.length){h+='<h3>'+t("posts")+'</h3>';S.posts.forEach(function(q,k){h+=postHtml({own:true,id:"o"+k,name:q.by,hl:q.hl||"",text:q.t,tags:"",likes:0,cm:0,time:t("now"),cmt:null})})}
+ return h}
+function book(i){if(!S.user){openModal();return}if(isExp()||S.role==="admin")return;if(!profileOK()){openProfile(true,"notel");return}var v=SV[i],key=v[0]+v[1];
+ if(!(v[0]==="work"&&v[1]>0)&&(S.slotFor!==i||!S.slot))return;
+ S.bk=i;render()}
+function sendBook(i){var v=SV[i],key=v[0]+v[1],bt=document.getElementById("bt"),bf=document.getElementById("bf"),bp=document.getElementById("bp");
+ if(bt&&!bt.value.trim()){bt.focus();bt.style.borderColor="#b00020";return}
+ if(bf&&!(bf.files&&bf.files[0])){bf.focus();bf.style.outline="2px solid #b00020";return}
+ S.booked=S.booked||{};S.booked[i]={slot:(v[0]==="work"&&v[1]>0)?"":S.slot,topic:bt?bt.value.trim():"",file:bf&&bf.files[0]?bf.files[0].name:"",pay:bp?bp.value:"",status:"pending"};S.bk=null;render()}
+function openPerson(i){S.page="person";S.pp=i;S.ptype=null;S.ptab="ov";S.menu=false;S.view=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
+function pdata(){var i=S.pp,p=PEOPLE[i],d=PD[i],l=ai(),groups={},order=[];
+ SV.forEach(function(v,k){if(v[2]!==i||v.deleted)return;var key=v[0]+v[1];if(!groups[key]){groups[key]=[];order.push(key)}groups[key].push(k)});
+ function stat(key){var tot=0,cnt=0;groups[key].forEach(function(k){tot+=SV[k][9]*SV[k][10];cnt+=SV[k][10]});return {avg:cnt?tot/cnt:0,cnt:cnt}}
+ var tc=0,tt=0;order.forEach(function(key){var st=stat(key);tt+=st.avg*st.cnt;tc+=st.cnt});
+ return {i:i,p:p,d:d,l:l,n:l?p[3]:p[0],groups:groups,order:order,stat:stat,tc:tc,tt:tt}}
+function personCont(){var D=pdata(),d=D.d,l=D.l,tab=S.ptab||"ov";
+ function kv(k,v){return '<div class="kv"><span>'+k+'</span><span>'+v+'</span></div>'}
+ function rt(st){return st.cnt?'★ '+st.avg.toFixed(1)+' ('+st.cnt+')':t("newt")}
+ var h="";
+ if(tab==="ov"){
+  h+='<h3 style="margin-top:6px">'+t("experience")+'</h3>'+expList(sampleExps(D.i))+'<div class="card" style="margin-top:-4px">'+kv(t("years"),d[8]+" "+t("yrs"))+kv(t("spec"),esc(d[9+l]))+'</div>';
+  h+='<h3>'+t("education")+'</h3><div class="card">'+kv(t("uni"),esc(d[l]))+kv(t("major"),esc(d[2+l]))+'</div>';
+  h+='<h3>'+t("ratingsT")+'</h3><div class="card">'+(D.order.length?kv(t("overall"),D.tc?'★ '+(D.tt/D.tc).toFixed(1)+' ('+D.tc+')':t("newt"))+D.order.map(function(key){var v0=SV[D.groups[key][0]];return kv(SUBS[v0[0]][v0[1]][l],rt(D.stat(key)))}).join(""):'<div class="empty" style="padding:6px">'+t("svcnone")+'</div>')+'</div>';
+ }else if(tab==="po"){
+  personPosts(D.i).forEach(function(p){h+=postHtml(p)});
+ }else if(tab==="sv"){
+  if(!D.order.length)return '<div class="card"><div class="empty">'+t("svcnone")+'</div></div>';
+  var sel=S.ptype&&D.groups[S.ptype]?S.ptype:D.order[0];
+  h+='<div class="seg">'+D.order.map(function(key){var v0=SV[D.groups[key][0]];return '<button class="'+(key===sel?'on':'')+'" onclick="setPType(\''+key+'\')">'+SUBS[v0[0]][v0[1]][l]+'</button>'}).join("")+'</div>';
+  D.groups[sel].forEach(function(k){h+=svcCard(k)});
+ }else{
+  h+=D.tc?'<div class="card"><span class="rate">★ '+(D.tt/D.tc).toFixed(1)+' <small>('+D.tc+')</small></span> <span class="tag">'+t("sample")+'</span>'+CM.map(function(c,k){return '<div class="cm"><b>'+c[l]+'</b> <span class="rate">★ '+(k===2?4:5)+'</span><div style="margin-top:6px;line-height:1.55;font-size:14px">'+c[2+l]+'</div></div>'}).join("")+'</div>':'<div class="card"><div class="empty">'+t("norev")+'</div></div>';
+ }
+ return h}
+var EXPS=[
+{cur:2019,prev:[["Brand Manager","مدير علامة تجارية","Pyramid Consumer Goods","بيراميد للسلع الاستهلاكية",2015,2019],["Assistant Brand Manager","مساعد مدير علامة تجارية","Nile Foods","النيل للأغذية",2011,2015]]},
+{cur:2018,prev:[["Trade Marketing Manager","مدير تسويق المبيعات","Delta Distribution","دلتا للتوزيع",2014,2018],["Sales Executive","مسؤول مبيعات","Cairo Retail Co.","القاهرة للتجزئة",2012,2014]]},
+{cur:2020,prev:[["Partnerships Manager","مديرة شراكات","Lotus Ventures","لوتس فنتشرز",2017,2020],["Business Analyst","محللة أعمال","Oasis Consulting","واحة للاستشارات",2015,2017]]},
+{cur:2017,prev:[["Demand Planner","مخطط طلب","Horus Foods","حورس للأغذية",2013,2017],["Logistics Coordinator","منسق لوجستيات","Delta Shipping","دلتا للشحن",2011,2013]]},
+{cur:2019,prev:[["Key Account Manager","مديرة عملاء رئيسيين","Sphinx Retail","سفنكس للتجزئة",2015,2019],["Sales Representative","مندوبة مبيعات","Nile Pharma","النيل للأدوية",2013,2015]]},
+{cur:2016,prev:[["Senior Relationship Manager","مدير علاقات أول","Delta Bank","بنك دلتا",2011,2016],["Credit Analyst","محلل ائتمان","Cairo Finance","القاهرة للتمويل",2008,2011]]},
+{cur:2020,prev:[["Financial Analyst","محللة مالية","Lotus Group","مجموعة لوتس",2016,2020],["Accountant","محاسبة","Nile Industries","النيل للصناعات",2014,2016]]},
+{cur:2021,prev:[["Data Analyst","محلل بيانات","Cairo Retail Co.","القاهرة للتجزئة",2018,2021],["BI Intern","متدرب ذكاء أعمال","Horus Telecom","حورس للاتصالات",2017,2018]]},
+{cur:2018,prev:[["HR Business Partner","شريكة أعمال موارد بشرية","Nile Foods","النيل للأغذية",2014,2018],["HR Assistant","مساعدة موارد بشرية","Delta Group","مجموعة دلتا",2011,2014]]},
+{cur:2022,prev:[["UI Designer","مصمم واجهات","Lotus Studio","لوتس ستوديو",2019,2022],["Freelance Designer","مصمم فريلانسر","Self-employed","عمل حر",2017,2019]]}];
+var PX2=[["Small habits compound. One focused hour a day on a skill beats a weekend cram.","العادات الصغيرة بتتراكم. ساعة تركيز كل يوم على مهارة أحسن من مذاكرة آخر الأسبوع."],["Ask for feedback early. Your first draft is meant to be improved.","اطلب ملاحظات بدري. المسودة الأولى معمولة علشان تتحسن."],["Networking is not collecting contacts. It is being useful to people before you need anything.","التعارف مش إنك تجمع أرقام. هو إنك تفيد الناس قبل ما تحتاج منهم حاجة."],["Your first job is not your career. It is your first lesson.","أول وظيفة مش هي مسارك. هي أول درس."],["Read one case study a week in your field. In a year you will see patterns others miss.","اقرا دراسة حالة واحدة كل أسبوع في مجالك. بعد سنة هتشوف أنماط غيرك مش شايفها."]];
+function sampleExps(i){var l=ai(),d=PD[i],e=EXPS[i],out=[{title:d[6+l],company:d[4+l],from:e.cur,to:""}];e.prev.forEach(function(x){out.push({title:x[l],company:x[2+l],from:x[4],to:x[5]})});return out}
+function expList(items){return '<div class="card">'+items.map(function(x){return '<div class="xp"><span class="xpd"></span><div style="min-width:0"><b>'+esc(x.title||"")+'</b><div class="line">'+esc(x.company||"")+'</div><div class="line">'+(x.from?esc(x.from)+' – ':'')+(x.to?esc(x.to):t("presentw"))+'</div></div></div>'}).join("")+'</div>'}
+function personPosts(i){var l=ai(),pp=PEOPLE[i],d=PD[i],o=[samplePost(i,"s")],x2=PX2[i%PX2.length];
+ o.push({own:false,idx:i,id:"s"+i+"b",key:pp[0],name:l?pp[3]:pp[0],hl:d[6+l]+" "+t("at")+" "+d[4+l],text:x2[l],tags:"",img:"",likes:20+((i*13)%60),cm:2+(i%5),time:l?"من 3 أسابيع":"3w",cmt:null});
+ return o}
+function personPage(){var D=pdata(),p=D.p,d=D.d,l=D.l,n=D.n,fl=S.follows&&S.follows[p[0]],tab=S.ptab||"ov";
+ var h=backBtn()+'<div class="card" style="text-align:center;padding:24px 18px">'+avBox(D.i,n,"lg",'style="margin:0 auto 12px;width:76px;height:76px;font-size:28px"')+'<div class="pname">'+esc(n)+'</div><div class="line" style="font-weight:700;color:var(--navy)">'+esc(d[6+l]+" "+t("at")+" "+d[4+l])+'</div><div class="line">'+esc(d[l]+" · "+d[2+l])+'</div><div class="line">'+d[8]+' '+t("yrs")+' '+t("inw")+' '+esc(d[9+l])+'</div><div style="margin-top:12px"><span class="tag" style="margin:0">'+t("expert")+'</span><span class="tag">'+t("sample")+'</span></div><div style="margin-top:16px"><button class="fbtn'+(fl?' on':'')+'" onclick="follow(\''+p[0]+'\')">'+(fl?t("following"):'+ '+t("follow"))+'</button></div></div>';
+ h+='<div class="seg" id="pseg"><button data-v="ov" class="'+(tab==="ov"?'on':'')+'" onclick="setPT(\'ov\')">'+t("overview")+'</button><button data-v="po" class="'+(tab==="po"?'on':'')+'" onclick="setPT(\'po\')">'+t("posts")+'</button><button data-v="sv" class="'+(tab==="sv"?'on':'')+'" onclick="setPT(\'sv\')">'+t("svcs")+'</button><button data-v="rv" class="'+(tab==="rv"?'on':'')+'" onclick="setPT(\'rv\')">'+t("revs")+'</button></div>';
+ return h+'<div id="pcont">'+personCont()+'</div>'}
+function setPT(k){S.ptab=k;var sg=document.getElementById("pseg");if(sg)[].forEach.call(sg.children,function(b){b.className=b.getAttribute("data-v")===k?"on":""});var c=document.getElementById("pcont");if(c)c.innerHTML=personCont()}
+function setPType(k){S.ptype=k;var c=document.getElementById("pcont");if(c)c.innerHTML=personCont()}
+function pickS(k,i){S["s_"+k]=i;render()}
+function pickFmentor(s){S.f_mentor=(S.f_mentor===s)?null:s;render()}
+function pickFwork(s){S.f_work=(S.f_work===s)?null:s;render()}
+var EV=[[0,"Career talk: starting in FMCG","كلام عن الشغل: تبدأ إزاي في السلع الاستهلاكية",0,5,19,0,"Online","أونلاين"],[0,"How to ace graduate programs","إزاي تنجح في برامج الخريجين",8,12,18,30,"Online","أونلاين"],[1,"Marketing meetup","لقاء المسوقين",1,9,18,0,"Cairo","القاهرة"],[1,"Networking evening","لقاء تعارف مهني",4,16,19,0,"Cairo","القاهرة"]];
+function events(){var m=S.evm==null?1:S.evm,loc=L==="ar"?"ar-EG":"en-GB";
+ var h='<div class="seg" style="margin:0 0 18px"><button class="'+(m===1?'on':'')+'" onclick="S.evm=1;render()">'+t("evin")+'</button><button class="'+(m===0?'on':'')+'" onclick="S.evm=0;render()">'+t("evon")+'</button></div>';
+ EV.forEach(function(e,k){if(e[0]!==m)return;var d=new Date();d.setDate(d.getDate()+e[4]);d.setHours(e[5],e[6],0,0);var p=PEOPLE[e[3]],nm=L==="ar"?p[3]:p[0],when=d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"})+" · "+d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"}),reg=S.reg&&S.reg[k],x=S.evx&&S.evx[k];
+  h+=dcard({pill:t("upc"),label:t(m===0?"evon2":"evin2")+' · '+t("sample"),title:esc(e[1+ai()]),meta:[when,esc(e[7+ai()])],extra:x?t("evd1")+esc(nm)+t("evd2"):'',f1:'S.evx=S.evx||{};S.evx['+k+']=!S.evx['+k+'];render()',b1:t("learnm"),f2:'reserve('+k+')',b2:t(reg?"regd":"regb"),dis:!!reg})});
+ return h}
+function reserve(k){if(!S.user){openModal();return}S.reg=S.reg||{};S.reg[k]=true;render()}
+function modal(){
+ var ex=S.pick==="expert",so=S.fs==="other",co=S.fcn==="other";
+ return '<div class="ov"><div class="modal"><button class="x" aria-label="Close" onclick="S.modal=false;render()">&times;</button>'+
+ '<h2>'+t("join")+'</h2><p class="sub">'+t("joinsub")+'</p>'+
+ '<div class="role"><button id="rl0" class="'+(S.pick==="learner"?'on':'')+'" onclick="pickRole(\'learner\')">'+t("learner")+'<small>'+t("learnersub")+'</small></button>'+
+ '<button id="rl1" class="'+(ex?'on':'')+'" onclick="pickRole(\'expert\')">'+t("expert")+'<small>'+t("expertsub")+'</small></button></div>'+
+ '<div id="exb" style="display:'+(ex?'block':'none')+'"><label class="fl">'+t("linkedin")+'</label><input id="li" dir="ltr" placeholder="https://www.linkedin.com/in/..." value="'+esc(S.fl||"")+'"><label class="fl">'+t("spec")+'</label><select id="fs" onchange="onOther(\'fs\',\'fo\')"><option value="">'+t("selspec")+'</option>'+SPECS.map(function(x){return '<option value="'+x+'"'+(S.fs===x?' selected':'')+'>'+esc(sp(x))+'</option>'}).join("")+'<option value="other"'+(so?" selected":"")+'>'+t("oth")+'</option></select><input id="fo" style="display:'+(so?'block':'none')+'" placeholder="'+t("typespec")+'" value="'+esc(S.fo||"")+'"><label class="fl">'+t("jtitle")+'</label><input id="fj" value="'+esc(S.fj||"")+'"><div class="seg" style="margin:0 0 12px"><button id="fl0" class="'+(!S.ffl?'on':'')+'" onclick="setFl(false)">'+t("atco")+'</button><button id="fl1" class="'+(S.ffl?'on':'')+'" onclick="setFl(true)">'+t("isfl")+'</button></div><div id="cow" style="display:'+(S.ffl?'none':'block')+'"><label class="fl">'+t("company")+'</label><input id="fc" value="'+esc(S.fc||"")+'"></div></div>'+
+ '<label class="fl">'+t("age")+'</label><input id="ag" type="number" min="10" max="99" dir="ltr" value="'+esc(S.fa||"")+'"><label class="fl">'+t("country")+'</label><select id="cn" onchange="onOther(\'cn\',\'cno\')"><option value="">'+t("selcountry")+'</option>'+cOpts(S.fcn,co)+'</select><input id="cno" style="display:'+(co?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(S.fco||"")+'">'+
+ '<button class="btn" onclick="social(\'Google\')">'+t("google")+'</button>'+
+ '<button class="btn" style="margin-top:10px" onclick="social(\'Apple\')">'+t("apple")+'</button>'+
+ '<div class="or">'+t("or")+'</div>'+
+ '<label class="fl">'+t("fullname")+'</label><input id="nm" value="'+esc(S.fn||"")+'">'+
+ '<label class="fl">'+t("email")+'</label><input id="em" dir="ltr" type="email" value="'+esc(S.fe||"")+'">'+
+ '<button class="btn fill" style="margin-top:4px" onclick="keep();doLogin()">'+t("cont")+'</button>'+
+ '</div></div>';
+}
+function onOther(sel,inp){var a=document.getElementById(sel),i=document.getElementById(inp);if(!a||!i)return;var o=a.value==="other";i.style.display=o?"block":"none";if(o)i.focus();keep()}
+function setFl(v){keep();S.ffl=v;var a=document.getElementById("fl0"),b=document.getElementById("fl1"),c=document.getElementById("cow");if(a)a.className=v?"":"on";if(b)b.className=v?"on":"";if(c)c.style.display=v?"none":"block"}
+function keep(){var a=document.getElementById("nm"),b=document.getElementById("em"),c=document.getElementById("li"),d=document.getElementById("fs"),e=document.getElementById("ff"),f=document.getElementById("fo");if(f)S.fo=f.value;var ga=document.getElementById("ag"),gc=document.getElementById("cn"),gco=document.getElementById("cno");if(ga)S.fa=ga.value;if(gc)S.fcn=gc.value;if(gco)S.fco=gco.value;var g=document.getElementById("fj"),g2=document.getElementById("fjo"),g3=document.getElementById("fc");if(g)S.fj=g.value;if(g2)S.fjo=g2.value;if(g3)S.fc=g3.value;if(a)S.fn=a.value;if(b)S.fe=b.value;if(c)S.fl=c.value;if(d)S.fs=d.value;if(e)S.ff=e.value}
+function commonOK(){var ag=document.getElementById("ag"),cn=document.getElementById("cn"),a=parseInt(ag.value,10);
+ if(!(a>=10&&a<=99)){ag.focus();ag.style.borderColor="#b00020";return null}
+ if(!cn.value){cn.focus();cn.style.borderColor="#b00020";return null}
+ var c=cn.value;if(c==="other"){var co=document.getElementById("cno");if(!co||!co.value.trim()){if(co){co.focus();co.style.borderColor="#b00020"}return null}c=co.value.trim()}
+ return {age:String(a),country:c}}
+function expertOK(){var li=document.getElementById("li"),fs=document.getElementById("fs");
+ if(!/linkedin\.com/i.test(li.value.trim())){li.focus();li.style.borderColor="#b00020";return null}
+ if(!fs.value){fs.focus();return null}
+ var spv=fs.value;if(spv==="other"){var fo=document.getElementById("fo");if(!fo||!fo.value.trim()){if(fo){fo.focus();fo.style.borderColor="#b00020"}return null}spv=fo.value.trim()}
+ var fj=document.getElementById("fj"),fc=document.getElementById("fc");
+ if(!fj.value.trim()){fj.focus();fj.style.borderColor="#b00020";return null}
+ if(!S.ffl&&(!fc||!fc.value.trim())){if(fc){fc.focus();fc.style.borderColor="#b00020"}return null}
+ return {linkedin:li.value.trim(),spec:spv,field:spv,title:fj.value.trim(),company:S.ffl?"":fc.value.trim(),freelancer:!!S.ffl}}
+function pickRole(r){S.pick=r;var a=document.getElementById("rl0"),b=document.getElementById("rl1"),e=document.getElementById("exb");if(a)a.className=r==="learner"?"on":"";if(b)b.className=r==="expert"?"on":"";if(e)e.style.display=r==="expert"?"block":"none"}
+function valid(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
+function finish(n,e,prof){S.user=n;S.email=e;S.role=S.pick;S.profile=Object.assign({status:"graduate",working:S.pick==="expert",years:""},prof||{});if(prof&&prof.spec)S.spec=prof.spec;S.modal=false;S.fn=S.fe=S.fl=S.fs=S.ff=S.fo=S.fj=S.fjo=S.fc="";S.ffl=false;S.fa=S.fcn=S.fco="";openProfile(true,"notec")}
+function doLogin(){var a=document.getElementById("nm"),b=document.getElementById("em"),n=a.value.trim(),e=b.value.trim();
+ if(!n){a.focus();return}
+ if(!valid(e)){b.focus();b.style.borderColor="#b00020";return}
+ var prof=commonOK();if(!prof)return;if(S.pick==="expert"){var ex=expertOK();if(!ex)return;prof=Object.assign(prof,ex)}
+ finish(n,e,prof)}
+function social(p){var n="",e="";var prof=commonOK();if(!prof)return;if(S.pick==="expert"){var ex=expertOK();if(!ex)return;prof=Object.assign(prof,ex)}finish(n||(L==="ar"?t("guser")+" "+p:p+" "+t("guser")),e||"",prof)}
+function menu(){
+ var MOON='<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>',SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>';
+ var lg='<button class="tinyb" onclick="toggleLang(\''+(L==="ar"?"en":"ar")+'\')">'+(L==="ar"?"English":"العربية")+'</button>';
+ var th='<button class="tinyb" onclick="setTheme(\''+(S.theme==="dark"?"light":"dark")+'\')">'+(S.theme==="dark"?SUN:MOON)+(S.theme==="dark"?t("lights"):t("darks"))+'</button>';
+ var top=S.user?'<div class="row" style="justify-content:flex-start;margin-bottom:12px"><div class="av lg">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><div style="min-width:0"><b>'+esc(S.user)+'</b><div dir="ltr" style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis">'+esc(S.email||"")+'</div><div style="color:var(--mut);font-size:13px">'+t(isExp()?"expert":"learner")+'</div></div></div>'+(S.profile&&S.profile.spec?'<div class="sub" style="margin:-4px 0 10px">'+esc(sp(S.profile.spec))+'</div>':''):'';
+ var it=[];
+ if(S.user){it.push(['openProfile(false)',t("profile")]);if(isExp())it.push(["S.page='manage';S.mg=0;S.menu=false;render()",t("manage")]);it.push(['openNotif()',t("notif")]);it.push(["S.page='saved';S.menu=false;render()",t("savedt")])}
+ it.push(["S.page='interest';S.menu=false;S.view=null;render()",t("changeint2")]);
+ it.push(["S.page='events';S.menu=false;S.view=null;render()",t("events")]);it.push(['openGuide()',t("guide")]);it.push(["S.page='contact';S.menu=false;render()",t("contact")]);
+ it.push(S.user?['doLogout()',t("logout")]:['openModal()',t("signin")]);
+ return '<div class="menu" onclick="S.menu=false;render()"><div class="sheet" onclick="event.stopPropagation()">'+'<div class="prefs">'+lg+th+'</div>'+top+it.map(function(x){return '<button onclick="'+x[0]+'">'+x[1]+'</button>'}).join("")+'</div></div>';
+}
+function doLogout(){try{localStorage.removeItem("ur_state")}catch(e){}S.photo="";S.user=null;S.role=null;S.profile=null;S.page=null;S.menu=false;S.posts=[];S.follows=null;S.likes=null;S.comments=null;S.cl=null;S.savedP=null;S.savedS=null;S.gj=null;S.gposts=null;S.booked=null;S.notifs=null;S.nid=0;S.spec=null;S.reg=null;S.reqs=null;render()}
+function bodyHtml(){
+ if(S.adding)return addForm();
+ var pg=S.page;
+ if(pg==="notif")return notifPage();
+ if(pg==="guide")return guidePage();
+ if(pg==="profile")return S.edit?profileForm():profileView();
+ if(pg==="manage")return managePage();
+ if(pg==="events")return eventsPage();
+ if(pg==="interest")return interestPage();
+ if(pg==="saved")return savedPage();
+ if(pg==="contact")return contactPage();
+ if(pg==="person")return personPage();
+ if(pg&&window.PAGES&&PAGES[pg])return PAGES[pg]();
+ if(S.view!=null&&(S.tab==="mentor"||S.tab==="work"))return detail(S.view);
+ return S.tab==="comm"?commPage():S.tab==="mentor"?listing("mentor"):S.tab==="work"?listing("work"):feed();
+}
+function render(){
+ var d=document.documentElement;d.lang=L;d.dir=L==="ar"?"rtl":"ltr";if(d.setAttribute)d.setAttribute("data-theme",S.theme);
+ var body=bodyHtml();
+ var who=S.user?'<div class="av" onclick="openProfile(false)" style="cursor:pointer">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><button class="pill out" onclick="doLogout()">'+t("logout")+'</button>':'<button class="pill" onclick="openModal()">'+t("signin")+'</button>';
+ var mn0=document.querySelector("main"),sig=[S.tab,S.page,S.view,!!S.adding,S.fv,S.grp,S.pp,S.edit].join("|"),st0=(S.lastSig===sig&&mn0)?mn0.scrollTop:0;S.lastSig=sig;
+ app.innerHTML='<header><div class="brand"><span style="color:var(--green)">U</span>Ready</div><div class="right">'+bell()+who+'<button class="burger" aria-label="Menu" onclick="S.menu=true;render()"><i></i><i></i><i></i></button></div></header>'+
+ '<main>'+body+'</main><nav>'+TABS.map(function(k){return '<button class="'+(S.tab===k?'on':'')+'" onclick="S.tab=\''+k+'\';S.view=null;S.adding=null;S.page=null;S.fq=\'\';S.grp=null;render()"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span class="nl">'+t(k)+'</span></button>'}).join("")+'</nav>'+(S.menu?menu():'')+(S.modal?modal():'')+(S.cm?cmSheet():'');
+ var mn1=document.querySelector("main");if(mn1&&st0)mn1.scrollTop=st0;
+ if(mn1){mn1.scrollLeft=0;mn1.onscroll=function(){if(mn1.scrollLeft)mn1.scrollLeft=0};document.documentElement.scrollLeft=0}
+ if(S.cmFocus){S.cmFocus=false;var ci=document.getElementById("cmi");if(ci&&ci.focus)ci.focus()}
+ persist();
+}
+render();
+setTimeout(function(){if(!S.user&&!S.modal){S.modal=true;render()}},1200);
+</script>
+</body>
+</html>
