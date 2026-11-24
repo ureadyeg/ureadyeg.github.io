@@ -334,7 +334,7 @@ comments:["Comments","التعليقات"],about:["About","نبذة"],aboutph:["
 changeint2:["Change your interest","غيّر اهتمامك"],
 searchf:["Search in UReady","دوّر في UReady"],
 comm:["Communities","الكوميونيتيز"],
-addphoto:["Add a photo","أضف صورة"],changephoto:["Change photo","غيّر الصورة"],crop:["Adjust your photo","ظبط صورتك"],crophint:["Drag to move. Pinch or use the slider to zoom.","اسحب الصورة لتحريكها، وقرّب بصباعين أو بالسلايدر."],usephoto:["Use photo","استخدم الصورة"],cancel:["Cancel","إلغاء"],edit:["Edit","تعديل"],del:["Delete","مسح"],repo:["Report","إبلاغ"],repsent:["Report sent. Thank you.","وصل البلاغ. شكراً."],cnfdel:["Delete this post? This cannot be undone.","تمسح البوست ده؟ مش هتقدر ترجعه."],cnfdelc:["Delete this comment?","تمسح الكومنت ده؟"],ownerw:["Owner","المالك"],savetxt:["Save","حفظ"],
+addphoto:["Add a photo","أضف صورة"],changephoto:["Change photo","غيّر الصورة"],editphoto:["Edit photo","عدّل الصورة"],crop:["Adjust your photo","ظبط صورتك"],crophint:["Drag to move. Pinch or use the slider to zoom.","اسحب الصورة لتحريكها، وقرّب بصباعين أو بالسلايدر."],usephoto:["Use photo","استخدم الصورة"],cancel:["Cancel","إلغاء"],edit:["Edit","تعديل"],del:["Delete","مسح"],repo:["Report","إبلاغ"],repsent:["Report sent. Thank you.","وصل البلاغ. شكراً."],cnfdel:["Delete this post? This cannot be undone.","تمسح البوست ده؟ مش هتقدر ترجعه."],cnfdelc:["Delete this comment?","تمسح الكومنت ده؟"],ownerw:["Owner","المالك"],savetxt:["Save","حفظ"],
 likesw:["likes","إعجاب"],membersw:["members","عضو"],
 prevexp:["Previous experience","خبرات سابقة"],addexp:["Add experience","ضيف خبرة"],fromy:["From (month/year)","من (شهر/سنة)"],toy:["To (month/year)","إلى (شهر/سنة)"],presentw:["Present","لحد دلوقتي"],
 guser:["user","مستخدم"],other:["English","عربي"]};
@@ -457,6 +457,7 @@ function avSrc(idx,name){if(idx!=null&&idx>=0&&SAMP[idx])return SAMP[idx];if(nam
 function avBox(idx,name,cls,attrs){var src=avSrc(idx,name);return '<div class="av '+(cls||"")+'" '+(attrs||"")+'>'+(src?'<img src="'+src+'" alt="">':ini(name||"?"))+'</div>'}
 function onPhoto(inp){var f=inp.files&&inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){alert(t("imgonly"));inp.value="";return}
  var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){openCrop(im)};im.src=rd.result};rd.readAsDataURL(f);inp.value=""}
+function editPhoto(){if(!S.photo)return;var im=new Image();im.onload=function(){openCrop(im)};im.src=S.photo}
 var CROP=null;
 function openCrop(im){
  var ov=document.createElement("div");ov.className="ov";ov.style.zIndex="60";
@@ -954,7 +955,7 @@ function addExp(){S.draft.exps=S.draft.exps||[];S.draft.exps.push({title:"",comp
 function rmExp(k){S.draft.exps.splice(k,1);var e=document.getElementById("exlist");if(e)e.innerHTML=expsForm()}
 function profileForm(){var d=S.draft,toth=d.tOther||(d.title&&JOBS.indexOf(d.title)<0),oth=d.other||(d.spec&&SPECS.indexOf(d.spec)<0),w=isExp()||d.working,h='<button class="back" onclick="S.page=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button><h2>'+t("editp")+'</h2><p class="sub"></p>';
  if(S.pnote)h+='<div class="note">'+t(S.pnote)+'</div>';
- h+='<div class="row" style="justify-content:flex-start;gap:14px;margin:0 0 18px">'+avBox(null,S.user,"lg")+'<label class="mini" style="cursor:pointer">'+t(S.photo?"changephoto":"addphoto")+'<input type="file" accept="image/*" style="display:none" onchange="onPhoto(this)"></label></div>';
+ h+='<div class="row" style="justify-content:flex-start;gap:14px;margin:0 0 18px">'+avBox(null,S.user,"lg")+'<label class="mini" style="cursor:pointer">'+t(S.photo?"changephoto":"addphoto")+'<input type="file" accept="image/*" style="display:none" onchange="onPhoto(this)"></label>'+(S.photo?'<button type="button" class="mini" id="editph" onclick="editPhoto()">'+t("editphoto")+'</button>':"")+'</div>';
  h+='<label class="fl">'+t("statusq")+'</label>'+segBtns("status",d.status,[["'student'",t("student")],["'graduate'",t("graduate")]]);
  h+='<label class="fl">'+t("uni")+' *</label><input id="pu" value="'+esc(d.uni||"")+'"><label class="fl">'+t("major")+' *</label><input id="pm" value="'+esc(d.major||"")+'">';
  h+=ageCountry(d);
