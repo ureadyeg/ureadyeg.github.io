@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ureadyeg.github.io/sitemap.xml
