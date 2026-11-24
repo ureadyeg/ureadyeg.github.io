@@ -115,7 +115,7 @@ function load(){
       var cls=banned?"ban":(p.role==="mentor_pending"?"pend":"");
       var acts="";
       if(p.role==="mentor_pending")acts+='<button class="act ok" onclick="approve(\''+p.id+'\')">Approve mentor</button>';
-      if(p.role!=="admin")acts+=banned?'<button class="act ghost" onclick="unban(\''+p.id+'\')">Unban</button>':'<button class="act danger" onclick="ban(\''+p.id+'\')">Ban</button>';
+      if(p.role!=="admin"){acts+=banned?'<button class="act ghost" onclick="unban(\''+p.id+'\')">Unban</button>':'<button class="act danger" onclick="ban(\''+p.id+'\')">Ban</button>';acts+='<button class="act danger" onclick="del(\''+p.id+'\')">Delete</button>'}
       var li=p.linkedin_url?'<a href="'+p.linkedin_url.replace(/"/g,"")+'" target="_blank" rel="noopener">profile</a>':"";
       var when=p.created_at?new Date(p.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
       h+='<tr class="'+cls+'"><td><b>'+esc(p.full_name||"-")+'</b></td><td dir="ltr">'+esc(p.email)+'</td><td><span class="pill p-'+p.role+'">'+p.role.replace("_"," ")+'</span></td><td>'+(banned?'<span class="pill p-banned">banned</span>':'active')+'</td><td>'+li+'</td><td class="mut">'+when+'</td><td style="white-space:nowrap">'+acts+'</td></tr>';
@@ -128,6 +128,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;
 function approve(id){sb.from("profiles").update({role:"mentor"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Mentor approved.");load()})}
 function ban(id){if(!confirm("Ban this account? They will be signed out and suspended."))return;sb.from("profiles").update({status:"banned"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account banned.");load()})}
 function unban(id){sb.from("profiles").update({status:"active"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account reinstated.");load()})}
+function del(id){if(!confirm("Delete this account? They lose access immediately. This cannot be undone."))return;sb.from("profiles").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Account deleted.");load()})}
 function out(){sb.auth.signOut().then(function(){show("gate")})}
 
 sb.auth.getSession().then(function(r){
