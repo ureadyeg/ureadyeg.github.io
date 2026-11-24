@@ -710,7 +710,7 @@ function feed(){
  var h=feedTop();
  if(S.user&&isExp()){var ed=S.editing&&S.editing.feed;
   if(!S.cmpOpen&&!ed){h+='<div class="cmp" style="cursor:pointer" onclick="if(!S.user){openModal();return}S.cmpOpen=true;render();setTimeout(function(){var e=document.getElementById(\'pt\');if(e)e.focus()},60)"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin"><div class="cmpfake">'+t("share")+'</div></div></div></div>'}
-  else{h+='<div class="cmp"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin"><input id="pt" dir="auto" placeholder="'+t("share")+'"></div></div><div class="cmpact" style="justify-content:flex-end">'+(ed?'<button class="btn sm" onclick="S.editing=null;S.cmpOpen=false;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addPost()">'+t("savetxt")+'</button>':'<button class="btn sm" onclick="S.cmpOpen=false;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addPost()">'+t("post")+'</button>')+'</div></div>'}}
+  else{h+='<div class="cmp"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin"><input id="pt" dir="auto" placeholder="'+t("share")+'"></div></div><div id="pprev">'+(S.pimg?'<img class="gprv" src="'+S.pimg+'" alt="">':'')+'</div><div class="cmpact" style="justify-content:space-between">'+(ed?'':'<label class="cmpph">'+ICPH+'<span>'+t("photo")+'</span><input type="file" accept="image/*" style="display:none" onchange="onPImg(this)"></label>')+'<span>'+(ed?'<button class="btn sm" onclick="S.editing=null;S.cmpOpen=false;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addPost()">'+t("savetxt")+'</button>':'<button class="btn sm" onclick="S.cmpOpen=false;S.pimg=\'\';render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addPost()">'+t("post")+'</button>')+'</span></div></div>'}}
  if(!S.spec){
   h+='<h2>'+t("interest")+'</h2><p class="sub">'+t("interestsub")+'</p>';
   h+='<input id="sq" placeholder="'+t("search")+'" value="'+esc(S.q)+'" oninput="onQ(this.value)">';
@@ -820,12 +820,14 @@ function reportCm(cid,btn){if(!S.user){openModal();return}if(!sb)return;var txt=
  sb.from("reports").insert({comment_id:cid,post_text:txt,reporter:S.uid}).then(function(r){alert(r.error&&r.error.code!=="23505"?r.error.message:t("repsent"))})}
 function reportPost(id){var p=POSTREG[id];S.pmenu=null;if(!p)return;if(!S.user){openModal();return}if(!sb)return;
  sb.from("reports").insert({post_id:p.dbid||null,post_text:p.text,reporter:S.uid}).then(function(r){alert(r.error&&r.error.code!=="23505"?r.error.message:t("repsent"))})}
-function addPost(){if(!pubOK())return;if(!gateOK())return;if(!profileOK()){openProfile(true,"noteexp");return}var v=document.getElementById("pt").value.trim();if(!v)return;
+function onPImg(inp){var f=inp.files&&inp.files[0];if(!f)return;if(!/^image\//.test(f.type)){alert(t("imgonly"));inp.value="";return}
+ var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),w=im.width,h=im.height,mw=1080;if(w>mw){h=Math.round(h*mw/w);w=mw}c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);S.pimg=c.toDataURL("image/jpeg",0.8);var p=document.getElementById("pprev");if(p)p.innerHTML='<img class="gprv" src="'+S.pimg+'" alt="">'};im.src=rd.result};rd.readAsDataURL(f)}
+function addPost(){if(!pubOK())return;if(!gateOK())return;if(!profileOK()){openProfile(true,"noteexp");return}var v=document.getElementById("pt").value.trim();if(!v&&!S.pimg)return;
  if(S.editing&&S.editing.feed){var ed=S.editing;S.editing=null;S.cmpOpen=false;
   if(ed.dbid){sb.from("posts").update({text:v}).eq("id",ed.dbid).then(function(r){if(r.error)alert(r.error.message);sbPosts()})}
   else{var lp=S.posts[ed.k];if(lp)lp.t=v;render()}return}
  if(!sb)return;
- sb.from("posts").insert({author_id:S.uid,author_name:S.user,hl:myHl(),text:v,spec:(S.profile&&S.profile.spec)||S.spec||"General",community:null}).then(function(r){if(r.error){if(r.error.code==="42501"||(r.error.status&&r.error.status===401)){try{sb.auth.signOut()}catch(e){}S.uid=null;S.user=null;S.email=null;S.role=null;S.roleDb=null;S.profile=null;openModal();return}alert(r.error.message);return}S.cmpOpen=false;sbPosts()})}
+ var pim=S.pimg||"";sb.from("posts").insert({author_id:S.uid,author_name:S.user,hl:myHl(),text:v,spec:(S.profile&&S.profile.spec)||S.spec||"General",community:null,img:pim}).then(function(r){if(r.error){if(r.error.code==="42501"||(r.error.status&&r.error.status===401)){try{sb.auth.signOut()}catch(e){}S.uid=null;S.user=null;S.email=null;S.role=null;S.roleDb=null;S.profile=null;openModal();return}alert(r.error.message);return}S.cmpOpen=false;S.pimg="";sbPosts()})}
 var SUBS={mentor:[["1-to-1 Mentorship","إرشاد واحد لواحد"],["Feedback","الملاحظات"],["Explore a Field","اكتشف المجال"]],work:[["Workshops","ورش العمل"],["Challenges","التحديات"],["Companies' Workshops & Challenges","ورش وتحديات الشركات"]]};
 var SORD={mentor:[0,1,2],work:[0,1,2]};
 var CREATE={mentor:["mkmentor","mkfeed","mklearn"],work:["mkworkshop","mkchallenge","mkchallenge"]};
@@ -1022,9 +1024,16 @@ function bkCard(i,b,isCh,key){var v=SV[i],pay=(S.pay||{})[v.id]||{},st=b.status,
   if(isCh){h+='<h3>'+t("steps")+'</h3><div class="card">'+stepsHtml(i)+'</div>';
    h+='<div class="card"><div class="line" style="font-weight:700">'+t("workin")+'</div>'+(b.work_link?'<div class="line" style="margin:6px 0">'+lnk(b.work_link)+'</div>':'<div class="line">'+t("nowork")+'</div>')+ '<div class="note" style="margin:8px 0">'+t("subnote")+'</div><label class="fl">'+t("yourwork")+'</label><input id="wl'+b.id+'" dir="ltr" placeholder="https://" value="'+esc(b.work_link||"")+'"><button class="btn fill sm" onclick="bkSubmit(\''+b.id+'\')">'+t("sendwork")+'</button></div>'}
   else if(fb){h+='<div class="card"><div class="line" style="font-weight:700">'+t("workin")+'</div><div class="line" style="margin-top:6px">'+lnk(b.work_link)+'</div></div>'}
-  else{var ml=pv.meet_link||b.meet_link;if(ml)h+='<div class="card"><div class="line" style="font-weight:700">'+t("sesslink")+'</div><div style="margin-top:6px">'+lnk(ml)+'</div></div>';else h+='<div class="card"><div class="line">'+t("linkwait")+'</div></div>'}
+  else{var ml=pv.meet_link||b.meet_link;if(ml)h+='<div class="card"><div class="line" style="font-weight:700">'+t("sesslink")+'</div><div style="margin-top:6px">'+lnk(ml)+'</div></div>';else h+='<div class="card"><div class="line">'+t("linkwait")+'</div></div>';h+=attLearner(b)}
   if(isCh||fb){h+='<div class="card"><div class="line" style="font-weight:700">'+t("mfeed")+'</div>'+((b.reply_text||b.reply_link)?((b.score!=null?'<div style="margin-top:8px;font-weight:800;font-size:20px">'+b.score+' / 10</div>':'')+(b.reply_text?'<div style="margin-top:8px;line-height:1.6;white-space:pre-wrap">'+esc(b.reply_text)+'</div>':'')+(b.reply_link?'<div style="margin-top:8px">'+lnk(b.reply_link)+'</div>':'')):'<div class="line" style="margin-top:6px">'+t("waitfb")+'</div>')+'</div>'}}
  return h}
+Object.assign(T,{attq:["Did the session happen?","الجلسة حصلت؟"],attyes:["Yes, it happened","أيوه حصلت"],attno:["No, it did not happen","لأ محصلتش"],attdone:["You confirmed the session happened.","أكدت إن الجلسة حصلت."],attissue:["You reported that the session did not happen. The UReady team can see this.","بلغت إن الجلسة محصلتش. فريق UReady شايف ده."],attissueq:["What happened? (optional)","إيه اللي حصل؟ (اختياري)"],mheld:["Mark session as held","سجل إن الجلسة اتعملت"],mhelddone:["You marked this session as held.","سجلت إن الجلسة اتعملت."],lheld:["The mentor marked the session as held.","المرشد سجل إن الجلسة اتعملت."],postimg:["Photo","صورة"]});
+function attLearner(b){var h='';if(b.attended_mentor_at)h+='<div class="note" style="margin:10px 0">'+t("lheld")+'</div>';
+ if(b.issue_at)return h+'<div class="note" style="margin:10px 0">'+t("attissue")+'</div>';
+ if(b.attended_user_at)return h+'<div class="note" style="margin:10px 0">'+t("attdone")+'</div>';
+ return h+'<div class="card"><div class="line" style="font-weight:700">'+t("attq")+'</div><div class="row" style="margin-top:10px"><button class="btn fill sm" style="flex:1" onclick="bkAct(\''+b.id+'\',\'attended\')">'+t("attyes")+'</button><button class="btn sm dng" style="flex:1" onclick="bkNotHeld(\''+b.id+'\')">'+t("attno")+'</button></div></div>'}
+function bkNotHeld(id){var n=prompt(t("attissueq"),"");if(n===null)return;bkAct(id,"not_held",n)}
+function attMentor(b){if(b.attended_mentor_at)return '<div class="note" style="margin:12px 0 4px">'+t("mhelddone")+'</div>';return '<button class="btn fill sm" style="margin-top:12px" onclick="bkAct(\''+b.id+'\',\'held\')">'+t("mheld")+'</button>'}
 function myReqs(){var ids={};SV.forEach(function(v){if(mine(v))ids[v.id]=v});return (S.allbk||[]).filter(function(b){return ids[b.service_id]}).map(function(b){return {b:b,v:ids[b.service_id]}})}
 function pendingReqs(){return myReqs().filter(function(x){return x.b.status==="requested"||x.b.status==="paid"||needsRev(x.b,x.v)}).length}
 function needsRev(b,v){return b.status==="confirmed"&&v[0]==="work"&&v[1]>0&&!!b.work_link&&b.score==null&&!b.reply_text&&!b.reply_link}
@@ -1045,7 +1054,8 @@ function reqsHtml(h){var L2=myReqs();
   if(st==="confirmed"){var fb=(v[0]==="mentor"&&v[1]===1);
    if(isCh||fb){if(b.reply_text||b.reply_link)h+='<div class="note" style="margin:12px 0 4px"><b>'+t("mfeed")+':</b> '+(b.score!=null?b.score+'/10 · ':'')+esc(b.reply_text||"")+(b.reply_link?'<br>'+lnk(b.reply_link):'')+'</div>';
     if(fb||b.work_link)h+=(isCh?'<label class="fl">'+t("score10")+' *</label><select id="rs'+b.id+'"><option value="">'+t("scorep")+'</option>'+[10,9,8,7,6,5,4,3,2,1,0].map(function(k){return '<option value="'+k+'"'+(b.score===k?' selected':'')+'>'+k+' / 10</option>'}).join("")+'</select>':'')+'<label class="fl">'+t("fbtext")+'</label><textarea id="rt'+b.id+'" rows="3">'+esc(b.reply_text||"")+'</textarea><label class="fl">'+t("fblk")+'</label><input id="rk'+b.id+'" dir="ltr" placeholder="https://" value="'+esc(b.reply_link||"")+'"><button class="btn fill sm" onclick="bkReply(\''+b.id+'\')">'+t("sendfb")+'</button>';
-    else h+='<div class="note" style="margin:12px 0 4px">'+t("nowork")+'</div>'}}
+    else h+='<div class="note" style="margin:12px 0 4px">'+t("nowork")+'</div>'}
+   else h+=attMentor(b)}
   h+='</div>'});
  return h}
 function myBkPage(){var h=backBtn()+'<h2>'+t("mybk")+'</h2><p class="sub"></p>',n=0;
