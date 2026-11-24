@@ -177,7 +177,7 @@ label.fl{display:block;font-size:13px;font-weight:700;margin:2px 0 6px}
 .svbtn.on svg{fill:currentColor}
 .acts button.sv.on svg,.acts button.lk.on svg{fill:currentColor}
 .mini svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px}
-.seg.s3 button{font-size:13.5px;padding:10px 6px}
+.seg.s3{overflow-x:visible}.seg.s3 button{font-size:13.5px;padding:10px 6px;white-space:normal;flex:1 1 0;min-width:0}.seg.s3 button:last-child{flex:1.6 1 0}
 .csheet{background:var(--bg);width:100%;max-width:560px;height:82%;border-radius:16px 16px 0 0;display:flex;flex-direction:column;animation:up .3s ease}
 .csh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--bd);font-weight:800;font-size:16px}
 .cslist{flex:1;overflow-y:auto;padding:16px 18px}
@@ -753,7 +753,7 @@ var GD=[["Feedback","الملاحظات","Book an expert to review your CV, Link
 ["1-to-1 Mentorship","إرشاد واحد لواحد","A one-to-one session with a mentor on a specific topic. The mentor sets the specialty they are strong in. When you book, you write the topic or points you want to discuss so the mentor can prepare.","جلسة واحد لواحد مع مرشد في موضوع معين. المرشد هو اللي بيحدد التخصص اللي هو شاطر فيه. وقت الحجز بتكتب الموضوع أو النقط اللي عايز تتكلم فيها علشان المرشد يجهز."],
 ["Learn from","اتعلّم من","Ask someone with real experience about their field, such as HR or freelancing. Learn what the field is, what people do in it, how to grow, which courses to take, the best companies and the skills you need.","اسأل حد عنده خبرة حقيقية عن مجاله، زي الموارد البشرية أو الفريلانس. هتعرف المجال ده إيه، وبيشتغلوا فيه إيه، وإزاي تتطور، وتاخد كورسات إيه، وأحسن الشركات فيه، والمهارات اللي المفروض تبقى عندك."],
 ["Workshops","ورش العمل","A small group of 3 to 6 people learns something the mentor chooses, for example building a brand from scratch. It can be one session of a few hours or several sessions, as the mentor decides.","مجموعة صغيرة من 3 لـ 6 أشخاص بيتعلموا حاجة المرشد بيحددها، زي إنك تبني براند من الصفر. ممكن تبقى جلسة واحدة كام ساعة، أو كذا جلسة، على حسب المرشد."],
-["Companies challenges","تحديات الشركات","Companies post real challenges or projects. You join and complete them. It helps young people develop and learn new skills from real work.","الشركات بتعرض تحديات أو مشاريع حقيقية، وإنت بتشترك فيها وتنفذها. ودي بتساعد الشباب يتطوروا ويتعلموا مهارات جديدة من شغل حقيقي."],
+["Company Workshops & Challenges","ورش وتحديات الشركات","Companies post real challenges or projects. You join and complete them. It helps young people develop and learn new skills from real work.","الشركات بتعرض تحديات أو مشاريع حقيقية، وإنت بتشترك فيها وتنفذها. ودي بتساعد الشباب يتطوروا ويتعلموا مهارات جديدة من شغل حقيقي."],
 ["Challenges","التحديات","A mentor publishes a task, for example create your own product. Anyone can join. After you join, you get the steps and what you need to prepare, such as a product name and colors. You do it, get a first round of feedback, improve, then get a second round.","المرشد بيحط مهمة، زي إنك تعمل منتج بنفسك، وأي حد يقدر يشترك. بعد ما تشترك بتلاقي الخطوات والحاجات اللي لازم تجهزها، زي اسم المنتج والألوان. بتنفذ المهمة وتاخد ملاحظات أولى، وبعد ما تعدّل بتاخد ملاحظات تانية."],
 ["Events","الفعاليات","Join online events or in-person events hosted by experts.","اشترك في فعاليات أونلاين أو حضورية بيقدمها الخبراء."]];
 function openGuide(){S.page="guide";S.menu=false;S.view=null;S.adding=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
@@ -813,8 +813,8 @@ function addPost(){if(!pubOK())return;if(!profileOK()){openProfile(true,"noteexp
   else{var lp=S.posts[ed.k];if(lp)lp.t=v;render()}return}
  if(!sb)return;
  sb.from("posts").insert({author_id:S.uid,author_name:S.user,hl:myHl(),text:v,spec:(S.profile&&S.profile.spec)||S.spec||"General",community:null}).then(function(r){if(r.error){if(r.error.code==="42501"||(r.error.status&&r.error.status===401)){try{sb.auth.signOut()}catch(e){}S.uid=null;S.user=null;S.email=null;S.role=null;S.roleDb=null;S.profile=null;openModal();return}alert(r.error.message);return}S.cmpOpen=false;sbPosts()})}
-var SUBS={mentor:[["1-to-1 Mentorship","إرشاد واحد لواحد"],["Feedback","الملاحظات"],["Learn from","اتعلّم من"]],work:[["Workshops","ورش العمل"],["Challenges","التحديات"],["Companies challenges","تحديات الشركات"]]};
-var SORD={mentor:[0,1,2],work:[0,2,1]};
+var SUBS={mentor:[["1-to-1 Mentorship","إرشاد واحد لواحد"],["Feedback","الملاحظات"],["Learn from","اتعلّم من"]],work:[["Workshops","ورش العمل"],["Challenges","التحديات"],["Company Workshops & Challenges","ورش وتحديات الشركات"]]};
+var SORD={mentor:[0,1,2],work:[0,1,2]};
 var CREATE={mentor:["mkmentor","mkfeed","mklearn"],work:["mkworkshop","mkchallenge","mkchallenge"]};
 var SV=[
 ["mentor",0,0,"Break into brand management","ادخل مجال إدارة البراندات","Six weekly sessions on building a brand career.","ست جلسات أسبوعية تبني بيها مسارك في البراندات.","We will map your strengths to brand roles, review your CV, and practice case interviews. You leave with a clear plan for your first FMCG role.","هنربط نقط قوتك بوظايف البراندات، وهنراجع السي في بتاعك، وهنتدرب على مقابلات الحالات. وتخرج بخطة واضحة لأول وظيفة ليك في السلع الاستهلاكية.",4.9,32],
