@@ -774,7 +774,7 @@ function pubCont(tab,p,w){function kv(k,v){return '<div class="kv"><span>'+k+'</
  var h="";
  if(tab==="ov"&&p.kind==="company"){var ci=p.cinfo||{},ll=ai()?"_ar":"_en",lk=function(u){return u?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer" dir="ltr">'+esc(u.replace(/^https?:\/\//,"").replace(/\/$/,""))+'</a>':""};
   h+=(p.about?'<h3 style="margin-top:6px">'+t("about")+'</h3><div class="card"><div dir="auto" style="white-space:pre-wrap;word-break:break-word">'+esc(p.about)+'</div></div>':'');
-  h+='<h3>'+t("cdet")+'</h3><div class="card">'+kv(t("cind"),ci["industry"+ll])+kv(t("ccountry"),ci.country?ct(ci.country):"")+kv(t("ccity"),ci["city"+ll])+kv(t("cfound"),ci.founded)+kv(t("csize"),ci.size)+kv(t("coffers"),ci["offers"+ll])+'</div>';
+  h+='<h3>'+esc(p.company||p.full_name||"")+'</h3><div class="card">'+kv(t("cind"),ci["industry"+ll])+kv(t("ccountry"),ci.country?ct(ci.country):"")+kv(t("ccity"),ci["city"+ll])+kv(t("cfound"),ci.founded)+'</div>';
   h+='<h3>'+t("links")+'</h3><div class="card"><div class="kv"><span>'+t("cweb")+'</span><span>'+lk(ci.website)+'</span></div>'+(ci.instagram?'<div class="kv"><span>'+t("cig")+'</span><span>'+lk(ci.instagram)+'</span></div>':'')+(ci.email?'<div class="kv"><span>'+t("cmail")+'</span><span dir="ltr">'+esc(ci.email)+'</span></div>':'')+'</div>';
   return h}
  if(tab==="ov"){var cur=p.title?[{title:p.title,company:p.freelancer?t("freelancer"):(p.company||""),fromm:p.jobfromm||"",from:(p.jobfrom||""),tom:p.jobtom||"",to:(p.jobto||""),cur:(p.jobcur==null?true:p.jobcur)}]:[];var exps=cur.concat(Array.isArray(p.exps)?p.exps:[]);
