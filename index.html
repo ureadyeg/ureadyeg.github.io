@@ -96,6 +96,8 @@ input::placeholder,textarea::placeholder{color:#8b94a8}
 .sheet button{display:block;width:100%;text-align:start;background:none;border:0;border-bottom:1px solid var(--bd);padding:18px 2px;font-size:16px;font-weight:600;color:var(--navy);cursor:pointer}
 select{width:100%;border:1px solid var(--ln);background:var(--card);color:var(--navy);border-radius:10px;padding:13px 14px;font-size:15.5px;font-family:inherit;margin-bottom:12px}
 label.fl{display:block;font-size:13px;font-weight:700;margin:2px 0 6px}
+.agree{display:flex;align-items:flex-start;gap:8px;font-size:14px;margin:4px 0 12px;cursor:pointer;font-weight:400;line-height:1.5}
+.agree input{width:auto!important;margin:3px 0 0;padding:0;border:0}
 .plus{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
 .pname{font-size:21px;font-weight:800;margin:0 0 4px}
 .line{color:var(--mut);font-size:14px;line-height:1.5;margin:2px 0}
@@ -461,12 +463,12 @@ function mentorCompletePage(){var h='<h2>'+t("mctitle")+'</h2><p class="sub">'+t
 '<div id="mc_cow"><label class="fl">'+t("company")+'</label><input id="mc_fc"></div>'+
 '<label class="fl">'+t("age")+'</label><input id="mc_ag" type="number" min="10" max="99" dir="ltr">'+
 '<label class="fl">'+t("country")+'</label><select id="mc_cn" onchange="document.getElementById(\'mc_cno\').style.display=(this.value===\'other\'?\'block\':\'none\')"><option value="">'+t("selcountry")+'</option>'+cOpts(null,false)+'</select><input id="mc_cno" style="display:none" placeholder="'+t("typecountry")+'">'+
-'<label style="display:flex;align-items:flex-start;gap:8px;font-size:14px;margin:4px 0 12px;cursor:pointer"><input id="mc_tc" type="checkbox" style="margin-top:3px"><span>'+t("agree")+'</span></label>'+
+'<label class="agree"><input id="mc_tc" type="checkbox"><span>'+t("agree")+'</span></label>'+
 '<button class="btn fill" onclick="saveMentor()">'+t("cont")+'</button><div id="mc_ok" style="margin-top:12px"></div></div>';return h}
 function completePage(){var h='<h2>'+t("ctitle")+'</h2><p class="sub">'+t("csub")+'</p><div class="card">'+
 '<label class="fl">'+t("age")+'</label><input id="cp_ag" type="number" min="10" max="99" dir="ltr">'+
 '<label class="fl">'+t("country")+'</label><select id="cp_cn" onchange="document.getElementById(\'cp_cno\').style.display=(this.value===\'other\'?\'block\':\'none\')"><option value="">'+t("selcountry")+'</option>'+cOpts(null,false)+'</select><input id="cp_cno" style="display:none" placeholder="'+t("typecountry")+'">'+
-'<label style="display:flex;align-items:flex-start;gap:8px;font-size:14px;margin:4px 0 12px;cursor:pointer"><input id="cp_tc" type="checkbox" style="margin-top:3px"><span>'+t("agree")+'</span></label>'+
+'<label class="agree"><input id="cp_tc" type="checkbox"><span>'+t("agree")+'</span></label>'+
 '<button class="btn fill" onclick="saveCommon()">'+t("cont")+'</button><div id="cp_ok" style="margin-top:12px"></div></div>';return h}
 function saveCommon(){var ok=document.getElementById("cp_ok");function bad(el){el.focus();el.style.borderColor="#b00020"}
 var ag=document.getElementById("cp_ag"),a=parseInt(ag.value,10);if(!(a>=10&&a<=99)){bad(ag);return}
@@ -911,7 +913,7 @@ function modal(){
  '<div class="or">'+t("or")+'</div>'+
  '<label class="fl">'+t("fullname")+'</label><input id="nm" value="'+esc(S.fn||"")+'">'+
  '<label class="fl">'+t("email")+'</label><input id="em" dir="ltr" type="email" value="'+esc(S.fe||"")+'">'+
- '<label style="display:flex;align-items:flex-start;gap:8px;font-size:14px;margin:10px 0;cursor:pointer"><input id="tc" type="checkbox" style="margin-top:3px"><span>'+t("agree")+'</span></label>'+
+ '<label class="agree"><input id="tc" type="checkbox"><span>'+t("agree")+'</span></label>'+
  '<button class="btn fill" style="margin-top:4px" onclick="keep();doLogin()">'+t("cont")+'</button><div id="jok" style="margin-top:12px"></div>'+
  '</div></div>';
 }
