@@ -888,18 +888,34 @@ function profileForm(){var d=S.draft,toth=d.tOther||(d.title&&JOBS.indexOf(d.tit
  if(isExp())h+='<label class="fl">'+t("spec")+'</label><select id="ps" onchange="specChange(this.value)">'+SPECS.map(function(x){return '<option value="'+x+'"'+(!oth&&d.spec===x?' selected':'')+'>'+esc(sp(x))+'</option>'}).join("")+'<option value="other"'+(oth?' selected':'')+'>'+t("oth")+'</option></select>'+'<input id="pso" style="display:'+(oth?'block':'none')+'" placeholder="'+t("typespec")+'" value="'+esc(d.spec||"")+'">'+'<label class="fl">'+t("linkedin")+' *</label><input id="pl" dir="ltr" value="'+esc(d.linkedin||"")+'">';
  h+='<h3>'+t("prevexp")+'</h3><div id="exlist">'+expsForm()+'</div><button class="btn sm" style="margin-bottom:18px" onclick="addExp()">+ '+t("addexp")+'</button>';
  return h+'<button class="btn fill" onclick="saveProfile()">'+t("saveprofile")+'</button>'}
-function profileView(){var p=S.profile||{},w=isExp()||p.working,l=ai();
+function profileView(){var p=S.profile||{},w=isExp()||p.working,tab=S.prtab||"ov";
  var head=w&&p.title?esc(jt(p.title))+(p.freelancer?" · "+t("freelancer"):(p.company?" "+t("at")+" "+esc(p.company):"")):t(p.status==="student"?"student":"graduate");
  var edu=[p.uni,p.major].filter(Boolean).map(esc).join(" · ");
- var h='<div class="card" style="text-align:center;padding:26px 18px">'+avBox(null,S.user,"lg",'style="margin:0 auto 12px;width:76px;height:76px;font-size:28px"')+'<div class="pname">'+esc(S.user)+'</div><div class="line" style="font-weight:700;color:var(--navy)">'+head+'</div>'+(edu?'<div class="line">'+edu+'</div>':'')+'<div style="margin-top:10px"><span class="tag" style="margin:0">'+t(isExp()?"expert":"learner")+'</span><span class="tag">'+t(p.status==="student"?"student":"graduate")+'</span>'+(w&&p.years!==""&&p.years!=null?'<span class="tag">'+esc(p.years)+' '+t("yrs")+'</span>':'')+'</div><div style="margin-top:16px"><button class="btn sm" onclick="openProfile(true)">'+t("editp")+'</button></div></div>';
+ var h='<div class="card" style="text-align:center;padding:24px 18px">'+avBox(null,S.user,"lg",'style="margin:0 auto 12px;width:76px;height:76px;font-size:28px"')+'<div class="pname">'+esc(S.user)+'</div><div class="line" dir="auto" style="font-weight:700;color:var(--navy)">'+head+'</div>'+(edu?'<div class="line" dir="auto">'+edu+'</div>':'')+(w&&p.years!==""&&p.years!=null&&p.spec?'<div class="line" dir="auto">'+esc(String(p.years))+' '+t("yrs")+' '+t("inw")+' '+esc(sp(p.spec))+'</div>':'')+'<div style="margin-top:12px"><span class="tag" style="margin:0">'+t(isExp()?"expert":"learner")+'</span><span class="tag">'+t(p.status==="student"?"student":"graduate")+'</span></div><div style="margin-top:16px"><button class="fbtn" onclick="openProfile(true)">'+t("editp")+'</button></div></div>';
  if(!profileOK())h+='<div class="note">'+t("incomplete")+' '+t(isExp()?"noteexp":"notel")+'</div>';
- function kv(k,v){return '<div class="kv"><span>'+k+'</span><span>'+(v?esc(v):t("notset"))+'</span></div>'}
- h+='<h3 style="margin-top:8px">'+t("experience")+'</h3><div class="card">'+(w?kv(t("jtitle"),jt(p.title))+kv(t("company"),p.freelancer?t("freelancer"):p.company)+kv(t("years"),p.years===""||p.years==null?"":p.years+" "+T.yrs[l]):kv(t("experience"),"")) +'</div>';
- if(p.exps&&p.exps.length)h+='<h3>'+t("prevexp")+'</h3>'+expList(p.exps);
- h+='<h3>'+t("education")+'</h3><div class="card">'+kv(t("uni"),p.uni)+kv(t("major"),p.major)+kv(t("statusq"),t(p.status==="student"?"student":"graduate"))+'</div>';
- h+='<h3>'+t("personal")+'</h3><div class="card">'+kv(t("age"),p.age)+kv(t("country"),p.country?ct(p.country):"")+'</div>';
- if(isExp())h+='<h3>'+t("spec")+'</h3><div class="card">'+kv(t("spec"),p.spec?sp(p.spec):"")+(p.linkedin?'<div class="kv"><span>LinkedIn</span><span dir="ltr"><a href="'+esc(p.linkedin)+'" target="_blank" rel="noopener" style="color:var(--navy)">'+esc(p.linkedin.replace(/^https?:\/\/(www\.)?/,""))+'</a></span></div>':'')+'</div>';
- if(S.posts&&S.posts.length){h+='<h3>'+t("posts")+'</h3>';S.posts.forEach(function(q,k){h+=postHtml({own:true,id:"o"+k,name:q.by,hl:q.hl||"",text:q.t,tags:"",likes:0,cm:0,time:t("now"),cmt:null})})}
+ h+='<div class="seg" style="margin:16px 0 14px">'+[["ov","overview"],["po","posts"],["sv","svcs"],["rv","revs"]].map(function(x){return '<button class="'+(tab===x[0]?'on':'')+'" onclick="S.prtab=\''+x[0]+'\';render()">'+t(x[1])+'</button>'}).join("")+'</div>';
+ return h+profCont(tab,p,w)}
+function profCont(tab,p,w){function kv(k,v){return '<div class="kv"><span>'+k+'</span><span dir="auto">'+(v?esc(v):t("notset"))+'</span></div>'}
+ var h="";
+ if(tab==="ov"){
+  var cur=w&&p.title?[{title:jt(p.title),company:p.freelancer?t("freelancer"):(p.company||""),from:"",to:""}]:[];
+  var exps=cur.concat(p.exps||[]);
+  h+='<h3 style="margin-top:6px">'+t("experience")+'</h3>'+(exps.length?expList(exps):'<div class="card"><div class="empty" style="padding:14px">'+t("notset")+'</div></div>');
+  h+='<h3>'+t("education")+'</h3><div class="card">'+kv(t("uni"),p.uni)+kv(t("major"),p.major)+kv(t("statusq"),t(p.status==="student"?"student":"graduate"))+'</div>';
+  h+='<h3>'+t("personal")+'</h3><div class="card">'+kv(t("age"),p.age)+kv(t("country"),p.country?ct(p.country):"")+'</div>';
+  if(isExp())h+='<h3>'+t("spec")+'</h3><div class="card">'+kv(t("spec"),p.spec?sp(p.spec):"")+(p.linkedin?'<div class="kv"><span>LinkedIn</span><span dir="ltr"><a href="'+esc(p.linkedin)+'" target="_blank" rel="noopener" style="color:var(--navy)">'+esc(p.linkedin.replace(/^https?:\/\/(www\.)?/,""))+'</a></span></div>':'')+'</div>';
+ }else if(tab==="po"){
+  var mine=(S.dbposts||[]).filter(function(q){return S.uid&&q.author_id===S.uid});
+  if(!mine.length&&!(S.posts&&S.posts.length))h+='<div class="card"><div class="empty" style="padding:14px">'+t("noposts")+'</div></div>';
+  mine.forEach(function(q){h+=postHtml(dbPost(q))});
+  (S.posts||[]).forEach(function(q,k){h+=postHtml({own:true,id:"o"+k,k:k,comm:null,name:q.by,hl:q.hl||"",text:q.t,tags:"",likes:0,cm:0,time:t("now"),cmt:null})});
+ }else if(tab==="sv"){
+  var mine2=SV.map(function(v,k){return {v:v,k:k}}).filter(function(x){return x.v[11]&&x.v[11][0]===S.user});
+  if(!mine2.length)h+='<div class="card"><div class="empty" style="padding:14px">'+t("svcnone")+'</div></div>';
+  else mine2.forEach(function(x){h+='<div class="card" style="margin-bottom:10px"><b>'+esc(x.v[3])+'</b><div class="line">'+esc(x.v[5]||"")+'</div></div>'});
+ }else if(tab==="rv"){
+  h+='<div class="card"><div class="empty" style="padding:14px">'+t("norev")+'</div></div>';
+ }
  return h}
 function book(i){if(!S.user){openModal();return}if(isExp()||S.role==="admin")return;if(!profileOK()){openProfile(true,"notel");return}var v=SV[i],key=v[0]+v[1];
  if(!(v[0]==="work"&&v[1]>0)&&(S.slotFor!==i||!S.slot))return;
