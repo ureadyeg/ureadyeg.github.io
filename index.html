@@ -218,17 +218,7 @@ html[dir="rtl"] .back svg{transform:scaleX(-1)}
 <script>
 var SPECS=["Marketing","Trade Marketing","Business Development","Supply Chain","Sales","Finance","Banking","Data Analytics","HR","Technology","Design","Operations"];
 var SPEC_AR={"Marketing":"التسويق","Trade Marketing":"تسويق المبيعات (Trade Marketing)","Business Development":"تطوير الأعمال","Supply Chain":"سلاسل الإمداد","Sales":"المبيعات","Finance":"المالية","Banking":"الخدمات المصرفية","Data Analytics":"تحليل البيانات","HR":"الموارد البشرية","Technology":"التكنولوجيا","Design":"التصميم","Operations":"العمليات"};
-var PEOPLE=[
-["Nour Hassan","Senior Brand Manager, FMCG","Marketing","نور حسن","مديرة علامة تجارية أولى، سلع استهلاكية"],
-["Karim Adel","Head of Trade Marketing, Multinational","Trade Marketing","كريم عادل","رئيس تسويق المبيعات، شركة متعددة الجنسيات"],
-["Mariam Samir","Business Development Lead","Business Development","مريم سمير","قائدة تطوير الأعمال"],
-["Omar Fathy","Supply Chain Planning Manager","Supply Chain","عمر فتحي","مدير تخطيط سلاسل الإمداد"],
-["Salma Youssef","Regional Sales Manager","Sales","سلمى يوسف","مديرة مبيعات إقليمية"],
-["Youssef Nabil","Corporate Banking Associate Director","Banking","يوسف نبيل","مدير مساعد، الخدمات المصرفية للشركات"],
-["Hana Mostafa","Finance Business Partner","Finance","هنا مصطفى","شريك أعمال مالي"],
-["Ahmed Tarek","Senior Data Analyst","Data Analytics","أحمد طارق","محلل بيانات أول"],
-["Laila Ibrahim","Talent Acquisition Manager","HR","ليلى إبراهيم","مديرة استقطاب المواهب"],
-["Mina Georgy","Product Designer","Design","مينا جورجي","مصمم منتجات"]];
+var PEOPLE=[];
 var T={
 feed:["Feed","الفيد"],mentor:["Mentorship & Feedback","الإرشاد والملاحظات"],work:["Workshops & Challenges","ورش العمل والتحديات"],events:["Events","الفعاليات"],
 signin:["Sign in","تسجيل الدخول"],join:["Join UReady","انضم لـ UReady"],
@@ -367,10 +357,10 @@ function onPhoto(inp){var f=inp.files&&inp.files[0];if(!f)return;if(!/^image\//.
  var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),z=256,w=im.width,h=im.height,m=Math.min(w,h);c.width=c.height=z;c.getContext("2d").drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,z,z);S.photo=c.toDataURL("image/jpeg",0.85);if(S.draft)keepP();render()};im.src=rd.result};rd.readAsDataURL(f)}
 function feedPosts(){var out=[],l=ai();
  S.posts.forEach(function(p,k){if(S.spec&&p.spec!==S.spec)return;out.push({own:true,id:"o"+k,name:p.by,hl:p.hl||"",text:p.t,tags:"",likes:0,cm:0,time:t("now"),cmt:null})});
- POSTX.forEach(function(x,i){var pp=PEOPLE[i];if(S.spec&&pp[2]!==S.spec)return;var d=PD[i],cp=PEOPLE[(i+3)%10],cd=PD[(i+3)%10];
+ POSTX.forEach(function(x,i){var pp=PEOPLE[i];if(!pp)return;if(S.spec&&pp[2]!==S.spec)return;var d=PD[i],cp=PEOPLE[(i+3)%10],cd=PD[(i+3)%10];
   out.push({own:false,idx:i,id:"s"+i,key:pp[0],name:l?pp[3]:pp[0],hl:d[6+l]+" "+t("at")+" "+d[4+l],text:x[l],tags:x[2],img:(POSTIMG[i]!=null?SIMG[POSTIMG[i]]:""),likes:x[3],cm:x[4],time:x[5+l],cmt:{idx:(i+3)%10,name:l?cp[3]:cp[0],hl:cd[6+l]+" "+t("at")+" "+cd[4+l],text:CMT[l]}})});
  var fq=(S.fq||"").trim().toLowerCase();
- if(fq)out=out.filter(function(p){var hay=(p.name+" "+p.hl+" "+p.text+" "+(p.idx!=null?PEOPLE[p.idx][2]+" "+sp(PEOPLE[p.idx][2]):"")).toLowerCase();return hay.indexOf(fq)>-1});
+ if(fq)out=out.filter(function(p){var hay=(p.name+" "+p.hl+" "+p.text+" "+(p.idx!=null&&PEOPLE[p.idx]?PEOPLE[p.idx][2]+" "+sp(PEOPLE[p.idx][2]):"")).toLowerCase();return hay.indexOf(fq)>-1});
  return out}
 function postHtml(p){var fl=!p.own&&S.follows&&S.follows[p.key],liked=S.likes&&S.likes[p.id],lk=p.likes+(liked?1:0),copen=S.cOpen&&S.cOpen[p.id],cl=(S.comments&&S.comments[p.id])||[];
  POSTREG[p.id]=p;var sv=S.savedP&&S.savedP[p.id],oc=p.own?'openProfile(false)':'openPerson('+p.idx+')',h='<div class="lp"><div class="lph">'+avBox(p.idx,p.name,"",'onclick="'+oc+'" style="cursor:pointer"')+'<div class="lpi"><div class="lpn" onclick="'+oc+'" style="cursor:pointer">'+esc(p.name)+(p.own?'':'<span class="smp">'+t("sample")+'</span>')+'</div><div class="lps">'+p.time+(p.hl?' · '+esc(p.hl):'')+'</div></div>'+(p.own?'':'<button class="lfl'+(fl?' on':'')+'" onclick="follow(\''+p.key+'\')">'+(fl?t("following"):'+ '+t("follow"))+'</button>')+'</div>';
@@ -384,7 +374,7 @@ function commentsHtml(p,cl){var h='';if(p.cmt)h+=cmtRow(p.cmt);cl.forEach(functi
 function toggleC(id){S.cOpen=S.cOpen||{};S.cOpen[id]=!S.cOpen[id];render()}
 var CMTP=[["Great point, thanks for sharing.","نقطة حلوة، شكرًا إنك شاركتها."],["This is exactly what I needed to hear today.","ده بالظبط اللي كنت محتاج أسمعه النهارده."],["Could you share more about how you started?","ممكن تحكي أكتر إزاي بدأت؟"],["Saving this for later.","هحفظه وأرجعله بعدين."],["Agree 100%. This changed how I work.","متفق معاك 100%. ده غيّر طريقة شغلي."],["Very helpful, especially for fresh graduates.","مفيد جدًا، خصوصًا للخريجين الجداد."],["Would love to join a session on this.","نفسي أحضر جلسة عن الموضوع ده."],["Well said!","كلام جميل!"]];
 var CMTT=["2h","5h","1d","2d","3d","4d","5d","1w"],CMTTA=["من ساعتين","من 5 ساعات","من يوم","من يومين","من 3 أيام","من 4 أيام","من 5 أيام","من أسبوع"];
-function genCms(p){var out=[],l=ai(),n=p.cm||0,base=p.idx!=null?p.idx:0;
+function genCms(p){var out=[],l=ai(),n=p.cm||0,base=p.idx!=null?p.idx:0;if(!PEOPLE.length)return out;
  for(var k=0;k<n;k++){var pi=(base+k+1)%10,pp=PEOPLE[pi],d=PD[pi];out.push({idx:pi,name:l?pp[3]:pp[0],hl:d[6+l]+" "+t("at")+" "+d[4+l],text:CMTP[(base+k)%CMTP.length][l],time:(l?CMTTA:CMTT)[k%8],lk:(((base+2)*(k+3)*7)%11)%9,k:k})}
  return out}
 function topCm(p){var all=[];genCms(p).forEach(function(c){all.push({c:c,key:p.id+"_"+c.k})});((S.comments&&S.comments[p.id])||[]).forEach(function(c,k){all.push({c:c,key:p.id+"_u"+k})});
@@ -487,7 +477,7 @@ function interestPage(){var q=(S.q||"").trim().toLowerCase(),list=matches(q);if(
  return backBtn()+'<h2>'+t("interest")+'</h2><p class="sub">'+t("interestsub")+'</p><input id="sq" placeholder="'+t("search")+'" value="'+esc(S.q||"")+'" oninput="onQ(this.value)"><div id="chipbox">'+chipBox(list,q,true)+'</div>'}
 function setSpec(s){if(S.page==="interest"){S.spec=s;S.q="";S.page=null;S.tab="feed";S.fv="feed";S.grp=null;render();return}S.spec=(S.spec===s)?null:s;render()}
 function follow(k){if(!S.user){openModal();return}S.follows=S.follows||{};S.follows[k]=!S.follows[k];S.notifs=S.notifs||[];
- if(S.follows[k]){var idx=PEOPLE.findIndex(function(p){return p[0]===k}),si=SV.findIndex(function(v){return v[2]===idx});S.nid=(S.nid||0)+2;
+ if(S.follows[k]){var idx=PEOPLE.findIndex(function(p){return p[0]===k});if(idx<0){render();return}var si=SV.findIndex(function(v){return v[2]===idx});S.nid=(S.nid||0)+2;
   S.notifs.unshift({id:S.nid,who:k,kind:"post",u:true});if(si>=0)S.notifs.unshift({id:S.nid-1,who:k,kind:"svc",svc:si,u:true})}
  else S.notifs=S.notifs.filter(function(n){return n.who!==k});
  render()}
@@ -495,13 +485,13 @@ var SVT={mentor0:["mentorship program","برنامج إرشاد جديد"],mento
 function unread(){return (S.notifs||[]).filter(function(n){return n.u}).length}
 function bell(){if(!S.user)return "";var c=unread();return '<button class="bell" aria-label="Notifications" onclick="openNotif()"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>'+(c?'<span class="badge">'+c+'</span>':'')+'</button>'}
 function openNotif(){S.newIds=(S.notifs||[]).filter(function(n){return n.u}).map(function(n){return n.id});(S.notifs||[]).forEach(function(n){n.u=false});S.page="notif";S.menu=false;S.view=null;S.adding=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
-function notifText(n){if(n.kind==="sys")return t("nlink");var idx=PEOPLE.findIndex(function(p){return p[0]===n.who}),p=PEOPLE[idx],nm=L==="ar"?p[3]:p[0];
+function notifText(n){if(n.kind==="sys")return t("nlink");var idx=PEOPLE.findIndex(function(p){return p[0]===n.who}),p=PEOPLE[idx];if(!p)return "";var nm=L==="ar"?p[3]:p[0];
  if(n.kind==="svc"){var v=SV[n.svc],ty=SVT[v[0]+v[1]],ti=v[3+ai()];return L==="ar"?"اتنشر "+ty[1]+" من "+nm+": "+ti:nm+" added a new "+ty[0]+": "+ti}
  return L==="ar"?"اتنشر بوست جديد من "+nm+" في "+sp(p[2]):nm+" shared a new post in "+sp(p[2])}
 function openNotifItem(id){var n=(S.notifs||[]).find(function(x){return x.id===id});if(!n)return;S.page=null;
  if(n.kind==="sys"){S.page="manage";S.mg=0}
  else if(n.kind==="svc"){var v=SV[n.svc];S.tab=v[0];S["s_"+v[0]]=v[1];S.view=n.svc}
- else{var p=PEOPLE.find(function(x){return x[0]===n.who});S.tab="feed";S.spec=p[2];S.view=null}
+ else{var p=PEOPLE.find(function(x){return x[0]===n.who});if(p){S.tab="feed";S.spec=p[2]}S.view=null}
  render();var m=document.querySelector("main");if(m)m.scrollTop=0}
 function backBtn(){return '<button class="back" onclick="S.page=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button>'}
 function notifPage(){var h=backBtn()+'<h2>'+t("notif")+'</h2><p class="sub"></p>',ns=S.notifs||[];
@@ -573,14 +563,15 @@ function cnChange(v){var o=document.getElementById("pco");if(o){o.style.display=
 function jt(x,l){if(l==null)l=ai();return l===1&&JOBS_AR[x]?JOBS_AR[x]:x}
 function ai(){return L==="ar"?1:0}
 function pick2(a,i){return a[i*2+ai()]}
-var SVP={10:[200,45],11:[250,45],12:[200,45],13:[200,45],14:[0,0],15:[0,0],16:[0,0],0:[400,60],1:[250,120],2:[200,30],3:[150,0],4:[350,60],5:[300,120],6:[250,45],7:[150,0],8:[300,60],9:[350,120]};
+SV=SV.filter(function(v){return v[2]<0});
+SVP={};SV.forEach(function(v,i){SVP[i]=[0,0]});
 function pinfo(i){var v=SV[i];if(v[15])return v[15];var d=SVP[i]||[300,60];return {price:d[0],free:d[0]===0,dur:d[1]}}
 function pfmt(i,noDur){var p=pinfo(i),a=p.free?t("freet"):(L==="ar"?p.price+" "+t("egp"):t("egp")+" "+p.price);if(p.dur&&!noDur)a+=" · "+p.dur+" "+t("minw");return a}
 function avOf(v,n,cls){if(v[16])return '<div class="av '+cls+'"><img src="'+v[16]+'" alt=""></div>';return avBox(v[2]>=0?v[2]:null,n,cls)}
 function fmtSlot(iso){var d=new Date(iso),loc=L==="ar"?"ar-EG":"en-GB";return d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"})+" · "+d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"})}
 function mine(v){return v[2]<0&&v[11]&&v[11][0]===S.user&&!v.deleted}
 function rate(v,n){if(!n)return '<span class="rate"><small>'+t("newt")+'</small></span>';return '<span class="rate">★ '+v.toFixed(1)+' <small>('+n+')</small></span>'}
-function personOf(v){return v[2]>=0?PEOPLE[v[2]]:v[11]}
+function personOf(v){return v[2]>=0?(PEOPLE[v[2]]||["Guest","","Marketing","ضيف",""]):v[11]}
 function svcCard(i){var v=SV[i],p=personOf(v),n=L==="ar"?p[3]:p[0],d=detailsOf(v);
  var l2=d.freelancer?(jt(d.title||"")+" · "+t("freelancer")):(jt(d.title||"")+(d.company?" "+t("at")+" "+d.company:""));
  return dcard({pill:pfmt(i,true),label:SUBS[v[0]][v[1]][ai()]+((v[2]>=0||v.sample)?' · '+t("sample"):''),title:esc(v[3+ai()]),av:avOf(v,n,""),save:svBtn(i),meta:[esc(n),esc(l2),rate(v[9],v[10])+(pinfo(i).dur?' · '+pinfo(i).dur+' '+t("minw"):'')],f1:'openSvc('+i+')',b1:t("learnm"),f2:'openSvc('+i+')',b2:t("bookb")})}
@@ -753,8 +744,8 @@ function sendBook(i){var v=SV[i],key=v[0]+v[1],bt=document.getElementById("bt"),
  if(bt&&!bt.value.trim()){bt.focus();bt.style.borderColor="#b00020";return}
  if(bf&&!(bf.files&&bf.files[0])){bf.focus();bf.style.outline="2px solid #b00020";return}
  S.booked=S.booked||{};S.booked[i]={slot:(v[0]==="work"&&v[1]>0)?"":S.slot,topic:bt?bt.value.trim():"",file:bf&&bf.files[0]?bf.files[0].name:"",pay:bp?bp.value:"",status:"pending"};S.bk=null;render()}
-function openPerson(i){S.page="person";S.pp=i;S.ptype=null;S.ptab="ov";S.menu=false;S.view=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
-function pdata(){var i=S.pp,p=PEOPLE[i],d=PD[i],l=ai(),groups={},order=[];
+function openPerson(i){if(!PEOPLE[i])return;S.page="person";S.pp=i;S.ptype=null;S.ptab="ov";S.menu=false;S.view=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
+function pdata(){var i=S.pp,p=PEOPLE[i];if(!p)return null;var d=PD[i],l=ai(),groups={},order=[];
  SV.forEach(function(v,k){if(v[2]!==i||v.deleted)return;var key=v[0]+v[1];if(!groups[key]){groups[key]=[];order.push(key)}groups[key].push(k)});
  function stat(key){var tot=0,cnt=0;groups[key].forEach(function(k){tot+=SV[k][9]*SV[k][10];cnt+=SV[k][10]});return {avg:cnt?tot/cnt:0,cnt:cnt}}
  var tc=0,tt=0;order.forEach(function(key){var st=stat(key);tt+=st.avg*st.cnt;tc+=st.cnt});
@@ -792,10 +783,10 @@ var EXPS=[
 var PX2=[["Small habits compound. One focused hour a day on a skill beats a weekend cram.","العادات الصغيرة بتتراكم. ساعة تركيز كل يوم على مهارة أحسن من مذاكرة آخر الأسبوع."],["Ask for feedback early. Your first draft is meant to be improved.","اطلب ملاحظات بدري. المسودة الأولى معمولة علشان تتحسن."],["Networking is not collecting contacts. It is being useful to people before you need anything.","التعارف مش إنك تجمع أرقام. هو إنك تفيد الناس قبل ما تحتاج منهم حاجة."],["Your first job is not your career. It is your first lesson.","أول وظيفة مش هي مسارك. هي أول درس."],["Read one case study a week in your field. In a year you will see patterns others miss.","اقرا دراسة حالة واحدة كل أسبوع في مجالك. بعد سنة هتشوف أنماط غيرك مش شايفها."]];
 function sampleExps(i){var l=ai(),d=PD[i],e=EXPS[i],out=[{title:d[6+l],company:d[4+l],from:e.cur,to:""}];e.prev.forEach(function(x){out.push({title:x[l],company:x[2+l],from:x[4],to:x[5]})});return out}
 function expList(items){return '<div class="card">'+items.map(function(x){return '<div class="xp"><span class="xpd"></span><div style="min-width:0"><b>'+esc(x.title||"")+'</b><div class="line">'+esc(x.company||"")+'</div><div class="line">'+(x.from?esc(x.from)+' – ':'')+(x.to?esc(x.to):t("presentw"))+'</div></div></div>'}).join("")+'</div>'}
-function personPosts(i){var l=ai(),pp=PEOPLE[i],d=PD[i],o=[samplePost(i,"s")],x2=PX2[i%PX2.length];
+function personPosts(i){var l=ai(),pp=PEOPLE[i];if(!pp)return [];var d=PD[i],o=[samplePost(i,"s")],x2=PX2[i%PX2.length];
  o.push({own:false,idx:i,id:"s"+i+"b",key:pp[0],name:l?pp[3]:pp[0],hl:d[6+l]+" "+t("at")+" "+d[4+l],text:x2[l],tags:"",img:"",likes:20+((i*13)%60),cm:2+(i%5),time:l?"من 3 أسابيع":"3w",cmt:null});
  return o}
-function personPage(){var D=pdata(),p=D.p,d=D.d,l=D.l,n=D.n,fl=S.follows&&S.follows[p[0]],tab=S.ptab||"ov";
+function personPage(){var D=pdata();if(!D)return backBtn();var p=D.p,d=D.d,l=D.l,n=D.n,fl=S.follows&&S.follows[p[0]],tab=S.ptab||"ov";
  var h=backBtn()+'<div class="card" style="text-align:center;padding:24px 18px">'+avBox(D.i,n,"lg",'style="margin:0 auto 12px;width:76px;height:76px;font-size:28px"')+'<div class="pname">'+esc(n)+'</div><div class="line" style="font-weight:700;color:var(--navy)">'+esc(d[6+l]+" "+t("at")+" "+d[4+l])+'</div><div class="line">'+esc(d[l]+" · "+d[2+l])+'</div><div class="line">'+d[8]+' '+t("yrs")+' '+t("inw")+' '+esc(d[9+l])+'</div><div style="margin-top:12px"><span class="tag" style="margin:0">'+t("expert")+'</span><span class="tag">'+t("sample")+'</span></div><div style="margin-top:16px"><button class="fbtn'+(fl?' on':'')+'" onclick="follow(\''+p[0]+'\')">'+(fl?t("following"):'+ '+t("follow"))+'</button></div></div>';
  h+='<div class="seg" id="pseg"><button data-v="ov" class="'+(tab==="ov"?'on':'')+'" onclick="setPT(\'ov\')">'+t("overview")+'</button><button data-v="po" class="'+(tab==="po"?'on':'')+'" onclick="setPT(\'po\')">'+t("posts")+'</button><button data-v="sv" class="'+(tab==="sv"?'on':'')+'" onclick="setPT(\'sv\')">'+t("svcs")+'</button><button data-v="rv" class="'+(tab==="rv"?'on':'')+'" onclick="setPT(\'rv\')">'+t("revs")+'</button></div>';
  return h+'<div id="pcont">'+personCont()+'</div>'}
@@ -804,7 +795,7 @@ function setPType(k){S.ptype=k;var c=document.getElementById("pcont");if(c)c.inn
 function pickS(k,i){S["s_"+k]=i;render()}
 function pickFmentor(s){S.f_mentor=(S.f_mentor===s)?null:s;render()}
 function pickFwork(s){S.f_work=(S.f_work===s)?null:s;render()}
-var EV=[[0,"Career talk: starting in FMCG","كلام عن الشغل: تبدأ إزاي في السلع الاستهلاكية",0,5,19,0,"Online","أونلاين"],[0,"How to ace graduate programs","إزاي تنجح في برامج الخريجين",8,12,18,30,"Online","أونلاين"],[1,"Marketing meetup","لقاء المسوقين",1,9,18,0,"Cairo","القاهرة"],[1,"Networking evening","لقاء تعارف مهني",4,16,19,0,"Cairo","القاهرة"]];
+var EV=[];
 function events(){var m=S.evm==null?1:S.evm,loc=L==="ar"?"ar-EG":"en-GB";
  var h='<div class="seg" style="margin:0 0 18px"><button class="'+(m===1?'on':'')+'" onclick="S.evm=1;render()">'+t("evin")+'</button><button class="'+(m===0?'on':'')+'" onclick="S.evm=0;render()">'+t("evon")+'</button></div>';
  EV.forEach(function(e,k){if(e[0]!==m)return;var d=new Date();d.setDate(d.getDate()+e[4]);d.setHours(e[5],e[6],0,0);var p=PEOPLE[e[3]],nm=L==="ar"?p[3]:p[0],when=d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"})+" · "+d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"}),reg=S.reg&&S.reg[k],x=S.evx&&S.evx[k];
