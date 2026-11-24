@@ -125,6 +125,7 @@ label.fl{display:block;font-size:13px;font-weight:700;margin:2px 0 6px}
 .dc .lb.dis{background:transparent;color:#e6e9e5;border:1.5px solid #e6e9e5}
 .pgap{height:0}
 .lp{margin:0;padding:16px 0 10px;background:transparent;border-bottom:1px solid var(--bd)}
+.lpcomm{padding:12px 14px 0;font-size:12.5px;font-weight:700;color:var(--green)}
 .lph{display:flex;gap:12px;align-items:center}
 .lph .av,.lpc .av{flex:none}.lph .av{width:50px;height:50px;font-size:17px}.lpc .av{width:36px;height:36px;font-size:14px}
 .lpi{flex:1;min-width:0}
@@ -313,7 +314,7 @@ total:["Total","الإجمالي"],paym:["Payment method","طريقة الدفع
 pay1:["Card","بطاقة"],pay2:["Mobile wallet","محفظة إلكترونية"],pay3:["InstaPay","إنستاباي"],filef:["Upload your file (PDF, Word or PowerPoint)","ارفع ملفك (PDF أو Word أو PowerPoint)"],
 linkwait:["The session link will appear here once the mentor adds it.","لينك الجلسة هيظهر هنا بعد ما المرشد يضيفه."],statusw:["Waiting for the mentor's approval","في انتظار موافقة المرشد"],
 nlink:["A booking was approved. Add your session link.","اتوافق على حجز. ضيف لينك الجلسة."],minw:["min","دقيقة"],egp:["EGP","ج.م"],freet:["Free","مجاني"],addnew:["Add a new service","ضيف خدمة جديدة"],
-groups:["Communities","الكوميونيتيز"],cind:["Industries","الصناعات"],cfld:["Fields","المجالات"],cuni:["Universities","الجامعات"],cindd:["FMCG, telecom, banking and the industries Egypt runs on.","السلع الاستهلاكية والاتصالات والبنوك والصناعات اللي شغالة في مصر."],cfldd:["HR, marketing, finance and every career field.","الموارد البشرية والتسويق والمالية وكل مجالات الشغل."],cunid:["A community for every Egyptian university.","كوميونيتي لكل جامعة مصرية."],pick3:["Join your industry, your university and your field - plus any other communities you like.","انضم لصناعتك وجامعتك ومجالك - وأي كوميونيتيز تانية تعجبك برضه."],catw:["communities","كوميونيتي"],catind:["Industry","صناعة"],catfld:["Field","مجال"],catuni:["University","جامعة"],searchg:["Search communities","دوّر على كوميونيتي"],joing:["Join","انضم"],joinedg:["Joined","انضممت"],nogposts:["No posts yet. Posts from this community will appear here.","لسه مفيش بوستات. بوستات الكوميونيتي هتظهر هنا."],grpnone:["No communities found.","مفيش كوميونيتيز مطابقة."],
+groups:["Communities","الكوميونيتيز"],cind:["Industries","الصناعات"],cfld:["Fields","المجالات"],cuni:["Universities","الجامعات"],cindd:["FMCG, telecom, banking and the industries Egypt runs on.","السلع الاستهلاكية والاتصالات والبنوك والصناعات اللي شغالة في مصر."],cfldd:["HR, marketing, finance and every career field.","الموارد البشرية والتسويق والمالية وكل مجالات الشغل."],cunid:["A community for every Egyptian university.","كوميونيتي لكل جامعة مصرية."],pick3:["Join your industry, your university and your field - plus any other communities you like.","انضم لصناعتك وجامعتك ومجالك - وأي كوميونيتيز تانية تعجبك برضه."],catw:["communities","كوميونيتي"],catind:["Industry","صناعة"],catfld:["Field","مجال"],catuni:["University","جامعة"],searchg:["Search communities","دوّر على كوميونيتي"],joing:["Join","انضم"],joinedg:["Joined","انضممت"],nogposts:["No posts yet. Posts from this community will appear here.","لسه مفيش بوستات. بوستات الكوميونيتي هتظهر هنا."],allg:["All communities","كل الكوميونيتيز"],grpnone:["No communities found.","مفيش كوميونيتيز مطابقة."],
 upc:["Upcoming","جاية"],learnm:["Learn more","اعرف أكتر"],regb:["Register","سجّل"],regd:["Registered","اتسجلت"],bookb:["Book","احجز"],evd1:["Hosted by ","بتقدمها "],evd2:[". Details and the joining link are sent after you register.","، والتفاصيل ولينك الانضمام هيوصلوك بعد التسجيل."],evon2:["Online event","فعالية أونلاين"],evin2:["Event","فعالية"],noposts:["No posts yet.","لسه مفيش بوستات."],noev:["No events yet. Stay tuned.","لسه مفيش فعاليات. خليك قريب."],cormail:["Or email us directly:","أو ابعت لنا مباشرة على:"],
 lsph:["Search by name or specialty","دوّر بالاسم أو التخصص"],svcs:["Services","الخدمات"],svcnone:["This expert has not added services yet.","الخبير ده لسه ما ضافش خدمات."],
 light:["Light mode","وضع فاتح"],dark:["Dark mode","وضع داكن"],lights:["Light","فاتح"],darks:["Dark","داكن"],
@@ -328,7 +329,7 @@ searchf:["Search in UReady","دوّر في UReady"],
 comm:["Communities","الكوميونيتيز"],
 addphoto:["Add a photo","أضف صورة"],changephoto:["Change photo","غيّر الصورة"],crop:["Adjust your photo","ظبط صورتك"],crophint:["Drag to move. Pinch or use the slider to zoom.","اسحب الصورة لتحريكها، وقرّب بصباعين أو بالسلايدر."],usephoto:["Use photo","استخدم الصورة"],cancel:["Cancel","إلغاء"],edit:["Edit","تعديل"],del:["Delete","مسح"],repo:["Report","إبلاغ"],repsent:["Report sent. Thank you.","وصل البلاغ. شكراً."],cnfdel:["Delete this post? This cannot be undone.","تمسح البوست ده؟ مش هتقدر ترجعه."],savetxt:["Save","حفظ"],
 likesw:["likes","إعجاب"],membersw:["members","عضو"],
-prevexp:["Previous experience","خبرات سابقة"],addexp:["Add experience","ضيف خبرة"],fromy:["From (year)","من (سنة)"],toy:["To (year, leave empty if current)","إلى (سنة، سيبها فاضية لو لسه شغال)"],presentw:["Present","لحد دلوقتي"],
+prevexp:["Previous experience","خبرات سابقة"],addexp:["Add experience","ضيف خبرة"],fromy:["From (month/year)","من (شهر/سنة)"],toy:["To (month/year)","إلى (شهر/سنة)"],presentw:["Present","لحد دلوقتي"],
 guser:["user","مستخدم"],other:["English","عربي"]};
 var IC={
 feed:'<rect x="3" y="4" width="14" height="16" rx="2"/><path d="M17 9h3v8a3 3 0 0 1-3 3"/><path d="M7 8h6M7 12h6M7 16h4"/>',
@@ -466,7 +467,7 @@ function cropMove(e){var k=CROP,p=k.pts[e.pointerId];if(!p)return;var ids=Object
 function cropUp(e){if(CROP)delete CROP.pts[e.pointerId]}
 function closeCrop(){if(CROP&&CROP.ov)CROP.ov.remove();CROP=null}
 function feedPosts(){var out=[],l=ai();
- (S.dbposts||[]).forEach(function(q){if(q.community!=null)return;if(S.spec&&q.spec!==S.spec)return;out.push(dbPost(q))});
+ (S.dbposts||[]).forEach(function(q){if(q.community!=null)return;if(S.spec&&q.spec!==S.spec&&!(S.follows&&S.follows["u"+q.author_id]))return;out.push(dbPost(q))});
  S.posts.forEach(function(p,k){if(S.spec&&p.spec!==S.spec)return;out.push({own:true,id:"o"+k,k:k,comm:null,name:p.by,hl:p.hl||"",text:p.t,tags:"",likes:0,cm:0,time:t("now"),cmt:null})});
  POSTX.forEach(function(x,i){var pp=PEOPLE[i];if(!pp)return;if(S.spec&&pp[2]!==S.spec)return;var d=PD[i],cp=PEOPLE[(i+3)%10],cd=PD[(i+3)%10];
   out.push({own:false,idx:i,sample:true,id:"s"+i,key:pp[0],name:l?pp[3]:pp[0],hl:d[6+l]+" "+t("at")+" "+d[4+l],text:x[l],tags:x[2],img:(POSTIMG[i]!=null?SIMG[POSTIMG[i]]:""),likes:x[3],cm:x[4],time:x[5+l],cmt:{idx:(i+3)%10,name:l?cp[3]:cp[0],hl:cd[6+l]+" "+t("at")+" "+cd[4+l],text:CMT[l]}})});
@@ -474,7 +475,7 @@ function feedPosts(){var out=[],l=ai();
  if(fq)out=out.filter(function(p){var hay=(p.name+" "+p.hl+" "+p.text+" "+(p.idx!=null&&PEOPLE[p.idx]?PEOPLE[p.idx][2]+" "+sp(PEOPLE[p.idx][2]):"")).toLowerCase();return hay.indexOf(fq)>-1});
  return out}
 function postHtml(p){var fl=!p.own&&S.follows&&S.follows[p.key],liked=S.likes&&S.likes[p.id],lk=p.likes+(liked?1:0),copen=S.cOpen&&S.cOpen[p.id],cl=(S.comments&&S.comments[p.id])||[];
- POSTREG[p.id]=p;var sv=S.savedP&&S.savedP[p.id],oc=p.own?'openProfile(false)':(p.real?(p.aid?'viewPub(\''+p.aid+'\')':''):'openPerson('+p.idx+')'),h='<div class="lp"><div class="lph">'+avBox(p.idx,p.name,"",'onclick="'+oc+'" style="cursor:pointer"')+'<div class="lpi"><div class="lpn" onclick="'+oc+'" style="cursor:pointer">'+esc(p.name)+(p.sample?'<span class="smp">'+t("sample")+'</span>':'')+'</div><div class="lps">'+p.time+(p.hl?' · '+esc(p.hl):'')+'</div></div>'+(p.own?'':'<button class="lfl'+(fl?' on':'')+'" onclick="follow(\''+p.key+'\')">'+(fl?t("following"):'+ '+t("follow"))+'</button>')+'<button class="pmb" aria-label="More" onclick="event.stopPropagation();S.pmenu=(S.pmenu===\''+p.id+'\'?null:\''+p.id+'\');render()">···</button>'+(S.pmenu===p.id?pmenuHtml(p):'')+'</div>';
+ POSTREG[p.id]=p;var sv=S.savedP&&S.savedP[p.id],oc=p.own?'openProfile(false)':(p.real?(p.aid?'viewPub(\''+p.aid+'\')':''):'openPerson('+p.idx+')'),h='<div class="lp">'+(p.comm!=null&&GR[p.comm]?'<div class="lpcomm">'+esc(GR[p.comm][ai()])+'</div>':'')+'<div class="lph">'+avBox(p.idx,p.name,"",'onclick="'+oc+'" style="cursor:pointer"')+'<div class="lpi"><div class="lpn" onclick="'+oc+'" style="cursor:pointer">'+esc(p.name)+(p.sample?'<span class="smp">'+t("sample")+'</span>':'')+'</div><div class="lps">'+p.time+(p.hl?' · '+esc(p.hl):'')+'</div></div>'+(p.own?'':'<button class="lfl'+(fl?' on':'')+'" onclick="follow(\''+p.key+'\')">'+(fl?t("following"):'+ '+t("follow"))+'</button>')+'<button class="pmb" aria-label="More" onclick="event.stopPropagation();S.pmenu=(S.pmenu===\''+p.id+'\'?null:\''+p.id+'\');render()">···</button>'+(S.pmenu===p.id?pmenuHtml(p):'')+'</div>';
  h+='<div class="lpt" dir="auto">'+esc(p.text)+'</div>'+(p.img?'<img class="lpimg" src="'+p.img+'" alt="">':'');
  h+='<div class="acts"><button id="lkb_'+p.id+'" data-b="'+p.likes+'" class="lk'+(liked?' on':'')+'" onclick="likePost(\''+p.id+'\')">'+ICL+'<span>'+lk+'</span><em>'+t("likec")+'</em></button><button onclick="openCm(\''+p.id+'\')">'+ICC+'<span>'+(p.cm+cl.length)+'</span><em>'+t("cmtw")+'</em></button><button onclick="sharePost(\''+p.id+'\')">'+ICSH+'<em>'+t("sharew")+'</em></button><button id="svb_'+p.id+'" class="sv'+(sv?' on':'')+'" style="margin-inline-start:auto" onclick="saveP(\''+p.id+'\')">'+ICB+'</button></div>';
  var tc=topCm(p);if(tc)h+='<div class="lpc" onclick="openCm(\''+p.id+'\')" style="cursor:pointer">'+avBox(tc.idx,tc.name,"")+'<div class="lpi"><div class="cmb"><div class="cmn">'+esc(tc.name)+'</div><div class="cmt" dir="auto">'+esc(tc.text)+'</div></div><div class="cmm"><span>'+(tc.time||"")+'</span>'+(tc.lk?'<span>'+tc.lk+' '+t("likesw")+'</span>':'')+'</div></div></div>';
@@ -577,7 +578,7 @@ function addGPost(i){var tx=document.getElementById("gt"),v=tx?tx.value.trim():"
   if(ed.dbid){sb.from("posts").update({text:v}).eq("id",ed.dbid).then(function(r){if(r.error)alert(r.error.message);sbPosts()})}
   else{var lp=S.gposts&&S.gposts[i]&&S.gposts[i][ed.k];if(lp)lp.text=v;render()}return}
  if(!sb)return;
- var img=S.gimg||"";S.gimg="";
+ var img=S.gimg||"";S.gimg="";S.gcmpOpen=false;
  sb.from("posts").insert({author_id:S.uid,author_name:S.user,hl:myHl(),text:v,spec:(S.profile&&S.profile.spec)||S.spec||"General",community:i,img:img}).then(function(r){if(r.error){alert(r.error.message);return}sbPosts()})}
 var GN=[12400,8700,3200];
 function mkCover(i){var gs=[["#d3f0e0","#a5dcbf"],["#d6e4fb","#b5c6f3"],["#ffecd0","#f5cd96"]][i%3],q='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+gs[0]+'"/><stop offset="1" stop-color="'+gs[1]+'"/></linearGradient></defs><rect width="400" height="150" fill="url(#c)"/><circle cx="350" cy="20" r="70" fill="#fff" opacity=".25"/><circle cx="30" cy="140" r="60" fill="#fff" opacity=".2"/>';
@@ -593,17 +594,27 @@ function groupPage(i){var g=GR[i],joined=S.gj&&S.gj[i];
  h+='<div class="line" style="margin-bottom:6px">'+memTxt((S.gj&&S.gj[i])?1:0)+'</div>';
  if(!S.user)h+='<div class="cmp"><button class="btn fill" onclick="openModal()">'+t("signtopost")+'</button></div>';
  else if(!joined)h+='<div class="cmp"><div class="line" style="text-align:center">'+t("jointopost")+'</div></div>';
- else h+='<div class="cmp"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin"><input id="gt" dir="auto" placeholder="'+t("gshare")+'"></div></div><div id="gprev">'+(S.gimg?'<img class="gprv" src="'+S.gimg+'" alt="">':'')+'</div><div class="cmpact"><label class="cmpph">'+ICPH+'<span>'+t("photo")+'</span><input type="file" id="gimg" accept="image/*" style="display:none" onchange="onGImg(this)"></label>'+(S.editing&&S.editing.comm===i?'<button class="btn sm" onclick="S.editing=null;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addGPost('+i+')">'+t("savetxt")+'</button>':'<button class="btn fill sm" onclick="addGPost('+i+')">'+t("post")+'</button>')+'</div></div>';
+ else if(S.gcmpOpen||(S.editing&&S.editing.comm===i))h+='<div class="cmp"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin"><input id="gt" dir="auto" placeholder="'+t("gshare")+'"></div></div><div id="gprev">'+(S.gimg?'<img class="gprv" src="'+S.gimg+'" alt="">':'')+'</div><div class="cmpact"><label class="cmpph">'+ICPH+'<span>'+t("photo")+'</span><input type="file" id="gimg" accept="image/*" style="display:none" onchange="onGImg(this)"></label>'+(S.editing&&S.editing.comm===i?'<button class="btn sm" onclick="S.editing=null;S.gcmpOpen=false;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addGPost('+i+')">'+t("savetxt")+'</button>':'<button class="btn sm" onclick="S.gcmpOpen=false;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="addGPost('+i+')">'+t("post")+'</button>')+'</div></div>';
+ else h+='<div class="cmp" style="cursor:pointer" onclick="S.gcmpOpen=true;render();setTimeout(function(){var e=document.getElementById(\'gt\');if(e)e.focus()},60)"><div class="cmprow">'+avBox(null,S.user,"")+'<div class="cmpin"><div class="cmpfake">'+t("gshare")+'</div></div></div></div>';
  var out=[];(S.dbposts||[]).forEach(function(q){if(q.community!==i)return;out.push(dbPost(q))});(S.gposts&&S.gposts[i]||[]).forEach(function(p,k){out.push({own:true,id:"g"+i+"_"+k,k:k,comm:i,name:p.by,hl:p.hl||"",text:p.text,tags:"",likes:0,cm:0,time:t("now"),cmt:null,img:p.img})});
  out.forEach(function(p){h+=postHtml(p)});
  return h}
+function cfeedHtml(){var jn=Object.keys(S.gj||{}).filter(function(k){return S.gj[k]});if(!jn.length)return "";
+ var h='<div class="row" style="margin:0 0 12px"><select onchange="S.cfeed=(this.value===\'\'?null:this.value);render()" style="flex:1"><option value="">'+t("allg")+'</option>';
+ jn.forEach(function(k){h+='<option value="'+k+'"'+(String(S.cfeed)===String(k)?" selected":"")+'>'+esc(GR[k][ai()])+'</option>'});
+ h+='</select></div>';var out=[];
+ jn.forEach(function(k){if(S.cfeed!=null&&String(S.cfeed)!==String(k))return;(S.dbposts||[]).forEach(function(q){if(q.community!==+k)return;out.push(dbPost(q))});(S.gposts&&S.gposts[k]||[]).forEach(function(p,ki){out.push({own:true,id:"g"+k+"_"+ki,k:ki,comm:+k,name:p.by,hl:p.hl||"",text:p.text,tags:"",likes:0,cm:0,time:t("now"),cmt:null,img:p.img,ts:"~"})})});
+ out.sort(function(a,b){var x=b.ts||"",y=a.ts||"";return x<y?-1:x>y?1:0});
+ if(!out.length)h+='<div class="card"><div class="empty">'+t("nogposts")+'</div></div>';
+ out.forEach(function(p){h+=postHtml(p)});
+ return h+'<div class="pgap"></div>'}
 function groupsView(){
  if(S.grp!=null)return groupPage(S.grp);
  var any=Object.keys(S.gj||{}).some(function(k){return S.gj[k]}),tab=S.gtab||(any?"mine":"all");
  var h='<div class="seg" style="margin:0 0 16px"><button class="'+(tab==="mine"?'on':'')+'" onclick="S.gtab=\'mine\';render()">'+t("yourg")+'</button><button class="'+(tab==="all"?'on':'')+'" onclick="S.gtab=\'all\';render()">'+t("allg")+'</button></div>';
  S.gmine=(tab==="mine");
  if(tab==="all")return h+'<div id="glist">'+glist(false)+'</div>';
- h+='<div id="glist">'+glist(true)+'</div>';
+ h+=cfeedHtml()+'<div id="glist">'+glist(true)+'</div>';
  if(!any)h+='<button class="btn" onclick="S.gtab=\'all\';render()">'+t("browseg")+'</button>';
  return h}
 function feed(){
@@ -685,7 +696,7 @@ function pubCont(tab,p,w){function kv(k,v){return '<div class="kv"><span>'+k+'</
  return h}
 function sbProfileExtras(){if(!sb||!S.uid)return;try{sb.from("profiles").select("uni,major,years,exps,photo,title,company,linkedin_url,spec,freelancer").eq("id",S.uid).maybeSingle().then(function(r){var d=r&&r.data;if(!d)return;S.profile=S.profile||{};["uni","major","years","exps","title","company","spec","freelancer"].forEach(function(k){if((S.profile[k]==null||S.profile[k]==="")&&d[k]!=null&&d[k]!=="")S.profile[k]=d[k]});if(!S.profile.linkedin&&d.linkedin_url)S.profile.linkedin=d.linkedin_url;if(!S.photo&&d.photo)S.photo=d.photo;render()})}catch(e){}}
 function sbPosts(){if(!sb)return;try{sb.from("posts").select("*").order("created_at",{ascending:false}).limit(200).then(function(r){if(r&&r.data){S.dbposts=r.data;render()}})}catch(e){}}
-function dbPost(q){return {aid:q.author_id,own:!!(S.uid&&q.author_id===S.uid),real:true,dbid:q.id,id:"db"+q.id,key:"u"+q.author_id,name:q.author_name||t("guser"),hl:q.hl||"",text:q.text,tags:"",img:q.img||"",likes:0,cm:0,time:fmtT(q.created_at),cmt:null,comm:q.community!=null?q.community:null}}
+function dbPost(q){return {aid:q.author_id,own:!!(S.uid&&q.author_id===S.uid),real:true,dbid:q.id,id:"db"+q.id,key:"u"+q.author_id,name:q.author_name||t("guser"),hl:q.hl||"",text:q.text,tags:"",img:q.img||"",likes:0,cm:0,time:fmtT(q.created_at),cmt:null,comm:q.community!=null?q.community:null,ts:q.created_at}}
 function fmtT(ts){var loc=L==="ar"?"ar-EG":"en-GB",d=new Date(ts),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"}):d.toLocaleDateString(loc,{day:"numeric",month:"short"})}
 function myHl(){return (S.profile&&S.profile.title)?jt(S.profile.title)+(S.profile.freelancer?" · "+t("freelancer"):(S.profile.company?" "+t("at")+" "+S.profile.company:"")):""}
 function pmenuHtml(p){var h='<div class="ddov" style="z-index:44" onclick="S.pmenu=null;render()"></div><div class="pmm">';
