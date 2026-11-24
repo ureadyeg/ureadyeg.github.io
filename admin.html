@@ -87,6 +87,12 @@ a{color:var(--navy)}
     <tbody id="mrows"></tbody>
   </table>
   <p class="mut" style="margin-top:14px">Contact-form messages land here live. Reply by tapping the sender's email.</p>
+  <h2 style="color:var(--navy);margin:26px 0 10px">Reports</h2>
+  <table>
+    <thead><tr><th>Reported post</th><th>Reported by</th><th>When</th><th></th></tr></thead>
+    <tbody id="rrows"></tbody>
+  </table>
+  <p class="mut" style="margin-top:14px">Posts users flagged with the Report option. Deleting a report only dismisses it here.</p>
   <h2 style="color:var(--navy);margin:26px 0 10px">Events</h2>
   <div style="background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
@@ -165,6 +171,18 @@ function loadMsgs(){
   });
 }
 function delMsg(id){if(!confirm("Delete this message?"))return;sb.from("contact_messages").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Message deleted.");loadMsgs()})}
+function loadReports(){
+  sb.from("reports").select("*").order("created_at",{ascending:false}).limit(100).then(function(r){
+    if(r.error){flash("Could not load reports: "+r.error.message);return}
+    var h="";
+    (r.data||[]).forEach(function(m){
+      var when=m.created_at?new Date(m.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
+      h+='<tr><td dir="auto" style="white-space:normal;min-width:220px;text-align:start">'+esc(m.post_text||"")+'</td><td class="mut" dir="ltr" style="font-size:12px">'+esc((m.reporter||"").slice(0,8))+'...</td><td class="mut">'+when+'</td><td style="white-space:nowrap"><button class="act danger" onclick="delReport(\''+m.id+'\')">Dismiss</button></td></tr>';
+    });
+    document.getElementById("rrows").innerHTML=h||'<tr><td colspan="4" class="mut" style="text-align:center;padding:24px">No reports.</td></tr>';
+  });
+}
+function delReport(id){if(!confirm("Dismiss this report?"))return;sb.from("reports").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Report dismissed.");loadReports()})}
 function loadEvents(){
   sb.from("events").select("*").order("starts_at",{ascending:true}).then(function(r){
     if(r.error){flash("Could not load events: "+r.error.message);return}
@@ -199,7 +217,7 @@ sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN"&&se)check(se)});
 function check(se){
   sb.from("profiles").select("role").eq("id",se.user.id).single().then(function(r){
     if(r.data&&r.data.role==="admin"){
-      show("dash");document.getElementById("live").style.display="inline-flex";load();loadMsgs();loadEvents();
+      show("dash");document.getElementById("live").style.display="inline-flex";load();loadMsgs();loadReports();loadEvents();
       sb.channel("profiles-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},function(){load()}).subscribe();
       sb.channel("msgs-live").on("postgres_changes",{event:"*",schema:"public",table:"contact_messages"},function(){loadMsgs()}).subscribe();
       sb.channel("events-live").on("postgres_changes",{event:"*",schema:"public",table:"events"},function(){loadEvents()}).subscribe();
