@@ -351,18 +351,18 @@ var GR=[
 ["Design Community","كوميونيتي التصميم","Graphic, product and UI/UX design.","الجرافيك وتصميم المنتجات والواجهات.","fld"],
 ["Business Development Community","كوميونيتي تطوير الأعمال","Partnerships, strategy and growth roles.","الشراكات والاستراتيجية ووظايف النمو.","fld"],
 ["Customer Service Community","كوميونيتي خدمة العملاء","Support careers and communication skills.","وظايف خدمة العملاء ومهارات التواصل.","fld"],
-["Ain Shams University","جامعة عين شمس","Students and fresh grads of Ain Shams.","طلاب وخريجين جامعة عين شمس.","uni"],
-["Cairo University","جامعة القاهرة","Students and fresh grads of Cairo University.","طلاب وخريجين جامعة القاهرة.","uni"],
-["Alexandria University","جامعة الإسكندرية","Students and fresh grads of Alexandria University.","طلاب وخريجين جامعة الإسكندرية.","uni"],
-["Helwan University","جامعة حلوان","Students and fresh grads of Helwan University.","طلاب وخريجين جامعة حلوان.","uni"],
-["Mansoura University","جامعة المنصورة","Students and fresh grads of Mansoura University.","طلاب وخريجين جامعة المنصورة.","uni"],
-["AUC","الجامعة الأمريكية بالقاهرة","Students and fresh grads of the American University in Cairo.","طلاب وخريجين الجامعة الأمريكية بالقاهرة.","uni"],
-["GUC","الجامعة الألمانية بالقاهرة","Students and fresh grads of the German University in Cairo.","طلاب وخريجين الجامعة الألمانية بالقاهرة.","uni"],
-["BUE","الجامعة البريطانية في مصر","Students and fresh grads of the British University in Egypt.","طلاب وخريجين الجامعة البريطانية في مصر.","uni"],
-["Zagazig University","جامعة الزقازيق","Students and fresh grads of Zagazig University.","طلاب وخريجين جامعة الزقازيق.","uni"],
-["Tanta University","جامعة طنطا","Students and fresh grads of Tanta University.","طلاب وخريجين جامعة طنطا.","uni"],
-["Assiut University","جامعة أسيوط","Students and fresh grads of Assiut University.","طلاب وخريجين جامعة أسيوط.","uni"],
-["MSA University","جامعة أكتوبر للعلوم الحديثة MSA","Students and fresh grads of MSA University.","طلاب وخريجين جامعة أكتوبر للعلوم الحديثة.","uni"]];
+["Ain Shams University","جامعة عين شمس","Students and graduates of Ain Shams.","طلاب أو خريجين جامعة عين شمس.","uni"],
+["Cairo University","جامعة القاهرة","Students and graduates of Cairo University.","طلاب أو خريجين جامعة القاهرة.","uni"],
+["Alexandria University","جامعة الإسكندرية","Students and graduates of Alexandria University.","طلاب أو خريجين جامعة الإسكندرية.","uni"],
+["Helwan University","جامعة حلوان","Students and graduates of Helwan University.","طلاب أو خريجين جامعة حلوان.","uni"],
+["Mansoura University","جامعة المنصورة","Students and graduates of Mansoura University.","طلاب أو خريجين جامعة المنصورة.","uni"],
+["AUC","الجامعة الأمريكية بالقاهرة","Students and graduates of the American University in Cairo.","طلاب أو خريجين الجامعة الأمريكية بالقاهرة.","uni"],
+["GUC","الجامعة الألمانية بالقاهرة","Students and graduates of the German University in Cairo.","طلاب أو خريجين الجامعة الألمانية بالقاهرة.","uni"],
+["BUE","الجامعة البريطانية في مصر","Students and graduates of the British University in Egypt.","طلاب أو خريجين الجامعة البريطانية في مصر.","uni"],
+["Zagazig University","جامعة الزقازيق","Students and graduates of Zagazig University.","طلاب أو خريجين جامعة الزقازيق.","uni"],
+["Tanta University","جامعة طنطا","Students and graduates of Tanta University.","طلاب أو خريجين جامعة طنطا.","uni"],
+["Assiut University","جامعة أسيوط","Students and graduates of Assiut University.","طلاب أو خريجين جامعة أسيوط.","uni"],
+["MSA University","جامعة أكتوبر للعلوم الحديثة MSA","Students and graduates of MSA University.","طلاب أو خريجين جامعة أكتوبر للعلوم الحديثة.","uni"]];
 var POSTX=[
 ["Brand building starts with listening. Before you plan a campaign, spend a week reading what consumers actually say.\n\nWhat was the best consumer insight you ever worked with?","بناء البراند بيبدأ بالسمع. قبل ما تخطط لأي حملة، اقعد أسبوع واقرا الناس بتقول إيه فعلًا.\n\nإيه أحسن إنسايت عن المستهلك اشتغلت عليه؟","#marketing #branding #fmcg",128,14,"2d","من يومين"],
 ["Shelf execution beats a great plan on paper. Walk three stores this week and note what your shopper really sees.","تنفيذ الرف أهم من أي خطة حلوة على الورق. زور تلات محلات الأسبوع ده وسجّل المتسوق بيشوف إيه فعلًا.","#trade_marketing #retail #fmcg",86,9,"3d","من 3 أيام"],
@@ -866,7 +866,6 @@ function modal(){
  '<div id="exb" style="display:'+(ex?'block':'none')+'"><label class="fl">'+t("linkedin")+'</label><input id="li" dir="ltr" placeholder="https://www.linkedin.com/in/..." value="'+esc(S.fl||"")+'"><label class="fl">'+t("spec")+'</label><select id="fs" onchange="onOther(\'fs\',\'fo\')"><option value="">'+t("selspec")+'</option>'+SPECS.map(function(x){return '<option value="'+x+'"'+(S.fs===x?' selected':'')+'>'+esc(sp(x))+'</option>'}).join("")+'<option value="other"'+(so?" selected":"")+'>'+t("oth")+'</option></select><input id="fo" style="display:'+(so?'block':'none')+'" placeholder="'+t("typespec")+'" value="'+esc(S.fo||"")+'"><label class="fl">'+t("jtitle")+'</label><input id="fj" value="'+esc(S.fj||"")+'"><div class="seg" style="margin:0 0 12px"><button id="fl0" class="'+(!S.ffl?'on':'')+'" onclick="setFl(false)">'+t("atco")+'</button><button id="fl1" class="'+(S.ffl?'on':'')+'" onclick="setFl(true)">'+t("isfl")+'</button></div><div id="cow" style="display:'+(S.ffl?'none':'block')+'"><label class="fl">'+t("company")+'</label><input id="fc" value="'+esc(S.fc||"")+'"></div></div>'+
  '<label class="fl">'+t("age")+'</label><input id="ag" type="number" min="10" max="99" dir="ltr" value="'+esc(S.fa||"")+'"><label class="fl">'+t("country")+'</label><select id="cn" onchange="onOther(\'cn\',\'cno\')"><option value="">'+t("selcountry")+'</option>'+cOpts(S.fcn,co)+'</select><input id="cno" style="display:'+(co?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(S.fco||"")+'">'+
  '<button class="btn" onclick="social(\'Google\')">'+t("google")+'</button>'+
- '<button class="btn" style="margin-top:10px" onclick="social(\'Apple\')">'+t("apple")+'</button>'+
  '<div class="or">'+t("or")+'</div>'+
  '<label class="fl">'+t("fullname")+'</label><input id="nm" value="'+esc(S.fn||"")+'">'+
  '<label class="fl">'+t("email")+'</label><input id="em" dir="ltr" type="email" value="'+esc(S.fe||"")+'">'+
@@ -897,7 +896,7 @@ function doLogin(){var a=document.getElementById("nm"),b=document.getElementById
  if(!valid(e)){b.focus();b.style.borderColor="#b00020";return}
  var prof=commonOK();if(!prof)return;if(S.pick==="expert"){var ex=expertOK();if(!ex)return;prof=Object.assign(prof,ex)}
  sbJoin(n,e,prof);finish(n,e,prof)}
-function social(p){alert(t("socsoon"))}
+function social(p){if(p==="Google"&&sb){try{sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}})}catch(e){alert(t("socsoon"))}}else{alert(t("socsoon"))}}
 function menu(){
  var MOON='<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>',SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>';
  var lg='<button class="tinyb" onclick="toggleLang(\''+(L==="ar"?"en":"ar")+'\')">'+(L==="ar"?"English":"العربية")+'</button>';
