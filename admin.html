@@ -87,6 +87,24 @@ a{color:var(--navy)}
     <tbody id="mrows"></tbody>
   </table>
   <p class="mut" style="margin-top:14px">Contact-form messages land here live. Reply by tapping the sender's email.</p>
+  <h2 style="color:var(--navy);margin:26px 0 10px">Events</h2>
+  <div style="background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
+      <label class="mut">Type<br><select id="ev_type" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px"><option value="0">In-person</option><option value="1">Online</option></select></label>
+      <label class="mut">Date &amp; time<br><input id="ev_when" type="datetime-local" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px"></label>
+      <label class="mut">Hosted by<br><input id="ev_host" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px" placeholder="UReady team"></label>
+      <label class="mut">Title (English)<br><input id="ev_en" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px"></label>
+      <label class="mut">Title (Arabic)<br><input id="ev_ar" dir="rtl" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px"></label>
+      <label class="mut">Place (English)<br><input id="ev_pen" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px" placeholder="Zoom / Cairo / ..."></label>
+      <label class="mut">Place (Arabic)<br><input id="ev_par" dir="rtl" style="width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px"></label>
+    </div>
+    <button class="ok act" style="margin-top:12px;padding:10px 22px" onclick="addEvent()">Publish event</button>
+  </div>
+  <table style="margin-top:14px">
+    <thead><tr><th>When</th><th>Type</th><th>Title</th><th>Host</th><th>Place</th><th></th></tr></thead>
+    <tbody id="evrows"></tbody>
+  </table>
+  <p class="mut" style="margin-top:14px">Published events appear on the site's Events page immediately. Only you can post events; mentors cannot.</p>
   <button class="ghost act" onclick="out()">Sign out</button>
 </div>
 
@@ -147,6 +165,28 @@ function loadMsgs(){
   });
 }
 function delMsg(id){if(!confirm("Delete this message?"))return;sb.from("contact_messages").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Message deleted.");loadMsgs()})}
+function loadEvents(){
+  sb.from("events").select("*").order("starts_at",{ascending:true}).then(function(r){
+    if(r.error){flash("Could not load events: "+r.error.message);return}
+    var h="";
+    (r.data||[]).forEach(function(e){
+      var when=e.starts_at?new Date(e.starts_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
+      h+='<tr><td class="mut" style="white-space:nowrap">'+when+'</td><td>'+(e.online?"Online":"In-person")+'</td><td><b>'+esc(e.title_en)+'</b>'+(e.title_ar?'<br><span class="mut" dir="rtl">'+esc(e.title_ar)+'</span>':'')+'</td><td>'+esc(e.host||"-")+'</td><td>'+esc(e.place_en||"-")+(e.place_ar?' / '+esc(e.place_ar):'')+'</td><td><button class="act danger" onclick="delEvent(\''+e.id+'\')">Delete</button></td></tr>';
+    });
+    document.getElementById("evrows").innerHTML=h||'<tr><td colspan="6" class="mut" style="text-align:center;padding:24px">No events yet.</td></tr>';
+  });
+}
+function addEvent(){
+  var en=document.getElementById("ev_en").value.trim(),w=document.getElementById("ev_when").value;
+  if(!en||!w){flash("Title (English) and date/time are required.");return}
+  sb.from("events").insert({online:document.getElementById("ev_type").value==="1",starts_at:new Date(w).toISOString(),host:document.getElementById("ev_host").value.trim(),title_en:en,title_ar:document.getElementById("ev_ar").value.trim(),place_en:document.getElementById("ev_pen").value.trim(),place_ar:document.getElementById("ev_par").value.trim()}).then(function(r){
+    if(r.error){flash("Could not publish: "+r.error.message);return}
+    flash("Event published.");
+    ["ev_en","ev_ar","ev_host","ev_pen","ev_par","ev_when"].forEach(function(i){document.getElementById(i).value=""});
+    loadEvents();
+  });
+}
+function delEvent(id){if(!confirm("Delete this event? It disappears from the site immediately."))return;sb.from("events").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Event deleted.");loadEvents()})}
 function out(){sb.auth.signOut().then(function(){show("gate")})}
 
 sb.auth.getSession().then(function(r){
@@ -159,9 +199,10 @@ sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN"&&se)check(se)});
 function check(se){
   sb.from("profiles").select("role").eq("id",se.user.id).single().then(function(r){
     if(r.data&&r.data.role==="admin"){
-      show("dash");document.getElementById("live").style.display="inline-flex";load();loadMsgs();
+      show("dash");document.getElementById("live").style.display="inline-flex";load();loadMsgs();loadEvents();
       sb.channel("profiles-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},function(){load()}).subscribe();
       sb.channel("msgs-live").on("postgres_changes",{event:"*",schema:"public",table:"contact_messages"},function(){loadMsgs()}).subscribe();
+      sb.channel("events-live").on("postgres_changes",{event:"*",schema:"public",table:"events"},function(){loadEvents()}).subscribe();
     }else show("deny");
   });
 }
