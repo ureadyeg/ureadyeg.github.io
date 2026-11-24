@@ -885,7 +885,7 @@ function rate(v,n){if(!n)return '<span class="rate"><small>'+t("newt")+'</small>
 function personOf(v){return v[2]>=0?(PEOPLE[v[2]]||["Guest","","Marketing","ضيف",""]):v[11]}
 function svcCard(i){var v=SV[i],p=personOf(v),n=L==="ar"?p[3]:p[0],d=detailsOf(v);
  var l2=d.freelancer?(jt(d.title||"")+" · "+t("freelancer")):(jt(d.title||"")+(d.company?" "+t("at")+" "+d.company:""));
- return dcard({img:v.cover||"",pill:pfmt(i,true),label:SUBS[v[0]][v[1]][ai()]+((v[2]>=0||v.sample)?' · '+t("sample"):''),title:esc(v[3+ai()]),av:avOf(v,n,""),save:svBtn(i),meta:[esc(n),esc(l2.replace(/^[\s·]+|[\s·]+$/g,"")),rate(v[9],v[10])+(pinfo(i).dur?' · '+pinfo(i).dur+' '+t("minw"):'')],f1:'openSvc('+i+')',b1:t("learnm"),f2:'openSvc('+i+')',b2:t("bookb")})}
+ return dcard({img:v.cover||"",pill:pfmt(i,true),label:SUBS[v[0]][v[1]][ai()]+((v[2]>=0||v.sample)?' · '+t("sample"):''),title:esc(v[3+ai()]),av:avOf(v,n,""),save:svBtn(i),meta:['<b style="font-size:16px">'+pfmt(i,true)+'</b>',esc(n),esc(l2.replace(/^[\s·]+|[\s·]+$/g,"")),rate(v[9],v[10])+(pinfo(i).dur?' · '+pinfo(i).dur+' '+t("minw"):'')],f1:'openSvc('+i+')',b1:t("learnm"),f2:'openSvc('+i+')',b2:t("bookb")})}
 var ICSH='<svg viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13"/></svg>';
 var SIC='<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',XIC='<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 function lmatch(v,q){if(!q)return true;var p=personOf(v),a=[p[0],p[3],p[2],sp(p[2])].join(" ").toLowerCase();return a.indexOf(q)>-1}
