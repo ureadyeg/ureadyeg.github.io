@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UReady · Owner</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#0a1f5c;--mut:#5f6b85;--bd:#e5e7e5;--gray:#f0f1f0;--green:#385235;--ink:#1c211d}
+*{box-sizing:border-box;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+body{margin:0;background:#f6f7f6;color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+header b{font-size:19px;letter-spacing:.3px}
+header .sub{font-size:12px;opacity:.75}
+button{cursor:pointer;border:0;border-radius:9px;font-weight:700}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:18px 0}
+.stat{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:14px}
+.stat .n{font-size:26px;font-weight:800;color:var(--navy)}
+.stat .l{font-size:12px;color:var(--mut);font-weight:600;margin-top:2px}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--bd);border-radius:12px;overflow:hidden;font-size:13.5px}
+th{background:var(--gray);text-align:left;padding:10px;font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+td{padding:10px;border-top:1px solid var(--bd);vertical-align:middle}
+tr.pend td{background:#fdf7e8}
+tr.ban td{background:#fdeeee;color:#8a8a8a}
+.pill{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:2px 8px}
+.p-learner{background:#e8eefc;color:#0a1f5c}
+.p-mentor_pending{background:#fbeec2;color:#7a5b00}
+.p-mentor{background:#dcefe0;color:#2a5a2a}
+.p-admin{background:#0a1f5c;color:#fff}
+.p-banned{background:#f6d4d4;color:#a02020}
+.act{padding:6px 12px;font-size:12px;margin-inline-end:6px}
+.ok{background:var(--green);color:#fff}
+.danger{background:#b00020;color:#fff}
+.ghost{background:var(--gray);color:var(--ink)}
+.mut{color:var(--mut);font-size:12px}
+a{color:var(--navy)}
+.center{display:grid;place-items:center;min-height:70vh}
+.panel{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:28px;width:min(92vw,400px);text-align:center}
+.panel input{width:100%;border:1px solid var(--bd);border-radius:10px;padding:12px;font-size:15px;margin:14px 0}
+.panel button{width:100%;background:var(--navy);color:#fff;padding:13px;font-size:15px}
+.flash{background:#e7f2e8;border:1px solid #bcd8bd;color:#2a5a2a;border-radius:10px;padding:10px 14px;font-size:13.5px;margin-bottom:14px;display:none}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--mut)}
+.live i{width:8px;height:8px;border-radius:50%;background:#3aa63a;display:inline-block;animation:p 1.6s infinite}
+@keyframes p{50%{opacity:.3}}
+</style>
+</head>
+<body>
+<header><div><b>UReady</b> <span class="sub">· Owner console</span></div><span class="live" id="live" style="display:none"><i></i>live</span></header>
+<div class="wrap">
+
+<div id="gate" class="center" style="display:none">
+  <div class="panel">
+    <h2 style="color:var(--navy);margin:0 0 4px">Owner sign-in</h2>
+    <p class="mut">Enter the owner email. We send a one-time sign-in link.</p>
+    <input id="em" type="email" dir="ltr" placeholder="you@email.com">
+    <button onclick="sendLink()">Send sign-in link</button>
+    <p class="mut" id="msg"></p>
+  </div>
+</div>
+
+<div id="deny" class="center" style="display:none">
+  <div class="panel">
+    <h2 style="color:#b00020;margin:0 0 4px">Not authorized</h2>
+    <p class="mut">This console is restricted to the platform owner.</p>
+    <button onclick="out()">Sign out</button>
+  </div>
+</div>
+
+<div id="dash" style="display:none">
+  <div class="flash" id="flash"></div>
+  <div class="cards">
+    <div class="stat"><div class="n" id="cAll">0</div><div class="l">Registered</div></div>
+    <div class="stat"><div class="n" id="cLearn">0</div><div class="l">Learners</div></div>
+    <div class="stat"><div class="n" id="cPend">0</div><div class="l">Mentors waiting</div></div>
+    <div class="stat"><div class="n" id="cMent">0</div><div class="l">Approved mentors</div></div>
+    <div class="stat"><div class="n" id="cBan">0</div><div class="l">Banned</div></div>
+  </div>
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>LinkedIn</th><th>Joined</th><th></th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <p class="mut" style="margin-top:14px">New registrations appear here the moment they happen. Approving a mentor lets them publish. Banning suspends the account on next sign-in.</p>
+  <button class="ghost act" onclick="out()">Sign out</button>
+</div>
+
+</div>
+<script>
+var SB_URL="https://eqbeswitvmmbazcbgojt.supabase.co",SB_KEY="sb_publishable_IONFCnLU-lVo1ijiffRWvg_AtCuOj2w";
+var sb=window.supabase.createClient(SB_URL,SB_KEY);
+
+function show(id){["gate","deny","dash"].forEach(function(x){document.getElementById(x).style.display=(x===id)?(id==="dash"?"block":"grid"):"none"})}
+function flash(m){var f=document.getElementById("flash");f.textContent=m;f.style.display="block";setTimeout(function(){f.style.display="none"},4000)}
+
+function sendLink(){
+  var e=document.getElementById("em").value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){document.getElementById("msg").textContent="Enter a valid email.";return}
+  sb.auth.signInWithOtp({email:e,options:{emailRedirectTo:location.origin+location.pathname}}).then(function(r){
+    document.getElementById("msg").textContent=r.error?("Error: "+r.error.message):"Link sent. Open your email and tap the sign-in link.";
+  });
+}
+
+function load(){
+  sb.from("profiles").select("*").order("created_at",{ascending:false}).then(function(r){
+    if(r.error){flash("Could not load registrations: "+r.error.message);return}
+    var rows=r.data||[];
+    document.getElementById("cAll").textContent=rows.length;
+    document.getElementById("cLearn").textContent=rows.filter(function(p){return p.role==="learner"}).length;
+    document.getElementById("cPend").textContent=rows.filter(function(p){return p.role==="mentor_pending"}).length;
+    document.getElementById("cMent").textContent=rows.filter(function(p){return p.role==="mentor"||p.role==="admin"}).length;
+    document.getElementById("cBan").textContent=rows.filter(function(p){return p.status==="banned"}).length;
+    var h="";
+    rows.forEach(function(p){
+      var banned=p.status==="banned";
+      var cls=banned?"ban":(p.role==="mentor_pending"?"pend":"");
+      var acts="";
+      if(p.role==="mentor_pending")acts+='<button class="act ok" onclick="approve(\''+p.id+'\')">Approve mentor</button>';
+      if(p.role!=="admin")acts+=banned?'<button class="act ghost" onclick="unban(\''+p.id+'\')">Unban</button>':'<button class="act danger" onclick="ban(\''+p.id+'\')">Ban</button>';
+      var li=p.linkedin_url?'<a href="'+p.linkedin_url.replace(/"/g,"")+'" target="_blank" rel="noopener">profile</a>':"";
+      var when=p.created_at?new Date(p.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
+      h+='<tr class="'+cls+'"><td><b>'+esc(p.full_name||"-")+'</b></td><td dir="ltr">'+esc(p.email)+'</td><td><span class="pill p-'+p.role+'">'+p.role.replace("_"," ")+'</span></td><td>'+(banned?'<span class="pill p-banned">banned</span>':'active')+'</td><td>'+li+'</td><td class="mut">'+when+'</td><td style="white-space:nowrap">'+acts+'</td></tr>';
+    });
+    document.getElementById("rows").innerHTML=h||'<tr><td colspan="7" class="mut" style="text-align:center;padding:24px">No registrations yet.</td></tr>';
+  });
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function approve(id){sb.from("profiles").update({role:"mentor"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Mentor approved.");load()})}
+function ban(id){if(!confirm("Ban this account? They will be signed out and suspended."))return;sb.from("profiles").update({status:"banned"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account banned.");load()})}
+function unban(id){sb.from("profiles").update({status:"active"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account reinstated.");load()})}
+function out(){sb.auth.signOut().then(function(){show("gate")})}
+
+sb.auth.getSession().then(function(r){
+  var se=r&&r.data&&r.data.session;
+  if(!se){show("gate");return}
+  check(se);
+});
+sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN"&&se)check(se)});
+
+function check(se){
+  sb.from("profiles").select("role").eq("id",se.user.id).single().then(function(r){
+    if(r.data&&r.data.role==="admin"){
+      show("dash");document.getElementById("live").style.display="inline-flex";load();
+      sb.channel("profiles-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},function(){load()}).subscribe();
+    }else show("deny");
+  });
+}
+</script>
+</body>
+</html>
