@@ -215,6 +215,7 @@ html[dir="rtl"] .back svg{transform:scaleX(-1)}
 </head>
 <body>
 <div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SPECS=["Marketing","Trade Marketing","Business Development","Supply Chain","Sales","Finance","Banking","Data Analytics","HR","Technology","Design","Operations"];
 var SPEC_AR={"Marketing":"التسويق","Trade Marketing":"تسويق المبيعات (Trade Marketing)","Business Development":"تطوير الأعمال","Supply Chain":"سلاسل الإمداد","Sales":"المبيعات","Finance":"المالية","Banking":"الخدمات المصرفية","Data Analytics":"تحليل البيانات","HR":"الموارد البشرية","Technology":"التكنولوجيا","Design":"التصميم","Operations":"العمليات"};
@@ -223,6 +224,11 @@ var T={
 feed:["Feed","الفيد"],mentor:["Mentorship & Feedback","الإرشاد والملاحظات"],work:["Workshops & Challenges","ورش العمل والتحديات"],events:["Events","الفعاليات"],
 signin:["Sign in","تسجيل الدخول"],join:["Join UReady","انضم لـ UReady"],
 joinsub:["Sign in to follow experts and take part. You can keep browsing without an account.","سجّل دخولك علشان تتابع الخبراء وتشارك. وتقدر تكمّل تتصفح من غير حساب."],
+pendok:["Your mentor account is waiting for approval. You can browse and join, but you cannot publish yet.","حسابك كمرشد مستني الموافقة. تقدر تتصفح وتشترك، بس لسه مش تقدر تنشر."],
+onlym:["Only approved mentors can publish.","النشر متاح للمرشدين المعتمدين بس."],
+banned:["This account is suspended. Contact the UReady team.","الحساب ده موقوف. كلم فريق UReady."],
+linksent:["We sent a sign-in link to your email. Open it once to confirm your account.","بعثنا لينك تسجيل دخول على إيميلك. افتحه مرة علشان تفعّل حسابك."],
+socsoon:["Google and Apple sign-in are coming soon. Please use your email below.","تسجيل الدخول بجوجل وآبل جاي قريب. استخدم إيميلك تحت."],
 learner:["Learner","متعلّم"],learnersub:["Learn and get feedback","اتعلّم وخد ملاحظات"],
 expert:["Expert or Mentor","خبير أو مرشد"],expertsub:["Share and guide others","شارك خبرتك وساعد غيرك"],
 google:["Continue with Google","كمّل بحساب Google"],apple:["Continue with Apple","كمّل بحساب Apple"],
@@ -298,10 +304,19 @@ var L="en";try{var sv=localStorage.getItem("ur_lang");if(sv)L=sv;else if((naviga
 var S={user:null,email:null,role:null,tab:"feed",spec:null,q:"",menu:false,modal:false,pick:"learner",posts:[],f_mentor:null,f_work:null,fn:"",fe:""};
 var app=document.getElementById("app");
 S.theme="light";try{var th0=localStorage.getItem("ur_theme");if(th0)S.theme=th0;else if(typeof window!=="undefined"&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)S.theme="dark"}catch(e){}
-var PKEYS=["user","email","role","profile","photo","posts","follows","likes","comments","cl","savedP","savedS","gj","gposts","booked","notifs","nid","spec","reg"];
+var PKEYS=["user","email","role","profile","photo","posts","follows","likes","comments","cl","savedP","savedS","gj","gposts","booked","notifs","nid","spec","reg","roleDb"];
 function persist(){try{var o={};PKEYS.forEach(function(k){if(S[k]!==undefined&&S[k]!==null)o[k]=S[k]});localStorage.setItem("ur_state",JSON.stringify(o))}catch(e){}}
 function restore(){try{var o=JSON.parse(localStorage.getItem("ur_state")||"{}");PKEYS.forEach(function(k){if(o[k]!==undefined&&o[k]!==null)S[k]=o[k]})}catch(e){}}
 restore();
+var SB_URL="https://eqbeswitvmmbazcbgojt.supabase.co",SB_KEY="sb_publishable_IONFCnLU-lVo1ijiffRWvg_AtCuOj2w";
+var sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SB_URL,SB_KEY):null;
+function sbJoin(n,e,prof){if(!sb)return;try{sb.auth.signInWithOtp({email:e,options:{data:{full_name:n,role:(S.pick==="expert"?"expert":"learner"),linkedin_url:(prof&&prof.linkedin)||""},emailRedirectTo:location.origin+location.pathname}}).then(function(r){if(r&&r.error)console.warn("otp",r.error);else alert(t("linksent"))})}catch(e){}}
+function sbProfile(){if(!sb)return;try{sb.auth.getSession().then(function(r){var se=r&&r.data&&r.data.session;if(!se||!se.user)return;sb.from("profiles").select("*").eq("id",se.user.id).single().then(function(pr){var p=pr&&pr.data;if(!p)return;
+ if(p.status==="banned"){S.user=null;S.role=null;S.roleDb=null;S.profile=null;try{sb.auth.signOut()}catch(e){}alert(t("banned"));render();return}
+ S.user=p.full_name||se.user.email;S.email=p.email;S.roleDb=p.role;S.role=(p.role==="learner")?"learner":"expert";S.modal=false;render()})})}catch(e){}}
+if(sb){try{sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN")sbProfile()})}catch(e){}}
+function pubOK(){if(!S.user){openModal();return false}if(S.roleDb==="mentor"||S.roleDb==="admin")return true;if(isExp()||S.roleDb==="mentor_pending"){alert(t("pendok"));return false}alert(t("onlym"));return false}
+sbProfile();
 function setTheme(m){S.theme=m;try{localStorage.setItem("ur_theme",m)}catch(e){}render()}
 function t(k){return T[k][L==="ar"?1:0]}
 function sp(s){return L==="ar"&&SPEC_AR[s]?SPEC_AR[s]:s}
@@ -509,7 +524,7 @@ var GD=[["Feedback","الملاحظات","Book an expert to review your CV, Link
 function openGuide(){S.page="guide";S.menu=false;S.view=null;S.adding=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
 function guidePage(){var h=backBtn()+'<h2>'+t("guide")+'</h2><p class="sub">'+t("guidesub")+'</p>';
  GD.forEach(function(g){h+='<div class="card"><div class="stitle" style="margin-top:0">'+g[ai()]+'</div><div style="line-height:1.65;font-size:14.5px">'+g[2+ai()]+'</div></div>'});return h}
-function addPost(){if(!profileOK()){openProfile(true,"noteexp");return}var v=document.getElementById("pt").value.trim();if(!v)return;S.posts.unshift({by:S.user,hl:(S.profile&&S.profile.title)?jt(S.profile.title)+(S.profile.freelancer?" · "+t("freelancer"):(S.profile.company?" "+t("at")+" "+S.profile.company:"")):"",t:v,spec:(S.profile&&S.profile.spec)||S.spec||"General"});render()}
+function addPost(){if(!pubOK())return;if(!profileOK()){openProfile(true,"noteexp");return}var v=document.getElementById("pt").value.trim();if(!v)return;S.posts.unshift({by:S.user,hl:(S.profile&&S.profile.title)?jt(S.profile.title)+(S.profile.freelancer?" · "+t("freelancer"):(S.profile.company?" "+t("at")+" "+S.profile.company:"")):"",t:v,spec:(S.profile&&S.profile.spec)||S.spec||"General"});render()}
 var SUBS={mentor:[["1-to-1 Mentorship","إرشاد واحد لواحد"],["Feedback","الملاحظات"],["Learn from","اتعلّم من"]],work:[["Workshops","ورش العمل"],["Challenges","التحديات"],["Companies challenges","تحديات الشركات"]]};
 var SORD={mentor:[0,1,2],work:[0,2,1]};
 var CREATE={mentor:["mkmentor","mkfeed","mklearn"],work:["mkworkshop","mkchallenge","mkchallenge"]};
@@ -635,7 +650,7 @@ function detail(i){
  h+='<h3>'+t("revs")+'</h3><div class="card">'+(v[10]===0?'<div class="empty" style="padding:6px">'+t("norev")+'</div>':rate(v[9],v[10])+' <span class="tag">'+t("sample")+'</span>'+CM.map(function(c,k){return '<div class="cm"><b>'+c[ai()]+'</b> <span class="rate">★ '+(k===2?4:5)+'</span><div style="margin-top:6px;line-height:1.55;font-size:14px">'+c[2+ai()]+'</div></div>'}).join(""))+'</div>';
  return h;
 }
-function startAdd(k,sub,ed){if(!profileOK()){openProfile(true,"noteexp");return}
+function startAdd(k,sub,ed){if(!pubOK())return;if(!profileOK()){openProfile(true,"noteexp");return}
  if(appStatus()!=="approved"){S.page="pending";S.menu=false;S.view=null;render();return}
  var v=ed!=null?SV[ed]:null,pp=S.profile||{},pi=ed!=null?pinfo(ed):null;
  S.adding={kind:k,sub:sub,edit:ed!=null?ed:null,from:S.page};
@@ -841,8 +856,8 @@ function doLogin(){var a=document.getElementById("nm"),b=document.getElementById
  if(!n){a.focus();return}
  if(!valid(e)){b.focus();b.style.borderColor="#b00020";return}
  var prof=commonOK();if(!prof)return;if(S.pick==="expert"){var ex=expertOK();if(!ex)return;prof=Object.assign(prof,ex)}
- finish(n,e,prof)}
-function social(p){var n="",e="";var prof=commonOK();if(!prof)return;if(S.pick==="expert"){var ex=expertOK();if(!ex)return;prof=Object.assign(prof,ex)}finish(n||(L==="ar"?t("guser")+" "+p:p+" "+t("guser")),e||"",prof)}
+ sbJoin(n,e,prof);finish(n,e,prof)}
+function social(p){alert(t("socsoon"))}
 function menu(){
  var MOON='<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>',SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>';
  var lg='<button class="tinyb" onclick="toggleLang(\''+(L==="ar"?"en":"ar")+'\')">'+(L==="ar"?"English":"العربية")+'</button>';
@@ -855,7 +870,7 @@ function menu(){
  it.push(S.user?['doLogout()',t("logout")]:['openModal()',t("signin")]);
  return '<div class="menu" onclick="S.menu=false;render()"><div class="sheet" onclick="event.stopPropagation()">'+'<div class="prefs">'+lg+th+'</div>'+top+it.map(function(x){return '<button onclick="'+x[0]+'">'+x[1]+'</button>'}).join("")+'</div></div>';
 }
-function doLogout(){try{localStorage.removeItem("ur_state")}catch(e){}S.photo="";S.user=null;S.role=null;S.profile=null;S.page=null;S.menu=false;S.posts=[];S.follows=null;S.likes=null;S.comments=null;S.cl=null;S.savedP=null;S.savedS=null;S.gj=null;S.gposts=null;S.booked=null;S.notifs=null;S.nid=0;S.spec=null;S.reg=null;S.reqs=null;render()}
+function doLogout(){if(sb)try{sb.auth.signOut()}catch(e){}try{localStorage.removeItem("ur_state")}catch(e){}S.photo="";S.user=null;S.role=null;S.roleDb=null;S.profile=null;S.page=null;S.menu=false;S.posts=[];S.follows=null;S.likes=null;S.comments=null;S.cl=null;S.savedP=null;S.savedS=null;S.gj=null;S.gposts=null;S.booked=null;S.notifs=null;S.nid=0;S.spec=null;S.reg=null;S.reqs=null;render()}
 function bodyHtml(){
  if(S.adding)return addForm();
  var pg=S.page;
