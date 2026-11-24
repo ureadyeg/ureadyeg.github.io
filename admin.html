@@ -89,10 +89,10 @@ a{color:var(--navy)}
   <p class="mut" style="margin-top:14px">Contact-form messages land here live. Reply by tapping the sender's email.</p>
   <h2 style="color:var(--navy);margin:26px 0 10px">Reports</h2>
   <table>
-    <thead><tr><th>Reported post</th><th>Reported by</th><th>When</th><th></th></tr></thead>
+    <thead><tr><th>Type</th><th>Reported content</th><th>Reported by</th><th>When</th><th></th></tr></thead>
     <tbody id="rrows"></tbody>
   </table>
-  <p class="mut" style="margin-top:14px">Posts users flagged with the Report option. Deleting a report only dismisses it here.</p>
+  <p class="mut" style="margin-top:14px">Posts and comments users flagged with Report. Delete removes the content for everyone. Dismiss only clears the report.</p>
   <h2 style="color:var(--navy);margin:26px 0 10px">Events</h2>
   <div style="background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
@@ -175,14 +175,32 @@ function delMsg(id){if(!confirm("Delete this message?"))return;sb.from("contact_
 function loadReports(){
   sb.from("reports").select("*").order("created_at",{ascending:false}).limit(100).then(function(r){
     if(r.error){flash("Could not load reports: "+r.error.message);return}
-    var h="";
-    (r.data||[]).forEach(function(m){
-      var when=m.created_at?new Date(m.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
-      h+='<tr><td dir="auto" style="white-space:normal;min-width:220px;text-align:start">'+esc(m.post_text||"")+'</td><td class="mut" dir="ltr" style="font-size:12px">'+esc((m.reporter||"").slice(0,8))+'...</td><td class="mut">'+when+'</td><td style="white-space:nowrap"><button class="act danger" onclick="delReport(\''+m.id+'\')">Dismiss</button></td></tr>';
+    var rs=r.data||[],pids=[],cids=[],uids=[];
+    rs.forEach(function(m){if(m.comment_id)cids.push(m.comment_id);else if(m.post_id)pids.push(m.post_id);if(m.reporter)uids.push(m.reporter)});
+    var P=pids.length?sb.from("posts").select("id,author_name,text").in("id",pids):Promise.resolve({data:[]});
+    var C=cids.length?sb.from("comments").select("id,author_name,text").in("id",cids):Promise.resolve({data:[]});
+    var U=uids.length?sb.from("profiles").select("id,full_name,email").in("id",uids):Promise.resolve({data:[]});
+    Promise.all([P,C,U]).then(function(x){
+      var pm={},cm={},um={};(x[0].data||[]).forEach(function(p){pm[p.id]=p});(x[1].data||[]).forEach(function(c){cm[c.id]=c});(x[2].data||[]).forEach(function(u){um[u.id]=u});
+      var h="";
+      rs.forEach(function(m){
+        var isC=!!m.comment_id,cur=isC?cm[m.comment_id]:(m.post_id?pm[m.post_id]:null),gone=(isC||m.post_id)&&!cur,sample=!isC&&!m.post_id;
+        var when=m.created_at?new Date(m.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
+        var rep=um[m.reporter],rn=rep?(rep.full_name||rep.email||""):(m.reporter||"").slice(0,8);
+        var body=cur?cur.text:(m.post_text||"");
+        var who=cur?'<div class="mut" style="font-size:12px;margin-bottom:3px">by '+esc(cur.author_name||"")+'</div>':"";
+        var st=gone?'<div class="mut" style="font-size:12px;margin-top:3px">Already deleted.</div>':(sample?'<div class="mut" style="font-size:12px;margin-top:3px">Sample content, cannot be deleted.</div>':"");
+        var btns=(cur?'<button class="act danger" onclick="delReported(\''+(isC?"c":"p")+'\',\''+(isC?m.comment_id:m.post_id)+'\')">Delete '+(isC?"comment":"post")+'</button> ':"")+'<button class="act" onclick="delReport(\''+m.id+'\')">Dismiss</button>';
+        h+='<tr><td>'+(isC?"Comment":"Post")+'</td><td dir="auto" style="white-space:normal;min-width:220px;text-align:start">'+who+esc(body)+st+'</td><td class="mut" style="font-size:12px">'+esc(rn)+'</td><td class="mut">'+when+'</td><td style="white-space:nowrap">'+btns+'</td></tr>';
+      });
+      document.getElementById("rrows").innerHTML=h||'<tr><td colspan="5" class="mut" style="text-align:center;padding:24px">No reports.</td></tr>';
     });
-    document.getElementById("rrows").innerHTML=h||'<tr><td colspan="4" class="mut" style="text-align:center;padding:24px">No reports.</td></tr>';
   });
 }
+function delReported(kind,id){if(!confirm("Delete this "+(kind==="c"?"comment":"post")+" for everyone? This cannot be undone."))return;
+  var t=kind==="c"?"comments":"posts";
+  sb.from(t).delete().eq("id",id).then(function(r){if(r.error){flash(r.error.message);return}
+    var q=sb.from("reports").delete();(kind==="c"?q.eq("comment_id",id):q.eq("post_id",id).is("comment_id",null)).then(function(){flash((kind==="c"?"Comment":"Post")+" deleted.");loadReports()})})}
 function delReport(id){if(!confirm("Dismiss this report?"))return;sb.from("reports").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Report dismissed.");loadReports()})}
 function loadEvents(){
   sb.from("events").select("*").order("starts_at",{ascending:true}).then(function(r){
