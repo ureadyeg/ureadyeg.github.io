@@ -282,7 +282,7 @@ pay1:["Card","بطاقة"],pay2:["Mobile wallet","محفظة إلكترونية"
 linkwait:["The session link will appear here once the mentor adds it.","لينك الجلسة هيظهر هنا بعد ما المرشد يضيفه."],statusw:["Waiting for the mentor's approval","في انتظار موافقة المرشد"],
 nlink:["A booking was approved. Add your session link.","اتوافق على حجز. ضيف لينك الجلسة."],minw:["min","دقيقة"],egp:["EGP","ج.م"],freet:["Free","مجاني"],addnew:["Add a new service","ضيف خدمة جديدة"],
 groups:["Communities","الكوميونيتيز"],cind:["Industries","الصناعات"],cfld:["Fields","المجالات"],cuni:["Universities","الجامعات"],cindd:["FMCG, telecom, banking and the industries Egypt runs on.","السلع الاستهلاكية والاتصالات والبنوك والصناعات اللي شغالة في مصر."],cfldd:["HR, marketing, finance and every career field.","الموارد البشرية والتسويق والمالية وكل مجالات الشغل."],cunid:["A community for every Egyptian university.","كوميونيتي لكل جامعة مصرية."],pick3:["Join your industry, your university and your field - plus any other communities you like.","انضم لصناعتك وجامعتك ومجالك - وأي كوميونيتيز تانية تعجبك برضه."],catw:["communities","كوميونيتي"],catind:["Industry","صناعة"],catfld:["Field","مجال"],catuni:["University","جامعة"],searchg:["Search communities","دوّر على كوميونيتي"],joing:["Join","انضم"],joinedg:["Joined","انضممت"],nogposts:["No posts yet. Posts from this community will appear here.","لسه مفيش بوستات. بوستات الكوميونيتي هتظهر هنا."],grpnone:["No communities found.","مفيش كوميونيتيز مطابقة."],
-upc:["Upcoming","جاية"],learnm:["Learn more","اعرف أكتر"],regb:["Register","سجّل"],regd:["Registered","اتسجلت"],bookb:["Book","احجز"],evd1:["Hosted by ","بتقدمها "],evd2:[". Details and the joining link are sent after you register.","، والتفاصيل ولينك الانضمام هيوصلوك بعد التسجيل."],evon2:["Online event","فعالية أونلاين"],evin2:["Event","فعالية"],noposts:["No posts yet.","لسه مفيش بوستات."],
+upc:["Upcoming","جاية"],learnm:["Learn more","اعرف أكتر"],regb:["Register","سجّل"],regd:["Registered","اتسجلت"],bookb:["Book","احجز"],evd1:["Hosted by ","بتقدمها "],evd2:[". Details and the joining link are sent after you register.","، والتفاصيل ولينك الانضمام هيوصلوك بعد التسجيل."],evon2:["Online event","فعالية أونلاين"],evin2:["Event","فعالية"],noposts:["No posts yet.","لسه مفيش بوستات."],noev:["No events yet. Stay tuned.","لسه مفيش فعاليات. خليك قريب."],cormail:["Or email us directly:","أو ابعت لنا مباشرة على:"],
 lsph:["Search by name or specialty","دوّر بالاسم أو التخصص"],svcs:["Services","الخدمات"],svcnone:["This expert has not added services yet.","الخبير ده لسه ما ضافش خدمات."],
 light:["Light mode","وضع فاتح"],dark:["Dark mode","وضع داكن"],lights:["Light","فاتح"],darks:["Dark","داكن"],
 yourg:["Your communities","الكوميونيتيز بتاعتي"],allg:["All communities","كل الكوميونيتيز"],nomyg:["You have not joined any community yet.","لسه ما انضمتش لأي كوميونيتي."],browseg:["Browse all communities","شوف كل الكوميونيتيز"],gshare:["Write something...","اكتب حاجة..."],photo:["Photo","صورة"],jointopost:["Join this community to post.","انضم للكوميونيتي علشان تنزل بوست."],signtopost:["Sign in to post","سجّل دخولك علشان تنزل بوست"],imgonly:["Please choose an image file.","اختار ملف صورة لو سمحت."],
@@ -323,6 +323,7 @@ function sbProfile(){if(!sb)return;try{sb.auth.getSession().then(function(r){var
  else if(p.role!=="admin"&&(!p.age||!p.country||!p.terms_accepted_at)){S.mustComplete="common"}
  render()})})}catch(e){}}
 if(sb){try{sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN")sbProfile()})}catch(e){}}
+sbEvents();
 function pubOK(){if(!S.user){openModal();return false}if(S.roleDb==="mentor"||S.roleDb==="admin")return true;if(isExp()||S.roleDb==="mentor_pending"){alert(t("pendok"));return false}alert(t("onlym"));return false}
 sbProfile();
 function setTheme(m){S.theme=m;try{localStorage.setItem("ur_theme",m)}catch(e){}render()}
@@ -454,7 +455,7 @@ function savedPage(){var h=backBtn()+'<h2>'+t("savedt")+'</h2><p class="sub"></p
  if(ss.length){h+='<h3>'+t("svcs")+'</h3>';ss.forEach(function(k){h+=svcCard(+k)})}
  if(ps.length){h+='<h3>'+t("posts")+'</h3>';ps.forEach(function(id){var e=S.savedP[id],p;if(e.own)p={own:true,id:id,name:e.name,hl:e.hl,text:e.text,tags:"",likes:0,cm:0,time:t("now"),cmt:null,img:e.img};else{p=samplePost(e.idx,"");p.id=id}h+=postHtml(p)})}
  return h}
-function contactPage(){var h=backBtn()+'<h2>'+t("contact")+'</h2><p class="sub">'+t("contactsub")+'</p><div class="card"><label class="fl">'+t("cname")+'</label><input id="cn" maxlength="80"><label class="fl">'+t("cemail")+'</label><input id="ce" type="email" dir="ltr" maxlength="120"><label class="fl">'+t("cmsg")+'</label><textarea id="cm" rows="4" maxlength="2000"></textarea><button class="btn fill" onclick="sendContact()">'+t("csend")+'</button><div id="cok" style="margin-top:12px"></div></div>';return h}
+function contactPage(){var h=backBtn()+'<h2>'+t("contact")+'</h2><p class="sub">'+t("contactsub")+'</p><div class="card"><label class="fl">'+t("cname")+'</label><input id="cn" maxlength="80"><label class="fl">'+t("cemail")+'</label><input id="ce" type="email" dir="ltr" maxlength="120"><label class="fl">'+t("cmsg")+'</label><textarea id="cm" rows="4" maxlength="2000"></textarea><button class="btn fill" onclick="sendContact()">'+t("csend")+'</button><div id="cok" style="margin-top:12px"></div></div><div class="card" style="text-align:center">'+t("cormail")+'<br><a href="mailto:ureadygrow@gmail.com" dir="ltr" style="color:var(--navy);font-weight:700">ureadygrow@gmail.com</a></div>';return h}
 function mentorCompletePage(){var h='<h2>'+t("mctitle")+'</h2><p class="sub">'+t("mcsub")+'</p><div class="card">'+
 '<label class="fl">'+t("linkedin")+'</label><input id="mc_li" dir="ltr" placeholder="https://www.linkedin.com/in/..." value="'+esc(S.fl||"")+'">'+
 '<label class="fl">'+t("spec")+'</label><select id="mc_fs" onchange="document.getElementById(\'mc_fo\').style.display=(this.value===\'other\'?\'block\':\'none\')"><option value="">'+t("selspec")+'</option>'+SPECS.map(function(x){return '<option value="'+x+'">'+esc(sp(x))+'</option>'}).join("")+'<option value="other">'+t("oth")+'</option></select><input id="mc_fo" style="display:none" placeholder="'+t("typespec")+'">'+
@@ -491,7 +492,7 @@ function dcard(o){return '<div class="dc"><div class="band">'+(o.av||'')+(o.save
 function feedTop(){return '<div class="sbar">'+SIC+'<input id="fq" placeholder="'+t("searchf")+'" value="'+esc(S.fq||"")+'" oninput="onF(this.value)"></div>'}
 function commTop(){return '<div class="sbar">'+SIC+'<input id="fq" placeholder="'+t("searchg")+'" value="'+esc(S.fq||"")+'" oninput="onF(this.value)"></div>'}
 function commPage(){return S.grp!=null?groupsView():commTop()+groupsView()}
-function eventsPage(){return backBtn()+events()}
+function eventsPage(){sbEvents();return backBtn()+events()}
 function postsHtml(){var lst=feedPosts(),h="";if(!lst.length)h='<div class="card"><div class="empty">'+t("noposts")+'</div></div>';lst.forEach(function(p){h+=postHtml(p)});return h}
 function onF(v){S.fq=v;if(S.tab==="comm"){var g=document.getElementById("glist");if(g)g.innerHTML=glist(!!S.gmine)}else{var p=document.getElementById("plist");if(p)p.innerHTML=postsHtml()}}
 function feedSeg(){var g=S.fv==="groups";return '<div class="seg" style="margin:0 0 16px"><button class="'+(!g?'on':'')+'" onclick="S.fv=\'feed\';S.grp=null;S.gcat=null;S.fq=\'\';render()">'+t("feed")+'</button><button class="'+(g?'on':'')+'" onclick="S.fv=\'groups\';S.grp=null;S.gcat=null;S.fq=\'\';render()">'+t("groups")+'</button></div>'}
@@ -887,11 +888,13 @@ function setPType(k){S.ptype=k;var c=document.getElementById("pcont");if(c)c.inn
 function pickS(k,i){S["s_"+k]=i;render()}
 function pickFmentor(s){S.f_mentor=(S.f_mentor===s)?null:s;render()}
 function pickFwork(s){S.f_work=(S.f_work===s)?null:s;render()}
-var EV=[];
+function sbEvents(){if(!sb)return;try{sb.from("events").select("*").gte("starts_at",new Date(Date.now()-864e5).toISOString()).order("starts_at",{ascending:true}).then(function(r){if(r&&r.data){S.evlist=r.data;if(S.page==="events")render()}})}catch(e){}}
 function events(){var m=S.evm==null?1:S.evm,loc=L==="ar"?"ar-EG":"en-GB";
  var h='<div class="seg" style="margin:0 0 18px"><button class="'+(m===1?'on':'')+'" onclick="S.evm=1;render()">'+t("evin")+'</button><button class="'+(m===0?'on':'')+'" onclick="S.evm=0;render()">'+t("evon")+'</button></div>';
- EV.forEach(function(e,k){if(e[0]!==m)return;var d=new Date();d.setDate(d.getDate()+e[4]);d.setHours(e[5],e[6],0,0);var p=PEOPLE[e[3]],nm=L==="ar"?p[3]:p[0],when=d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"})+" · "+d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"}),reg=S.reg&&S.reg[k],x=S.evx&&S.evx[k];
-  h+=dcard({pill:t("upc"),label:t(m===0?"evon2":"evin2")+' · '+t("sample"),title:esc(e[1+ai()]),meta:[when,esc(e[7+ai()])],extra:x?t("evd1")+esc(nm)+t("evd2"):'',f1:'S.evx=S.evx||{};S.evx['+k+']=!S.evx['+k+'];render()',b1:t("learnm"),f2:'reserve('+k+')',b2:t(reg?"regd":"regb"),dis:!!reg})});
+ var list=(S.evlist||[]).filter(function(e){return (e.online?0:1)===m});
+ if(!list.length)return h+'<div class="empty">'+t("noev")+'</div>';
+ list.forEach(function(e){var d=new Date(e.starts_at),when=d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"})+" · "+d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"}),k="db"+e.id,reg=S.reg&&S.reg[k],x=S.evx&&S.evx[k],ti=L==="ar"?(e.title_ar||e.title_en):e.title_en,pl=L==="ar"?(e.place_ar||e.place_en||""):(e.place_en||"");
+  h+=dcard({pill:t("upc"),label:t(m===0?"evon2":"evin2"),title:esc(ti),meta:[when,esc(pl)],extra:x?t("evd1")+esc(e.host||"")+t("evd2"):'',f1:'S.evx=S.evx||{};S.evx["'+k+'"]=!S.evx["'+k+'"];render()',b1:t("learnm"),f2:'reserve("'+k+'")',b2:t(reg?"regd":"regb"),dis:!!reg})});
  return h}
 function reserve(k){if(!S.user){openModal();return}S.reg=S.reg||{};S.reg[k]=true;render()}
 function modal(){
