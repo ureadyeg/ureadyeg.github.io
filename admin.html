@@ -81,6 +81,12 @@ a{color:var(--navy)}
     <tbody id="rows"></tbody>
   </table>
   <p class="mut" style="margin-top:14px">New registrations appear here the moment they happen. Approving a mentor lets them publish. Banning suspends the account on next sign-in.</p>
+  <h2 style="color:var(--navy);margin:26px 0 10px">Messages</h2>
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Message</th><th>When</th><th></th></tr></thead>
+    <tbody id="mrows"></tbody>
+  </table>
+  <p class="mut" style="margin-top:14px">Contact-form messages land here live. Reply by tapping the sender's email.</p>
   <button class="ghost act" onclick="out()">Sign out</button>
 </div>
 
@@ -129,6 +135,18 @@ function approve(id){sb.from("profiles").update({role:"mentor"}).eq("id",id).the
 function ban(id){if(!confirm("Ban this account? They will be signed out and suspended."))return;sb.from("profiles").update({status:"banned"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account banned.");load()})}
 function unban(id){sb.from("profiles").update({status:"active"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account reinstated.");load()})}
 function del(id){if(!confirm("Delete this account? They lose access immediately. This cannot be undone."))return;sb.from("profiles").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Account deleted.");load()})}
+function loadMsgs(){
+  sb.from("contact_messages").select("*").order("created_at",{ascending:false}).limit(100).then(function(r){
+    if(r.error){flash("Could not load messages: "+r.error.message);return}
+    var h="";
+    (r.data||[]).forEach(function(m){
+      var when=m.created_at?new Date(m.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
+      h+='<tr><td><b>'+esc(m.name)+'</b></td><td dir="ltr"><a href="mailto:'+m.email.replace(/"/g,"")+'">'+esc(m.email)+'</a></td><td style="white-space:normal;min-width:220px">'+esc(m.message)+'</td><td class="mut">'+when+'</td><td style="white-space:nowrap"><button class="act danger" onclick="delMsg(\''+m.id+'\')">Delete</button></td></tr>';
+    });
+    document.getElementById("mrows").innerHTML=h||'<tr><td colspan="5" class="mut" style="text-align:center;padding:24px">No messages yet.</td></tr>';
+  });
+}
+function delMsg(id){if(!confirm("Delete this message?"))return;sb.from("contact_messages").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Message deleted.");loadMsgs()})}
 function out(){sb.auth.signOut().then(function(){show("gate")})}
 
 sb.auth.getSession().then(function(r){
@@ -141,8 +159,9 @@ sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN"&&se)check(se)});
 function check(se){
   sb.from("profiles").select("role").eq("id",se.user.id).single().then(function(r){
     if(r.data&&r.data.role==="admin"){
-      show("dash");document.getElementById("live").style.display="inline-flex";load();
+      show("dash");document.getElementById("live").style.display="inline-flex";load();loadMsgs();
       sb.channel("profiles-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},function(){load()}).subscribe();
+      sb.channel("msgs-live").on("postgres_changes",{event:"*",schema:"public",table:"contact_messages"},function(){loadMsgs()}).subscribe();
     }else show("deny");
   });
 }
