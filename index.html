@@ -92,7 +92,7 @@ input::placeholder,textarea::placeholder{color:#8b94a8}
 .or{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:13px;margin:16px 0}
 .or:before,.or:after{content:"";flex:1;height:1px;background:var(--bd)}
 .menu{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20}
-.sheet{position:absolute;top:0;inset-inline-end:0;width:80%;max-width:310px;height:100%;background:var(--bg);padding:calc(26px + env(safe-area-inset-top,0px)) 22px 22px}
+.sheet{position:absolute;top:0;inset-inline-end:0;width:80%;max-width:310px;height:100%;background:var(--bg);padding:calc(26px + env(safe-area-inset-top,0px)) 22px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .sheet button{display:block;width:100%;text-align:start;background:none;border:0;border-bottom:1px solid var(--bd);padding:18px 2px;font-size:16px;font-weight:600;color:var(--navy);cursor:pointer}
 select{width:100%;border:1px solid var(--ln);background:var(--card);color:var(--navy);border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;margin-bottom:12px}
 label.fl{display:block;font-size:13px;font-weight:700;margin:2px 0 6px}
@@ -149,6 +149,10 @@ label.fl{display:block;font-size:13px;font-weight:700;margin:2px 0 6px}
 .tile.on{border:1.5px solid var(--navy);background:var(--gray)}
 .tile b{display:block;font-size:14.5px;margin-bottom:6px}
 .prefs{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:0 0 18px}
+.langseg{display:inline-flex;gap:6px}
+.sheet .langseg button{display:inline-block;width:auto;border:1px solid var(--ln);border-bottom:1px solid var(--ln);padding:6px 14px;font-size:12.5px;border-radius:16px;background:var(--card);color:var(--navy);font-weight:700;cursor:pointer}
+.sheet .langseg button.on{background:var(--navy);color:var(--bg);border-color:var(--navy)}
+.cpills{display:flex;gap:8px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
 .tinyb{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ln);background:var(--card);color:var(--navy);border-radius:10px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;width:auto;line-height:1.3}
 .tinyb svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .seg.sm{display:inline-flex;width:auto;margin:0;padding:3px;gap:2px;border-radius:10px}
@@ -600,9 +604,9 @@ function groupPage(i){var g=GR[i],joined=S.gj&&S.gj[i];
  out.forEach(function(p){h+=postHtml(p)});
  return h}
 function cfeedHtml(){var jn=Object.keys(S.gj||{}).filter(function(k){return S.gj[k]});if(!jn.length)return "";
- var h='<div class="row" style="margin:0 0 12px"><select onchange="S.cfeed=(this.value===\'\'?null:this.value);render()" style="flex:1"><option value="">'+t("allg")+'</option>';
+ var h='<div class="row" style="gap:8px;margin:0 0 12px;align-items:center"><select onchange="S.cfeed=(this.value===\'\'?null:this.value);render()" style="flex:0 0 auto;width:auto;max-width:44%;margin-bottom:0"><option value="">'+t("allg")+'</option>';
  jn.forEach(function(k){h+='<option value="'+k+'"'+(String(S.cfeed)===String(k)?" selected":"")+'>'+esc(GR[k][ai()])+'</option>'});
- h+='</select></div>';var out=[];
+ h+='</select><div class="cpills">'+jn.map(function(k){return '<button class="chip" onclick="S.grp='+k+';render()">'+esc(GR[k][ai()])+'</button>'}).join("")+'</div></div>';var out=[];
  jn.forEach(function(k){if(S.cfeed!=null&&String(S.cfeed)!==String(k))return;(S.dbposts||[]).forEach(function(q){if(q.community!==+k)return;out.push(dbPost(q))});(S.gposts&&S.gposts[k]||[]).forEach(function(p,ki){out.push({own:true,id:"g"+k+"_"+ki,k:ki,comm:+k,name:p.by,hl:p.hl||"",text:p.text,tags:"",likes:0,cm:0,time:t("now"),cmt:null,img:p.img,ts:"~"})})});
  out.sort(function(a,b){var x=b.ts||"",y=a.ts||"";return x<y?-1:x>y?1:0});
  if(!out.length)h+='<div class="card"><div class="empty">'+t("nogposts")+'</div></div>';
@@ -614,7 +618,7 @@ function groupsView(){
  var h='<div class="seg" style="margin:0 0 16px"><button class="'+(tab==="mine"?'on':'')+'" onclick="S.gtab=\'mine\';render()">'+t("yourg")+'</button><button class="'+(tab==="all"?'on':'')+'" onclick="S.gtab=\'all\';render()">'+t("allg")+'</button></div>';
  S.gmine=(tab==="mine");
  if(tab==="all")return h+'<div id="glist">'+glist(false)+'</div>';
- h+=cfeedHtml()+'<div id="glist">'+glist(true)+'</div>';
+ h+=cfeedHtml();
  if(!any)h+='<button class="btn" onclick="S.gtab=\'all\';render()">'+t("browseg")+'</button>';
  return h}
 function feed(){
@@ -1090,7 +1094,7 @@ function doLogin(){var a=document.getElementById("nm"),b=document.getElementById
 function social(p){if(p==="Google"&&sb){try{sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}})}catch(e){alert(t("socsoon"))}}else{alert(t("socsoon"))}}
 function menu(){
  var MOON='<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>',SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>';
- var lg='<button class="tinyb" onclick="toggleLang(\''+(L==="ar"?"en":"ar")+'\')">'+(L==="ar"?"English":"العربية")+'</button>';
+ var lg='<div class="langseg"><button class="'+(L==="en"?"on":"")+'" onclick="toggleLang(\'en\')">English</button><button class="'+(L==="ar"?"on":"")+'" onclick="toggleLang(\'ar\')">عربي</button></div>';
  var th='<button class="tinyb" onclick="setTheme(\''+(S.theme==="dark"?"light":"dark")+'\')">'+(S.theme==="dark"?SUN:MOON)+(S.theme==="dark"?t("lights"):t("darks"))+'</button>';
  var top=S.user?'<div class="row" style="justify-content:flex-start;margin-bottom:12px"><div class="av lg">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><div style="min-width:0"><b>'+esc(S.user)+'</b><div dir="ltr" style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis">'+esc(S.email||"")+'</div><div style="color:var(--mut);font-size:13px">'+t(isExp()?"expert":"learner")+'</div></div></div>'+(S.profile&&S.profile.spec?'<div class="sub" style="margin:-4px 0 10px">'+esc(sp(S.profile.spec))+'</div>':''):'';
  var it=[];
@@ -1135,6 +1139,7 @@ function render(){
  var mn0=document.querySelector("main"),sig=[S.tab,S.page,S.view,!!S.adding,S.fv,S.grp,S.pp,S.edit].join("|"),st0=(S.lastSig===sig&&mn0)?mn0.scrollTop:0;S.lastSig=sig;
  app.innerHTML='<header><div class="brand"><span style="color:var(--green)">U</span>Ready</div><div class="right">'+sIco()+bell()+who+'<button class="burger" aria-label="Menu" onclick="S.menu=true;S.dd=false;render()"><i></i><i></i><i></i></button></div></header>'+
  '<main>'+body+'</main><nav>'+TABS.map(function(k){return '<button class="'+(S.tab===k?'on':'')+'" onclick="S.tab=\''+k+'\';S.view=null;S.adding=null;S.page=null;S.editing=null;S.fq=\'\';S.srch=false;S.grp=null;S.gcat=null;render()"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span class="nl">'+t(k)+'</span></button>'}).join("")+'</nav>'+(S.menu?menu():'')+(S.modal?modal():'')+(S.cm?cmSheet():'');
+ document.body.style.overflow=S.menu?"hidden":"";
  var mn1=document.querySelector("main");if(mn1&&st0)mn1.scrollTop=st0;
  if(mn1){mn1.scrollLeft=0;mn1.onscroll=function(){if(mn1.scrollLeft)mn1.scrollLeft=0};document.documentElement.scrollLeft=0}
  if(S.cmFocus){S.cmFocus=false;var ci=document.getElementById("cmi");if(ci&&ci.focus)ci.focus()}
