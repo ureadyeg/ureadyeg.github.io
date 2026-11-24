@@ -386,7 +386,7 @@ var sb=(window.supabase&&window.supabase.createClient)?window.supabase.createCli
 function sbJoin(n,e,prof){if(!sb)return;try{sb.auth.signInWithOtp({email:e,options:{data:{full_name:n,role:(S.pick==="expert"?"expert":"user"),linkedin_url:(prof&&prof.linkedin)||"",spec:(prof&&prof.spec)||"",title:(prof&&prof.title)||"",company:(prof&&prof.company)||"",freelancer:!!(prof&&prof.freelancer),age:(prof&&prof.age)||"",country:(prof&&prof.country)||"",terms:"v1"},emailRedirectTo:location.origin+location.pathname}}).then(function(r){if(r&&r.error){var ok=document.getElementById("jok");if(ok)ok.innerHTML='<div class="note">'+t("linkfail")+'</div>';else alert(t("linkfail"))}else alert(t("linksent"))})}catch(e){}}
 function sbProfile(){if(!sb)return;try{sb.auth.getSession().then(function(r){var se=r&&r.data&&r.data.session;if(!se||!se.user){if(S.user){S.uid=null;S.user=null;S.email=null;S.role=null;S.roleDb=null;S.profile=null;render()}return};sb.from("profiles").select("*").eq("id",se.user.id).single().then(function(pr){var p=pr&&pr.data;if(!p)return;
  if(p.status==="banned"){S.user=null;S.role=null;S.roleDb=null;S.profile=null;try{sb.auth.signOut()}catch(e){}alert(t("banned"));render();return}
- S.uid=se.user.id;S.user=p.full_name||se.user.email;S.email=p.email;S.roleDb=p.role;S.isOwner=!!p.is_owner;S.role=(p.role==="mentor"||p.role==="expert"||p.role==="admin")?"expert":"learner";S.modal=false;S.mustComplete=null;
+ S.uid=se.user.id;setTimeout(function(){sbBookings(true)},400);S.user=p.full_name||se.user.email;S.email=p.email;S.roleDb=p.role;S.isOwner=!!p.is_owner;S.role=(p.role==="mentor"||p.role==="expert"||p.role==="admin")?"expert":"learner";S.modal=false;S.mustComplete=null;
  if(p.role==="learner"&&S.pick==="expert"&&!p.linkedin_url){S.role="expert";S.mustComplete="mentor"}
  else if(p.role!=="admin"&&(!p.age||!p.country||!p.terms_accepted_at)){S.mustComplete="common"}
  render();sbProfileExtras();sbReactions()})})}catch(e){}}
@@ -394,7 +394,7 @@ if(sb){try{sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN")sbProfi
 var FDQ=".lpt,.cmt,.lpn,.lps,.cmn,.pname,.lpcomm,.line",FDT=0;
 function fixDir(){document.querySelectorAll(FDQ).forEach(function(el){if(el.closest(".phead")){if(el.hasAttribute("dir"))el.removeAttribute("dir");return}var tx=el.textContent||"",ar=(tx.match(/[\u0600-\u06FF\u0750-\u077F]+/g)||[]).length,la=(tx.match(/[A-Za-z]+/g)||[]).length,d=(ar||la)?(ar>=la&&ar>0?"rtl":"ltr"):"";if(d&&el.getAttribute("dir")!==d)el.setAttribute("dir",d)})}
 try{new MutationObserver(function(){if(FDT)return;FDT=requestAnimationFrame(function(){FDT=0;fixDir()})}).observe(document.body,{childList:true,subtree:true,characterData:true})}catch(e){}
-sbEvents();sbCImgs();sbPosts();sbProfile();sbProfileExtras();
+sbEvents();sbCImgs();sbPosts();sbServices(true);setInterval(function(){if(!document.hidden){sbServices(false);sbBookings(false)}},45000);sbProfile();sbProfileExtras();
 function pubOK(){if(!S.user){openModal();return false}if(S.roleDb==="mentor"||S.roleDb==="expert"||S.roleDb==="admin")return true;if(isExp()||S.roleDb==="mentor_pending"){alert(t("pendok"));return false}alert(t("onlym"));return false}
 sbProfile();
 function setTheme(m){S.theme=m;try{localStorage.setItem("ur_theme",m)}catch(e){}render()}
@@ -870,13 +870,15 @@ function cnChange(v){var o=document.getElementById("pco");if(o){o.style.display=
 function jt(x,l){if(l==null)l=ai();return l===1&&JOBS_AR[x]?JOBS_AR[x]:x}
 function ai(){return L==="ar"?1:0}
 function pick2(a,i){return a[i*2+ai()]}
+Object.assign(T,{fblink:["Link to your CV, LinkedIn or project (https)","لينك السي في أو لينكدإن أو مشروعك (https)"],fblinkbad:["Add a valid link that starts with https://","ضيف لينك صحيح يبدأ بـ https://"],fbnote:["What would you like feedback on? (optional)","عايز ملاحظات على إيه؟ (اختياري)"],meetlink:["Zoom or Google Meet link","لينك زوم أو جوجل ميت"],meetneed:["Add your Zoom or Google Meet link (https://).","ضيف لينك زوم أو جوجل ميت (https://)."],stepsneed:["Add the challenge steps (one per line).","ضيف خطوات التحدي (خطوة في كل سطر)."],stepslock:["The full steps appear after you join.","الخطوات الكاملة بتظهر بعد ما تشترك."],yourwork:["Link to your work (PDF or any link)","لينك شغلك (PDF أو أي لينك)"],sendwork:["Submit my work","ابعت شغلي"],workin:["Your submitted work","الشغل اللي بعته"],waitfb:["Waiting for the mentor's feedback.","في انتظار ملاحظات المرشد."],mfeed:["Mentor feedback","ملاحظات المرشد"],sendfb:["Send feedback","ابعت الملاحظات"],fbtext:["Your feedback","ملاحظاتك"],fblk:["Link (optional)","لينك (اختياري)"],userwork:["Submitted link","اللينك اللي اتبعت"],nowork:["No work submitted yet.","لسه مفيش شغل اتبعت."],sesslink:["Session link","لينك الجلسة"],usd:["USD","دولار"],bk_requested:["Booking requested. The mentor will review it.","طلب الحجز اتبعت والمرشد هيراجعه."],bk_accepted:["Accepted. Now pay the mentor to confirm your booking.","اتقبل طلبك. ادفع للمرشد عشان يتأكد الحجز."],bk_paid:["You marked it as paid. Waiting for the mentor to confirm.","سجلت إنك دفعت. في انتظار تأكيد المرشد."],bk_confirmed:["Confirmed","الحجز مؤكد"],bk_declined:["This request was declined.","الطلب اترفض."],bk_cancelled:["You cancelled this request.","لغيت الطلب ده."],payto:["Amount to pay","المبلغ المطلوب"],paybtn:["Pay the mentor","ادفع للمرشد"],paywait:["The mentor has not added payment details yet.","المرشد لسه مضافش بيانات الدفع."],paydisc:["UReady does not process or hold payments. You pay the mentor directly, and any refund is between you and the mentor.","UReady مش بتستلم ولا بتحتفظ بأي فلوس. انت بتدفع للمرشد مباشرة وأي استرداد بينك وبينه."],payref:["Transaction reference or note (optional)","رقم العملية أو ملاحظة (اختياري)"],ipaid:["I paid","دفعت"],cancelreq:["Cancel request","إلغاء الطلب"],cnfcancel:["Cancel this request?","تلغي الطلب ده؟"],paidwait:["Payment sent. The mentor will confirm once it arrives.","اتسجل الدفع. المرشد هيأكد أول ما توصله الفلوس."],paylater:["No payment now. If the mentor accepts, you will see how to pay.","مفيش دفع دلوقتي. لو المرشد قبل، هيظهرلك إزاي تدفع."],mybk:["My bookings","حجوزاتي"],nobk:["You have no bookings yet.","لسه معندكش حجوزات."],bigfile:["The file is too large (max 10 MB).","الملف كبير (الحد الأقصى ١٠ ميجا)."],curl:["Currency","العملة"],paylink:["Your payment link (https)","لينك الدفع بتاعك (https)"],paynotel:["Payment details (optional): for example a wallet number or instructions","بيانات الدفع (اختياري): مثلًا رقم محفظة أو تعليمات"],paymine:["Payments go straight to you. UReady does not take or hold any money.","الفلوس بتروحلك مباشرة. UReady مش بتاخد ولا بتحتفظ بأي فلوس."],needpay:["Add a payment link or payment details for a paid service.","ضيف لينك دفع أو بيانات دفع للخدمة المدفوعة."],payrecv:["Payment received","استلمت الدفع"],waitpay:["Waiting for the user to pay","في انتظار دفع المستخدم"],paidchk:["The user says they paid. Check your account, then confirm.","المستخدم بيقول إنه دفع. اتأكد من حسابك وبعدين أكد."],usernote:["Reference","المرجع"],opfile:["Open file","افتح الملف"],mtlink:["Session link","لينك الجلسة"],delcnf:["Delete this service?","تمسح الخدمة دي؟"]});
 SV=SV.filter(function(v){return v[2]<0});
 SVP={};SV.forEach(function(v,i){SVP[i]=[0,0]});
 function pinfo(i){var v=SV[i];if(v[15])return v[15];var d=SVP[i]||[300,60];return {price:d[0],free:d[0]===0,dur:d[1]}}
-function pfmt(i,noDur){var p=pinfo(i),a=p.free?t("freet"):(L==="ar"?p.price+" "+t("egp"):t("egp")+" "+p.price);if(p.dur&&!noDur)a+=" · "+p.dur+" "+t("minw");return a}
+function pfmt(i,noDur){var p=pinfo(i),cu=p.cur==="USD"?"usd":"egp",a=p.free?t("freet"):(L==="ar"?p.price+" "+t(cu):t(cu)+" "+p.price);if(p.dur&&!noDur)a+=" · "+p.dur+" "+t("minw");return a}
 function avOf(v,n,cls){if(v[16])return '<div class="av '+cls+'"><img src="'+v[16]+'" alt=""></div>';return avBox(v[2]>=0?v[2]:null,n,cls)}
 function fmtSlot(iso){var d=new Date(iso),loc=L==="ar"?"ar-EG":"en-GB";return d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"})+" · "+d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"})}
-function mine(v){return v[2]<0&&v[11]&&v[11][0]===S.user&&!v.deleted}
+function mine(v){return v.db&&(v.oid===S.uid||v.mgr===S.uid)&&!v.deleted}
+function hasSl(v){return !(v[0]==='work'&&v[1]>0)&&!(v[0]==='mentor'&&v[1]===1)}
 function rate(v,n){if(!n)return '<span class="rate"><small>'+t("newt")+'</small></span>';return '<span class="rate">★ '+v.toFixed(1)+' <small>('+n+')</small></span>'}
 function personOf(v){return v[2]>=0?(PEOPLE[v[2]]||["Guest","","Marketing","ضيف",""]):v[11]}
 function svcCard(i){var v=SV[i],p=personOf(v),n=L==="ar"?p[3]:p[0],d=detailsOf(v);
@@ -908,7 +910,7 @@ function listing(kind){
  return h+'<div id="lres">'+lres(kind)+'</div>';
 }
 function openSvc(i){S.view=i;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
-function slotsFor(i){var v=SV[i];if(v[2]<0){var loc0=L==="ar"?"ar-EG":"en-GB";return (v[12]||[]).map(function(iso,k){var d=new Date(iso);return {id:"c"+k,day:d.toLocaleDateString(loc0,{weekday:"short",day:"numeric",month:"short"}),time:d.toLocaleTimeString(loc0,{hour:"numeric",minute:"2-digit"})}})}
+function slotsFor(i){var v=SV[i];if(v[2]<0){var loc0=L==="ar"?"ar-EG":"en-GB";return (v[12]||[]).map(function(iso,k){var d=new Date(iso);if(d.getTime()<Date.now())return null;return {id:"c"+k,day:d.toLocaleDateString(loc0,{weekday:"short",day:"numeric",month:"short"}),time:d.toLocaleTimeString(loc0,{hour:"numeric",minute:"2-digit"})}}).filter(Boolean)}
  var base=[2+i%3,6+i%3,10,14+i%2,19,24,29],hs=[[19,30],[18,0],[20,0]],loc=L==="ar"?"ar-EG":"en-GB",out=[];
  base.forEach(function(off,k){var d=new Date();d.setDate(d.getDate()+off);d.setHours(hs[k%3][0],hs[k%3][1],0,0);
   out.push({id:off+"-"+k,day:d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"}),time:d.toLocaleTimeString(loc,{hour:"numeric",minute:"2-digit"})})});return out}
@@ -917,29 +919,30 @@ var STEPS={3:[["Pick a product and write its name and category.","Estimate weekl
 STEPS[14]=[["Pick your audience and describe them in two lines.","Suggest a name and a one-line promise.","Sketch the packaging idea.","Write a one-page launch plan and submit it."],["اختار جمهورك ووصفه في سطرين.","اقترح اسم ووعد في سطر واحد.","ارسم فكرة التغليف.","اكتب خطة إطلاق في صفحة واحدة وابعتها."]];
 STEPS[15]=[["Choose the store type and the product.","Draw the shelf and mark where the product goes.","Explain your choice in three points.","Suggest one simple promotion and submit your plan."],["اختار نوع المحل والمنتج.","ارسم الرف وحدد مكان المنتج.","اشرح اختيارك في تلات نقط.","اقترح عرض بسيط وابعت خطتك."]];
 STEPS[16]=[["Open the dataset and clean any errors.","Find three insights that matter for sales.","Make a simple chart for each insight.","Prepare a short summary with recommendations."],["افتح البيانات ونضف أي أخطاء.","طلّع تلات أفكار مهمة للمبيعات.","اعمل رسمة بسيطة لكل فكرة.","جهّز ملخص قصير بالتوصيات."]];
-function stepsFor(i){var v=SV[i];if(v[14]&&v[14].length)return v[14];return STEPS[i]?STEPS[i][ai()]:[]}
+function stepsFor(i){var v=SV[i];if(v.db){var pv=(S.priv||{})[v.id];return pv&&pv.steps?pv.steps:[]}if(v[14]&&v[14].length)return v[14];return STEPS[i]?STEPS[i][ai()]:[]}
 function detail(i){
- var v=SV[i],p=personOf(v),n=L==="ar"?p[3]:p[0],kind=v[0],key=kind+v[1],isCh=kind==="work"&&v[1]>0,bk=S.booked&&S.booked[i],pi=pinfo(i);
+ var v=SV[i],p=personOf(v),n=L==="ar"?p[3]:p[0],kind=v[0],key=kind+v[1],isCh=kind==="work"&&v[1]>0,bk=bookingFor(i),pi=pinfo(i);
  var txt=v[7+ai()]+" "+GEN[key==="work2"?"workc":kind][ai()],open=S.more&&S.more[i];
  var h='<button class="back" onclick="S.view=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button>';
  h+='<div class="card person"'+(v[2]>=0?' onclick="openPerson('+v[2]+')" style="cursor:pointer"':'')+'>'+avOf(v,n,"lg")+'<div class="info"><b>'+esc(n)+'</b>'+((v[2]>=0||v.sample)?'<span class="tag">'+t("sample")+'</span>':'')+provBlock(v)+rate(v[9],v[10])+'</div></div>';
  h+='<h2>'+esc(v[3+ai()])+'</h2><div class="line" style="font-weight:800;color:var(--navy);margin:4px 0 6px">'+pfmt(i)+'</div><button class="mini" style="margin-bottom:10px" onclick="saveS('+i+')">'+ICB+' '+t(S.savedS&&S.savedS[i]?"savedb":"saveb")+'</button><p class="sub" style="margin-top:6px">'+NOTE[key][ai()]+'</p><h3 style="margin-top:18px">'+t("about")+'</h3><div class="'+(open?'':'clamp')+'" style="line-height:1.65;font-size:14.5px">'+esc(txt)+'</div>';
  h+='<button class="link" onclick="S.more=S.more||{};S.more['+i+']=!S.more['+i+'];render()">'+t(open?"less":"more")+'</button>';
- if(!isCh){
+ if(hasSl(v)&&!(v.db&&bkActive(bk))){
   var sl0=slotsFor(i);h+='<h3>'+t("times")+'</h3>'+(sl0.length?'':'<p class="sub">'+t("notimes")+'</p>')+'<div class="slots">'+sl0.map(function(sl){return '<button class="slot'+(S.slot===sl.id&&S.slotFor===i?' on':'')+'" onclick="S.slot=\''+sl.id+'\';S.slotFor='+i+';render()">'+sl.day+'<br>'+sl.time+'</button>'}).join("")+'</div>';
  }
- if(bk){
+ if(bk&&v.db&&!bkActive(bk))h+='<div class="note" style="margin-top:12px">'+t("bk_"+bk.status)+'</div>';
+ if(bk&&v.db&&bkActive(bk)){h+=bkCard(i,bk,isCh,key)}else if(bk&&!v.db){
   h+='<div class="ok">'+t("booked")+'<div class="line" style="font-weight:500;margin-top:8px">'+t("statusw")+'</div>'+(bk.topic?'<div class="line" style="font-weight:500;margin-top:8px">'+esc(bk.topic)+'</div>':'')+(bk.file?'<div class="line" style="font-weight:600;margin-top:6px">'+esc(bk.file)+'</div>':'')+'</div>';
   if(isCh)h+='<h3>'+t("steps")+'</h3><div class="card"><ol style="margin:0;padding-inline-start:22px;line-height:1.75;font-size:14.5px">'+stepsFor(i).map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ol></div><div class="ok">'+t(key==="work2"?"cjoined":"fbrounds")+'</div>';
   else h+='<div class="card"><div class="line">'+t("linkwait")+'</div></div>';
  }else if(S.bk===i){
   h+='<div class="card"><div class="line" style="font-weight:800;margin-bottom:12px">'+t("total")+': '+pfmt(i,true)+'</div>'+
    ((key==="mentor0"||key==="mentor2")?'<label class="fl">'+t(key==="mentor2"?"learnq":"topicq")+'</label><textarea id="bt" rows="3"></textarea>':'')+
-   (key==="mentor1"?'<label class="fl">'+t("fbq")+'</label><textarea id="bt" rows="2"></textarea><label class="fl">'+t("filef")+'</label><input id="bf" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx">':'')+
-   (pi.free?'':'<label class="fl">'+t("paym")+'</label><select id="bp"><option>'+t("pay3")+'</option><option>'+t("pay4")+'</option></select><div class="line" style="margin-bottom:12px">'+t("paynote")+'</div>')+
+   (key==="mentor1"?'<label class="fl">'+t("fblink")+' *</label><input id="bl" dir="ltr" placeholder="https://"><label class="fl">'+t("fbnote")+'</label><textarea id="bn" rows="2"></textarea>':'')+
+   (pi.free?'':'<div class="note" style="margin-bottom:12px">'+t("paylater")+'</div>')+
    '<button class="btn fill" onclick="sendBook('+i+')">'+t("sendreq")+'</button></div>';
- }else if(isCh)h+='<div class="note" style="margin-top:14px">'+t(key==="work2"?"cjoin":"jointonote")+'</div><button class="btn fill" onclick="book('+i+')">'+t("joinc")+'</button>';
- else h+='<button class="btn fill" onclick="book('+i+')">'+(S.slotFor===i&&S.slot?t("book"):t("picktime"))+'</button>';
+ }else if(isCh)h+='<div class="note" style="margin-top:14px">'+t(key==="work2"?"cjoin":"jointonote")+' '+(v.db?t("stepslock"):"")+'</div><button class="btn fill" onclick="book('+i+')">'+t("joinc")+'</button>';
+ else h+='<button class="btn fill" onclick="book('+i+')">'+((!hasSl(v)||(S.slotFor===i&&S.slot))?t("book"):t("picktime"))+'</button>';
  h+='<h3>'+t("revs")+'</h3><div class="card">'+(v[10]===0?'<div class="empty" style="padding:6px">'+t("norev")+'</div>':rate(v[9],v[10])+' <span class="tag">'+t("sample")+'</span>'+CM.map(function(c,k){return '<div class="cm"><b>'+c[ai()]+'</b> <span class="rate">★ '+(k===2?4:5)+'</span><div style="margin-top:6px;line-height:1.55;font-size:14px">'+c[2+ai()]+'</div></div>'}).join(""))+'</div>';
  return h;
 }
@@ -947,57 +950,108 @@ function startAdd(k,sub,ed){if(!pubOK())return;if(!profileOK()){openProfile(true
  if(appStatus()!=="approved"){S.page="pending";S.menu=false;S.view=null;render();return}
  var v=ed!=null?SV[ed]:null,pp=S.profile||{},pi=ed!=null?pinfo(ed):null;
  S.adding={kind:k,sub:sub,edit:ed!=null?ed:null,from:S.page};
- S.af=v?{title:v[3],sum:v[5],desc:v[7],spec:v[11][2],price:String(pi.price),free:pi.free,dur:String(pi.dur||""),slots:(v[12]||[]).slice(),steps:(v[14]||[]).join("\n")}:{title:"",sum:"",desc:"",spec:pp.spec||SPECS[0],price:"",free:false,dur:"60",slots:[""],steps:""};
+ var py=v&&v.id&&S.pay&&S.pay[v.id]?S.pay[v.id]:{},pv=v&&v.id&&S.priv&&S.priv[v.id]?S.priv[v.id]:{};S.af=v?{title:v[3],sum:v[5],desc:v[7],spec:v[11][2],price:String(pi.price),free:pi.free,cur:pi.cur||"EGP",link:py.pay_link||"",meet:pv.meet_link||"",note:py.pay_note||"",dur:String(pi.dur||""),slots:(v[12]||[]).map(toLocalIn),steps:(pv.steps||[]).join("\n")}:{title:"",sum:"",desc:"",spec:pp.spec||SPECS[0],price:"",free:false,cur:"EGP",link:"",meet:"",note:"",dur:"60",slots:[""],steps:""};
  render();var m=document.querySelector("main");if(m)m.scrollTop=0}
-function addForm(){var a=S.adding,f=S.af,o=SUBS[a.kind][a.sub][ai()],isCh=a.kind==="work"&&a.sub>0,list=SPECS.indexOf(f.spec)<0?SPECS.concat([f.spec]):SPECS;
+function addForm(){var a=S.adding,f=S.af,o=SUBS[a.kind][a.sub][ai()],isCh=a.kind==="work"&&a.sub>0,sess=!isCh&&!(a.kind==="mentor"&&a.sub===1),list=SPECS.indexOf(f.spec)<0?SPECS.concat([f.spec]):SPECS;
  var h='<button class="back" onclick="S.adding=null;S.af=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button><h2>'+t(a.edit!=null?"editsvc":CREATE[a.kind][a.sub])+'</h2><p class="sub">'+o+'</p>';
  h+='<label class="fl">'+t("atitle")+' *</label><input id="at" value="'+esc(f.title)+'" oninput="S.af.title=this.value">';
  h+='<label class="fl">'+t("asum")+'</label><input id="as" value="'+esc(f.sum)+'" oninput="S.af.sum=this.value">';
  h+='<label class="fl">'+t("adesc")+'</label><textarea id="ad" rows="5" oninput="S.af.desc=this.value">'+esc(f.desc)+'</textarea>';
  h+='<label class="fl">'+t("spec")+'</label><select id="asp" onchange="S.af.spec=this.value">'+list.map(function(x){return '<option value="'+esc(x)+'"'+(x===f.spec?' selected':'')+'>'+esc(sp(x))+'</option>'}).join("")+'</select>';
  h+='<label class="chk"><input type="checkbox" '+(f.free?'checked':'')+' onchange="S.af.free=this.checked;render()">'+t("free")+'</label>';
- if(!f.free)h+='<label class="fl">'+t("price")+' *</label><input id="pr" type="number" min="1" dir="ltr" value="'+esc(f.price)+'" oninput="S.af.price=this.value">';
- if(!isCh)h+='<label class="fl">'+t("dur")+'</label><input id="du" type="number" min="5" dir="ltr" value="'+esc(f.dur)+'" oninput="S.af.dur=this.value">';
+ if(!f.free){h+='<label class="fl">'+t("price")+' *</label><div class="row" style="gap:8px;margin-bottom:6px"><input id="pr" type="number" min="1" dir="ltr" style="margin:0" value="'+esc(f.price)+'" oninput="S.af.price=this.value"><select id="pcu" style="margin:0;max-width:110px" onchange="S.af.cur=this.value"><option value="EGP"'+(f.cur!=="USD"?' selected':'')+'>'+t("egp")+'</option><option value="USD"'+(f.cur==="USD"?' selected':'')+'>'+t("usd")+'</option></select></div>';
+  h+='<label class="fl">'+t("paylink")+'</label><input id="plk" dir="ltr" placeholder="https://" value="'+esc(f.link)+'" oninput="S.af.link=this.value"><label class="fl">'+t("paynotel")+'</label><textarea id="pnt" rows="2" oninput="S.af.note=this.value">'+esc(f.note)+'</textarea><div class="note" style="margin-bottom:12px">'+t("paymine")+'</div>'}
+ if(sess)h+='<label class="fl">'+t("dur")+'</label><input id="du" type="number" min="5" dir="ltr" value="'+esc(f.dur)+'" oninput="S.af.dur=this.value">';
  if(isCh)h+='<label class="fl">'+t("astep")+'</label><textarea id="ast" rows="4" oninput="S.af.steps=this.value">'+esc(f.steps)+'</textarea>';
- if(!isCh){h+='<label class="fl">'+t("addtimes")+'</label>';f.slots.forEach(function(x,k){h+='<div class="row" style="margin-bottom:10px"><input type="datetime-local" dir="ltr" style="margin:0" value="'+esc(x)+'" oninput="S.af.slots['+k+']=this.value"><button class="mini dng" onclick="S.af.slots.splice('+k+',1);render()">&times;</button></div>'});
+ if(sess){h+='<label class="fl">'+t("meetlink")+' *</label><input id="ml" dir="ltr" placeholder="https://zoom.us/... / https://meet.google.com/..." value="'+esc(f.meet)+'" oninput="S.af.meet=this.value"><label class="fl">'+t("addtimes")+'</label>';f.slots.forEach(function(x,k){h+='<div class="row" style="margin-bottom:10px"><input type="datetime-local" dir="ltr" style="margin:0" value="'+esc(x)+'" oninput="S.af.slots['+k+']=this.value"><button class="mini dng" onclick="S.af.slots.splice('+k+',1);render()">&times;</button></div>'});
   h+='<button class="btn sm" style="margin-bottom:16px" onclick="S.af.slots.push(\'\');render()">+ '+t("addanother")+'</button>'}
  return h+'<button class="btn fill" onclick="saveAdd()">'+t("save")+'</button>'}
-function saveAdd(){var a=S.adding,f=S.af,isCh=a.kind==="work"&&a.sub>0;
+function saveAdd(){var a=S.adding,f=S.af,isCh=a.kind==="work"&&a.sub>0,sess=!isCh&&!(a.kind==="mentor"&&a.sub===1),mt=(f.meet||"").trim();
+ if(S.saving)return;
  if(!f.title.trim()){var e=document.getElementById("at");if(e){e.focus();e.style.borderColor="#b00020"}return}
  if(!f.free&&!(parseFloat(f.price)>0)){var e2=document.getElementById("pr");if(e2){e2.focus();e2.style.borderColor="#b00020"}return}
- var ti=f.title.trim(),su=f.sum.trim()||ti,de=f.desc.trim()||su,steps=f.steps.split("\n").map(function(x){return x.trim()}).filter(Boolean),slots=isCh?[]:f.slots.filter(Boolean);
- var pi={price:f.free?0:Math.round(parseFloat(f.price)),free:!!f.free,dur:isCh?0:(parseInt(f.dur,10)||0)};
+ var lk=(f.link||"").trim(),nt=(f.note||"").trim();
+ if(sess&&!/^https:\/\/\S+$/i.test(mt)){var e4=document.getElementById("ml");if(e4){e4.focus();e4.style.borderColor="#b00020"}alert(t("meetneed"));return}
+ if(isCh&&!f.steps.split("\n").some(function(x){return x.trim()})){var e5=document.getElementById("ast");if(e5){e5.focus();e5.style.borderColor="#b00020"}alert(t("stepsneed"));return}
+ if(!f.free&&!lk&&!nt){alert(t("needpay"));return}
+ if(lk&&!/^https:\/\/\S+$/i.test(lk)){var e3=document.getElementById("plk");if(e3){e3.focus();e3.style.borderColor="#b00020"}alert(t("paylink"));return}
+ var ti=f.title.trim(),su=f.sum.trim()||ti,de=f.desc.trim()||su,steps=f.steps.split("\n").map(function(x){return x.trim()}).filter(Boolean),slots=!sess?[]:f.slots.filter(Boolean).map(function(x){var d=new Date(x);return isNaN(d)?null:d.toISOString()}).filter(Boolean);
  var pp=S.profile||{},co0=pp.freelancer?T.freelancer[0]:pp.company,co1=pp.freelancer?T.freelancer[1]:pp.company,
  hl=[jt(pp.title,0),co0,pp.years!==""&&pp.years!=null?pp.years+" "+T.yrs[0]:""].filter(Boolean).join(" · "),hlA=[jt(pp.title,1),co1,pp.years!==""&&pp.years!=null?pp.years+" "+T.yrs[1]:""].filter(Boolean).join(" · ");
- var det={title:pp.title,company:pp.company,freelancer:pp.freelancer,uni:pp.uni,major:pp.major,years:pp.years,field:pp.spec?sp(pp.spec):pp.field};
- if(a.edit!=null){var v=SV[a.edit];v[3]=v[4]=ti;v[5]=v[6]=su;v[7]=v[8]=de;v[11][2]=f.spec;v[12]=slots;v[14]=steps;v[15]=pi;v[16]=S.photo||v[16]||""}
- else SV.push([a.kind,a.sub,-1,ti,ti,su,su,de,de,0,0,[S.user,hl,f.spec,S.user,hlA],slots,det,steps,pi,S.photo||""]);
- var from=a.from;S.adding=null;S.af=null;
- if(from==="manage"){S.page="manage";S.mg=1}else{S.f_mentor=S.f_work=null;S["s_"+a.kind]=a.sub}
- render()}
-function pendingReqs(){return (S.reqs||[]).filter(function(x){return x.status==="pending"}).length}
-function seedReqs(){if(S.reqs)return;S.reqs=[{id:1,name:"Mona Adel",key:"mentor0",off:3,h:19,m:0,topic:"I want advice on moving from sales into marketing.",status:"pending",link:""},{id:2,name:"Hassan Ali",key:"mentor1",off:5,h:18,m:0,topic:"Please review my CV for graduate programs.",file:"Hassan_CV.pdf",status:"pending",link:""},{id:3,name:"Nada Samy",key:"work0",off:8,h:20,m:0,topic:"",status:"approved",link:""}]}
-function reqType(k){var m={mentor0:1,mentor1:0,work0:3};return GD[m[k]][ai()]}
-function reqWhen(x){var d=new Date();d.setDate(d.getDate()+x.off);d.setHours(x.h,x.m,0,0);return fmtSlot(d.toISOString())}
-function reqAct(id,st){var x=S.reqs.find(function(q){return q.id===id});x.status=st;if(st==="approved"){S.nid=(S.nid||0)+1;S.notifs=S.notifs||[];S.notifs.unshift({id:S.nid,kind:"sys",key:"link",u:true})}render()}
-function saveLink(id){var x=S.reqs.find(function(q){return q.id===id}),e=document.getElementById("rl"+id);if(!e.value.trim()){e.focus();e.style.borderColor="#b00020";return}x.link=e.value.trim();render()}
-function addSlotTo(i){var e=document.getElementById("ns"+i);if(!e||!e.value)return;SV[i][12]=SV[i][12]||[];SV[i][12].push(e.value);render()}
-function rmSlot(i,k){SV[i][12].splice(k,1);render()}
-function delSvc(i){SV[i].deleted=true;render()}
-function managePage(){seedReqs();var tab=S.mg||0,pr=pendingReqs();
+ var det={title:pp.title||"",company:pp.company||"",freelancer:!!pp.freelancer,uni:pp.uni||"",major:pp.major||"",years:pp.years==null?"":pp.years,field:pp.spec?sp(pp.spec):(pp.field||"")};
+ var id=a.edit!=null?SV[a.edit].id:null,from=a.from;S.saving=true;
+ sb.rpc("save_service",{p_id:id,p_kind:a.kind,p_sub:a.sub,p_title:ti,p_summary:su,p_descr:de,p_spec:f.spec,p_price:f.free?0:parseFloat(f.price),p_currency:f.cur==="USD"?"USD":"EGP",p_dur:sess?(parseInt(f.dur,10)||0):0,p_meet:sess?mt:"",p_slots:slots,p_steps:steps,p_link:f.free?"":lk,p_note:f.free?"":nt,p_hl_en:hl,p_hl_ar:hlA,p_det:det,p_photo:S.photo||""}).then(function(r){S.saving=false;
+  if(r.error){alert(r.error.message);return}
+  S.adding=null;S.af=null;
+  if(from==="manage"){S.page="manage";S.mg=1}else{S.f_mentor=S.f_work=null;S["s_"+a.kind]=a.sub}
+  sbServices(true)})}
+function toLocalIn(x){if(!x)return "";var d=new Date(x);if(isNaN(d))return x;var p=function(n){return String(n).padStart(2,"0")};return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes())}
+function svFromRow(r){var v=[r.kind,r.sub,-1,r.title,r.title,r.summary||"",r.summary||"",r.descr||"",r.descr||"",0,0,[r.owner_name,r.hl_en||"",r.spec||"",r.owner_name,r.hl_ar||""],r.slots||[],r.det||{},r.steps||[],{price:Number(r.price),free:Number(r.price)===0,dur:r.dur||0,cur:r.currency},r.photo||""];v.id=r.id;v.oid=r.owner_id;v.mgr=r.manager_id||null;v.db=true;return v}
+function sbServices(f){if(!sb)return;try{sb.from("services").select("*").eq("deleted",false).order("created_at",{ascending:true}).limit(500).then(function(r){if(!r||!r.data)return;var key=JSON.stringify(r.data);if(!f&&key===S.svKey)return;S.svKey=key;SV=SV.filter(function(v){return !v.db}).concat(r.data.map(svFromRow));S.view=S.view!=null&&SV[S.view]?S.view:null;if(S.uid)sbBookings(true);else render()})}catch(e){}}
+function bookingFor(i){var v=SV[i];if(!v)return null;if(!v.db)return (v.sample&&S.booked&&S.booked[i])||null;var l=null;(S.allbk||[]).forEach(function(b){if(b.user_id===S.uid&&b.service_id===v.id&&(!l||b.created_at>l.created_at))l=b});return l}
+function bkActive(b){return !!b&&["requested","accepted","paid","confirmed"].indexOf(b.status)>=0}
+function sbBookings(f){if(!sb||!S.uid){return}try{sb.from("bookings").select("*").order("created_at",{ascending:false}).limit(500).then(function(r){if(!r||!r.data)return;sb.from("service_pay").select("*").then(function(p){sb.from("service_private").select("*").then(function(q){var pm={},qm={};((p&&p.data)||[]).forEach(function(x){pm[x.service_id]=x});((q&&q.data)||[]).forEach(function(x){qm[x.service_id]=x});var key=JSON.stringify([r.data,pm,qm]);if(!f&&key===S.bkKey)return;S.bkKey=key;S.allbk=r.data;S.pay=pm;S.priv=qm;var a=document.activeElement;if(!f&&a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;render()})})})}catch(e){}}
+function bookDb(i,v){var isCh=v[0]==="work"&&v[1]>0,slot="";if(hasSl(v)){var k=parseInt(String(S.slot||"").slice(1),10);slot=v[12][k]||""}
+ if(S.bkBusy)return;S.bkBusy=true;
+ var bt=document.getElementById("bt")||document.getElementById("bn"),bl=document.getElementById("bl");
+ sb.rpc("book_service",{p_service:v.id,p_slot:slot,p_topic:bt?bt.value.trim():"",p_link:bl?bl.value.trim():""}).then(function(r){S.bkBusy=false;if(r.error){alert(r.error.message);return}S.bk=null;S.slot=null;sbBookings(true)})}
+function bkAct(id,act,txt,lnk){if(act==="paid"){var e=document.getElementById("pref");txt=e?e.value.trim():""}
+ sb.rpc("booking_act",{p_id:id,p_action:act,p_text:txt||"",p_link:lnk||""}).then(function(r){if(r.error)alert(r.error.message);sbBookings(true)})}
+function bkSubmit(id){var e=document.getElementById("wl"+id);if(!e)return;if(!/^https:\/\/\S+$/i.test(e.value.trim())){e.focus();e.style.borderColor="#b00020";alert(t("fblinkbad"));return}bkAct(id,"submit",e.value.trim())}
+function bkReply(id){var a=document.getElementById("rt"+id),b=document.getElementById("rk"+id),tx=a?a.value.trim():"",lk=b?b.value.trim():"";if(!tx&&!lk){if(a)a.focus();return}if(lk&&!/^https:\/\/\S+$/i.test(lk)){b.focus();b.style.borderColor="#b00020";alert(t("fblinkbad"));return}bkAct(id,"reply",tx,lk)}
+function lnk(u){return /^https:\/\//i.test(u||"")?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer" dir="ltr" style="word-break:break-all">'+esc(u)+'</a>':esc(u||"")}
+function bkCard(i,b,isCh,key){var v=SV[i],pay=(S.pay||{})[v.id]||{},st=b.status,h='<div class="ok">'+t("bk_"+st);
+ if(b.slot)h+='<div class="line" style="font-weight:600;margin-top:8px">'+fmtSlot(b.slot)+'</div>';
+ if(b.topic)h+='<div class="line" style="font-weight:500;margin-top:8px">'+esc(b.topic)+'</div>';
+ if(b.file_name)h+='<div class="line" style="font-weight:600;margin-top:6px">'+esc(b.file_name)+'</div>';
+ h+='</div>';
+ if(st==="accepted"){h+='<div class="card"><div class="line" style="font-weight:800">'+t("payto")+': '+pfmt(i,true)+'</div>';
+  if(pay.pay_link&&/^https:\/\//i.test(pay.pay_link))h+='<a class="btn fill" style="display:block;text-align:center;margin:12px 0;text-decoration:none" href="'+esc(pay.pay_link)+'" target="_blank" rel="noopener noreferrer">'+t("paybtn")+'</a>';
+  if(pay.pay_note)h+='<div class="line" style="margin:8px 0;white-space:pre-wrap">'+esc(pay.pay_note)+'</div>';
+  if(!pay.pay_link&&!pay.pay_note)h+='<div class="line">'+t("paywait")+'</div>';
+  h+='<div class="note" style="margin:10px 0">'+t("paydisc")+'</div><input id="pref" placeholder="'+t("payref")+'" maxlength="300"><button class="btn fill" onclick="bkAct(\''+b.id+'\',\'paid\')">'+t("ipaid")+'</button></div>'}
+ if(st==="paid")h+='<div class="card"><div class="line">'+t("paidwait")+'</div></div>';
+ if(st==="requested"||st==="accepted")h+='<button class="mini dng" style="margin:10px 0" onclick="if(confirm(t(\'cnfcancel\')))bkAct(\''+b.id+'\',\'cancel\')">'+t("cancelreq")+'</button>';
+ if(st==="confirmed"){var fb=(v[0]==="mentor"&&v[1]===1),pv=(S.priv||{})[v.id]||{};
+  if(isCh){h+='<h3>'+t("steps")+'</h3><div class="card"><ol style="margin:0;padding-inline-start:22px;line-height:1.75;font-size:14.5px">'+stepsFor(i).map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ol></div>';
+   h+='<div class="card"><div class="line" style="font-weight:700">'+t("workin")+'</div>'+(b.work_link?'<div class="line" style="margin:6px 0">'+lnk(b.work_link)+'</div>':'<div class="line">'+t("nowork")+'</div>')+'<label class="fl">'+t("yourwork")+'</label><input id="wl'+b.id+'" dir="ltr" placeholder="https://" value="'+esc(b.work_link||"")+'"><button class="btn fill sm" onclick="bkSubmit(\''+b.id+'\')">'+t("sendwork")+'</button></div>'}
+  else if(fb){h+='<div class="card"><div class="line" style="font-weight:700">'+t("workin")+'</div><div class="line" style="margin-top:6px">'+lnk(b.work_link)+'</div></div>'}
+  else{var ml=pv.meet_link||b.meet_link;if(ml)h+='<div class="card"><div class="line" style="font-weight:700">'+t("sesslink")+'</div><div style="margin-top:6px">'+lnk(ml)+'</div></div>';else h+='<div class="card"><div class="line">'+t("linkwait")+'</div></div>'}
+  if(isCh||fb){h+='<div class="card"><div class="line" style="font-weight:700">'+t("mfeed")+'</div>'+((b.reply_text||b.reply_link)?(b.reply_text?'<div style="margin-top:8px;line-height:1.6;white-space:pre-wrap">'+esc(b.reply_text)+'</div>':'')+(b.reply_link?'<div style="margin-top:8px">'+lnk(b.reply_link)+'</div>':''):'<div class="line" style="margin-top:6px">'+t("waitfb")+'</div>')+'</div>'}}
+ return h}
+function myReqs(){var ids={};SV.forEach(function(v){if(mine(v))ids[v.id]=v});return (S.allbk||[]).filter(function(b){return ids[b.service_id]}).map(function(b){return {b:b,v:ids[b.service_id]}})}
+function pendingReqs(){return myReqs().filter(function(x){return x.b.status==="requested"||x.b.status==="paid"}).length}
+function saveMeet(id){var e=document.getElementById("rl"+id);if(!e||!e.value.trim()){if(e){e.focus();e.style.borderColor="#b00020"}return}bkAct(id,"link",e.value.trim())}
+function reqsHtml(h){var L2=myReqs();
+ if(!L2.length)return h+'<div class="card"><div class="empty">'+t("norequests")+'</div></div>';
+ L2.forEach(function(x){var b=x.b,v=x.v,st=b.status,isCh=v[0]==="work"&&v[1]>0;
+  h+='<div class="card"><div><b>'+esc(b.user_name||"")+'</b><div class="line">'+esc(v[3])+'</div>'+(b.slot?'<div class="line">'+fmtSlot(b.slot)+'</div>':'')+'<div class="line" style="font-weight:700">'+pfmt(SV.indexOf(v),true)+'</div></div>'+(b.topic?'<div style="margin-top:10px;line-height:1.55;font-size:14px">'+esc(b.topic)+'</div>':'');
+  if(b.work_link)h+='<div class="line" style="margin-top:8px"><b>'+t("userwork")+':</b> '+lnk(b.work_link)+'</div>';
+  h+='<div style="margin-top:12px"><span class="tag" style="margin:0">'+t("bk_"+st)+'</span></div>';
+  if(st==="requested")h+='<div class="row" style="margin-top:14px"><button class="btn fill sm" style="flex:1" onclick="bkAct(\''+b.id+'\',\'accept\')">'+t("approve")+'</button><button class="btn sm dng" style="flex:1" onclick="bkAct(\''+b.id+'\',\'decline\')">'+t("reject")+'</button></div>';
+  if(st==="accepted")h+='<div class="note" style="margin:12px 0 4px">'+t("waitpay")+'</div>';
+  if(st==="paid"){h+='<div class="note" style="margin:12px 0 10px">'+t("paidchk")+(b.pay_ref?'<br><b>'+t("usernote")+':</b> '+esc(b.pay_ref):'')+'</div><div class="row"><button class="btn fill sm" style="flex:1" onclick="bkAct(\''+b.id+'\',\'confirm\')">'+t("payrecv")+'</button><button class="btn sm dng" style="flex:1" onclick="bkAct(\''+b.id+'\',\'decline\')">'+t("reject")+'</button></div>'}
+  if(st==="confirmed"){var fb=(v[0]==="mentor"&&v[1]===1);
+   if(isCh||fb){if(b.reply_text||b.reply_link)h+='<div class="note" style="margin:12px 0 4px"><b>'+t("mfeed")+':</b> '+esc(b.reply_text||"")+(b.reply_link?'<br>'+lnk(b.reply_link):'')+'</div>';
+    if(fb||b.work_link)h+='<label class="fl">'+t("fbtext")+'</label><textarea id="rt'+b.id+'" rows="3">'+esc(b.reply_text||"")+'</textarea><label class="fl">'+t("fblk")+'</label><input id="rk'+b.id+'" dir="ltr" placeholder="https://" value="'+esc(b.reply_link||"")+'"><button class="btn fill sm" onclick="bkReply(\''+b.id+'\')">'+t("sendfb")+'</button>';
+    else h+='<div class="note" style="margin:12px 0 4px">'+t("nowork")+'</div>'}}
+  h+='</div>'});
+ return h}
+function myBkPage(){var h=backBtn()+'<h2>'+t("mybk")+'</h2><p class="sub"></p>',n=0;
+ (S.allbk||[]).filter(function(b){return b.user_id===S.uid}).forEach(function(b){var i=SV.findIndex(function(v){return v.id===b.service_id});if(i<0)return;n++;var v=SV[i];h+='<div class="card" style="cursor:pointer" onclick="openSvc('+i+')"><span class="tag" style="margin:0">'+t("bk_"+b.status)+'</span><div class="stitle">'+esc(v[3])+'</div>'+(b.slot?'<div class="line">'+fmtSlot(b.slot)+'</div>':'')+'<div class="line" style="font-weight:700">'+pfmt(i,true)+'</div></div>'});
+ if(!n)h+='<div class="card"><div class="empty">'+t("nobk")+'</div></div>';return h}
+function openSvc(i){var v=SV[i];S.page=null;S.menu=false;S.tab=v[0];S["s_"+v[0]]=v[1];S.view=i;render()}
+function pushSvc(i){var v=SV[i],pi=v[15],py=(S.pay||{})[v.id]||{};sb.rpc("save_service",{p_id:v.id,p_kind:v[0],p_sub:v[1],p_title:v[3],p_summary:v[5],p_descr:v[7],p_spec:v[11][2],p_price:pi.price,p_currency:pi.cur||"EGP",p_dur:pi.dur||0,p_slots:v[12]||[],p_steps:((S.priv||{})[v.id]||{}).steps||[],p_meet:((S.priv||{})[v.id]||{}).meet_link||"",p_link:py.pay_link||"",p_note:py.pay_note||"",p_hl_en:v[11][1],p_hl_ar:v[11][4],p_det:v[13]||{},p_photo:""}).then(function(r){if(r.error)alert(r.error.message);sbServices(true)})}
+function addSlotTo(i){var e=document.getElementById("ns"+i);if(!e||!e.value)return;var d=new Date(e.value);if(isNaN(d))return;SV[i][12]=(SV[i][12]||[]).concat([d.toISOString()]);pushSvc(i)}
+function rmSlot(i,k){SV[i][12].splice(k,1);pushSvc(i)}
+function delSvc(i){if(!confirm(t("delcnf")))return;var v=SV[i];if(!v.db){v.deleted=true;render();return}sb.rpc("delete_service",{p_id:v.id}).then(function(r){if(r.error)alert(r.error.message);sbServices(true)})}
+function managePage(){var tab=S.mg||0,pr=pendingReqs();
  var h=backBtn()+'<h2>'+t("manage")+'</h2><p class="sub"></p><div class="seg" style="margin:0 0 16px"><button class="'+(tab===0?'on':'')+'" onclick="S.mg=0;render()">'+t("reqs")+(pr?' ('+pr+')':'')+'</button><button class="'+(tab===1?'on':'')+'" onclick="S.mg=1;render()">'+t("mysvc")+'</button></div>';
- if(tab===0){
-  if(!S.reqs.length)return h+'<div class="card"><div class="empty">'+t("norequests")+'</div></div>';
-  S.reqs.forEach(function(x){h+='<div class="card"><div class="row" style="align-items:flex-start"><div><b>'+esc(x.name)+'</b><div class="line">'+reqType(x.key)+'</div><div class="line">'+reqWhen(x)+'</div></div><span class="tag" style="margin:0">'+t("sample")+'</span></div>'+(x.topic?'<div style="margin-top:10px;line-height:1.55;font-size:14px">'+esc(x.topic)+'</div>':'')+(x.file?'<div class="line" style="font-weight:700;margin-top:6px">'+esc(x.file)+'</div>':'');
-   if(x.status==="pending")h+='<div class="row" style="margin-top:14px"><button class="btn fill sm" style="flex:1" onclick="reqAct('+x.id+',\'approved\')">'+t("approve")+'</button><button class="btn sm dng" style="flex:1" onclick="reqAct('+x.id+',\'rejected\')">'+t("reject")+'</button></div>';
-   else if(x.status==="rejected")h+='<div style="margin-top:12px"><span class="tag" style="margin:0">'+t("rejected")+'</span></div>';
-   else h+='<div style="margin-top:12px"><span class="tag" style="margin:0">'+t("approvedt")+'</span></div>'+(x.link?'<div class="line" style="margin-top:10px;font-weight:700">'+t("linkadded")+'</div><div class="line" dir="ltr" style="word-break:break-all">'+esc(x.link)+'</div>':'<div class="note" style="margin:12px 0 10px">'+t("remtext")+'</div><input id="rl'+x.id+'" dir="ltr" placeholder="'+t("linkph")+'"><button class="btn fill sm" onclick="saveLink('+x.id+')">'+t("savelink")+'</button>');
-   h+='</div>'});
-  return h}
+ if(tab===0)return reqsHtml(h);
  h+='<div class="card"><div class="stitle" style="margin-top:0">'+t("addnew")+'</div><div class="chips"><button class="chip" onclick="startAdd(\'mentor\',0)">+ '+SUBS.mentor[0][ai()]+'</button><button class="chip" onclick="startAdd(\'mentor\',1)">+ '+SUBS.mentor[1][ai()]+'</button><button class="chip" onclick="startAdd(\'mentor\',2)">+ '+SUBS.mentor[2][ai()]+'</button><button class="chip" onclick="startAdd(\'work\',0)">+ '+SUBS.work[0][ai()]+'</button><button class="chip" onclick="startAdd(\'work\',1)">+ '+SUBS.work[1][ai()]+'</button></div></div>';
  var n=0;SV.forEach(function(v,i){if(!mine(v))return;n++;var isCh=v[0]==="work"&&v[1]>0;
   h+='<div class="card"><span class="tag" style="margin:0">'+SUBS[v[0]][v[1]][ai()]+'</span><div class="stitle">'+esc(v[3])+'</div><div class="line" style="font-weight:700">'+pfmt(i)+'</div>';
-  if(!isCh){h+='<div class="slots" style="margin-top:12px;margin-bottom:8px">'+(v[12]||[]).map(function(x,k){return '<span class="slot" style="cursor:default">'+fmtSlot(x)+' <button class="mini dng" style="padding:0 7px;margin-inline-start:6px" onclick="rmSlot('+i+','+k+')">&times;</button></span>'}).join("")+'</div><div class="row"><input id="ns'+i+'" type="datetime-local" dir="ltr" style="margin:0"><button class="mini" onclick="addSlotTo('+i+')">'+t("addtime")+'</button></div>'}
+  if(hasSl(v)){h+='<div class="slots" style="margin-top:12px;margin-bottom:8px">'+(v[12]||[]).map(function(x,k){return '<span class="slot" style="cursor:default">'+fmtSlot(x)+' <button class="mini dng" style="padding:0 7px;margin-inline-start:6px" onclick="rmSlot('+i+','+k+')">&times;</button></span>'}).join("")+'</div><div class="row"><input id="ns'+i+'" type="datetime-local" dir="ltr" style="margin:0"><button class="mini" onclick="addSlotTo('+i+')">'+t("addtime")+'</button></div>'}
   h+='<div class="row" style="margin-top:14px;justify-content:flex-start"><button class="mini" onclick="startAdd(\''+v[0]+'\','+v[1]+','+i+')">'+t("editb")+'</button><button class="mini dng" onclick="delSvc('+i+')">'+t("delb")+'</button></div></div>'});
  if(!n)h+='<div class="card"><div class="empty">'+t("noservices")+'</div></div>';
  return h}
@@ -1065,7 +1119,7 @@ function profCont(tab,p,w){function kv(k,v){return '<div class="kv"><span>'+k+'<
   mine.forEach(function(q){h+=postHtml(dbPost(q))});
   (S.posts||[]).forEach(function(q,k){h+=postHtml({own:true,id:"o"+k,k:k,comm:null,name:q.by,hl:q.hl||"",text:q.t,tags:"",likes:0,cm:0,time:t("now"),cmt:null})});
  }else if(tab==="sv"){
-  var mine2=SV.map(function(v,k){return {v:v,k:k}}).filter(function(x){return x.v[11]&&x.v[11][0]===S.user});
+  var mine2=SV.map(function(v,k){return {v:v,k:k}}).filter(function(x){return mine(x.v)});
   if(!mine2.length)h+='<div class="card"><div class="empty" style="padding:14px">'+t("svcnone")+'</div></div>';
   else mine2.forEach(function(x){h+='<div class="card" style="margin-bottom:10px"><b>'+esc(x.v[3])+'</b><div class="line">'+esc(x.v[5]||"")+'</div></div>'});
  }else if(tab==="rv"){
@@ -1073,11 +1127,12 @@ function profCont(tab,p,w){function kv(k,v){return '<div class="kv"><span>'+k+'<
  }
  return h}
 function book(i){if(!S.user){openModal();return}if(isExp()||S.role==="admin")return;if(!profileOK()){openProfile(true,"notel");return}var v=SV[i],key=v[0]+v[1];
- if(!(v[0]==="work"&&v[1]>0)&&(S.slotFor!==i||!S.slot))return;
+ if(hasSl(v)&&(S.slotFor!==i||!S.slot))return;
  S.bk=i;render()}
 function sendBook(i){if(!S.user){openModal();return}var v=SV[i],key=v[0]+v[1],bt=document.getElementById("bt"),bf=document.getElementById("bf"),bp=document.getElementById("bp");
  if(bt&&!bt.value.trim()){bt.focus();bt.style.borderColor="#b00020";return}
- if(bf&&!(bf.files&&bf.files[0])){bf.focus();bf.style.outline="2px solid #b00020";return}
+ var bl=document.getElementById("bl");if(bl&&!/^https:\/\/\S+$/i.test(bl.value.trim())){bl.focus();bl.style.borderColor="#b00020";alert(t("fblinkbad"));return}
+ if(v.db){bookDb(i,v);return}
  S.booked=S.booked||{};S.booked[i]={slot:(v[0]==="work"&&v[1]>0)?"":S.slot,topic:bt?bt.value.trim():"",file:bf&&bf.files[0]?bf.files[0].name:"",pay:bp?bp.value:"",status:"pending"};S.bk=null;render()}
 function openPerson(i){if(!PEOPLE[i])return;S.page="person";S.pp=i;S.ptype=null;S.ptab="ov";S.menu=false;S.view=null;render();var m=document.querySelector("main");if(m)m.scrollTop=0}
 function pdata(){var i=S.pp,p=PEOPLE[i];if(!p)return null;var d=PD[i],l=ai(),groups={},order=[];
@@ -1200,7 +1255,7 @@ function menu(){
  var lg='<div class="langseg"><button onclick="setTheme(\''+(S.theme==="dark"?"light":"dark")+'\')">'+(S.theme==="dark"?SUN:MOON)+(S.theme==="dark"?t("lights"):t("darks"))+'</button><button onclick="toggleLang(\''+(L==="ar"?"en":"ar")+'\')">'+(L==="ar"?"English":"عربي")+'</button></div>';
  var top=S.user?'<div class="row" style="justify-content:flex-start;margin-bottom:12px"><div class="av lg">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><div style="min-width:0"><b>'+esc(S.user)+'</b><div dir="ltr" style="color:var(--mut);font-size:13px;overflow:hidden;text-overflow:ellipsis">'+esc(S.email||"")+'</div>'+(roleLbl(S.roleDb)?'<div style="color:var(--mut);font-size:13px">'+roleLbl(S.roleDb)+'</div>':'')+'</div></div>'+(S.profile&&S.profile.spec?'<div class="sub" style="margin:-4px 0 10px">'+esc(sp(S.profile.spec))+'</div>':''):'';
  var it=[];
- if(S.user){it.push(['openProfile(false)',t("profile")]);if(S.roleDb!=="mentor"&&S.roleDb!=="expert"&&S.roleDb!=="admin"&&S.roleDb!=="mentor_pending")it.push(["S.page='mentorcomplete';S.menu=false;render()",t("joinm")]);if(isExp())it.push(["S.page='manage';S.mg=0;S.menu=false;render()",t("manage")]);it.push(['openNotif()',t("notif")]);it.push(["S.page='saved';S.menu=false;render()",t("savedt")])}
+ if(S.user){it.push(['openProfile(false)',t("profile")]);if(S.roleDb!=="mentor"&&S.roleDb!=="expert"&&S.roleDb!=="admin"&&S.roleDb!=="mentor_pending")it.push(["S.page='mentorcomplete';S.menu=false;render()",t("joinm")]);if(isExp())it.push(["S.page='manage';S.mg=0;S.menu=false;render()",t("manage")]);if(!isExp())it.push(["S.page='mybk';S.menu=false;S.view=null;render()",t("mybk")]);it.push(['openNotif()',t("notif")]);it.push(["S.page='saved';S.menu=false;render()",t("savedt")])}
  it.push(["S.page='events';S.menu=false;S.view=null;render()",t("events")]);
  it.push(["S.page='interest';S.menu=false;S.view=null;render()",t("changeint2")]);it.push(['openGuide()',t("guide")]);it.push(["S.page='contact';S.menu=false;render()",t("contact")]);
  it.push(S.user?['doLogout()',t("logout")]:['openModal()',t("signin")]);
@@ -1212,7 +1267,7 @@ function ddHtml(){var h='<div class="ddov" onclick="S.dd=false;render()"></div><
  if(S.roleDb==="admin")h+='<button onclick="location.href=\'admin.html\'">'+t("admc")+'</button>';
  h+='<button onclick="S.dd=false;doLogout()">'+t("logout")+'</button>';
  return h+'</div>'}
-function doLogout(){if(sb)try{sb.auth.signOut()}catch(e){}try{localStorage.removeItem("ur_state")}catch(e){}S.photo="";S.user=null;S.role=null;S.roleDb=null;S.profile=null;S.page=null;S.menu=false;S.posts=[];S.follows=null;S.likes=null;S.comments=null;S.cl=null;S.savedP=null;S.savedS=null;S.gj=null;S.gposts=null;S.booked=null;S.notifs=null;S.nid=0;S.spec=null;S.reg=null;S.reqs=null;render()}
+function doLogout(){if(sb)try{sb.auth.signOut()}catch(e){}try{localStorage.removeItem("ur_state")}catch(e){}S.photo="";S.allbk=null;S.pay=null;S.bkKey=null;S.user=null;S.role=null;S.roleDb=null;S.profile=null;S.page=null;S.menu=false;S.posts=[];S.follows=null;S.likes=null;S.comments=null;S.cl=null;S.savedP=null;S.savedS=null;S.gj=null;S.gposts=null;S.booked=null;S.notifs=null;S.nid=0;S.spec=null;S.reg=null;S.reqs=null;render()}
 function sIco(){return '<button class="sico" aria-label="Search" onclick="S.srch=!S.srch;S.menu=false;S.dd=false;render();if(S.srch)setTimeout(function(){var e=document.getElementById(\'fq\');if(e)e.focus()},60)">'+SIC+'</button>'}
 function bodyHtml(){
  if(S.mustComplete==="mentor")return mentorCompletePage();
@@ -1224,6 +1279,7 @@ function bodyHtml(){
  if(pg==="profile")return S.edit?profileForm():profileView();
  if(pg==="pub")return pubPage();
  if(pg==="manage")return managePage();
+ if(pg==="mybk")return myBkPage();
  if(pg==="events")return eventsPage();
  if(pg==="interest")return interestPage();
  if(pg==="saved")return savedPage();
