@@ -255,6 +255,22 @@ html[dir="rtl"] .back svg{transform:scaleX(-1)}
 .acts button em{font-style:normal}
 .acts button.lk.on{color:var(--green)}
 .acts .sv{flex:0 0 auto}
+
+/* LinkedIn-style full-width profile */
+main:has(.phead){padding:0 0 24px}
+main:has(.phead)>*{margin-left:0;margin-right:0}
+main:has(.phead)>.card{background:transparent;border:0;border-bottom:1px solid var(--bd);border-radius:0;box-shadow:none;margin:0;padding:8px 16px 16px}
+main:has(.phead)>.card.phead{padding:0 16px 16px!important;border-bottom:8px solid var(--gray)}
+main:has(.phead)>.card.phead::before{content:"";display:block;height:96px;margin:0 -16px;background:linear-gradient(135deg,#2a3f28,#0a1f5c)}
+main:has(.phead)>.card.phead>.av{margin:-40px 0 12px!important;border:3px solid var(--bg);position:relative;width:84px!important;height:84px!important}
+main:has(.phead)>h3{margin:0;padding:16px 16px 0;font-size:18px}
+main:has(.phead)>.sub,main:has(.phead)>h2{padding:0 16px}
+main:has(.phead)>.seg{margin:0!important;padding:0}
+main:has(.phead)>.seg+*{margin-top:0}
+main:has(.phead)>div:not(.card):not(.seg){padding-left:16px;padding-right:16px}
+main:has(.phead) .card .kv:first-child{border-top:0}
+main:has(.phead)>.card>.empty{padding:10px 0}
+main:has(.phead)>.backb,main:has(.phead)>button:first-child{margin-left:16px}
 </style>
 </head>
 <body>
