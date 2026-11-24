@@ -579,7 +579,7 @@ function dcard(o){return '<div class="dc"><div class="band"'+(o.img?' style="hei
 function feedTop(){return S.srch?'<div class="sbar">'+SIC+'<input id="fq" placeholder="'+t("searchf")+'" value="'+esc(S.fq||"")+'" oninput="onF(this.value)"></div>':''}
 function commTop(){return S.srch?'<div class="sbar">'+SIC+'<input id="fq" placeholder="'+t("searchg")+'" value="'+esc(S.fq||"")+'" oninput="onF(this.value)"></div>':''}
 function commPage(){return S.grp!=null?groupsView():commTop()+groupsView()}
-function eventsPage(){if(!S.evAt||Date.now()-S.evAt>20000){S.evAt=Date.now();sbEvents()}return backBtn()+evBar()+(S.evform&&S.isOwner?evForm():events())}
+function eventsPage(){if(!S.evAt||Date.now()-S.evAt>20000){S.evAt=Date.now();sbEvents()}var fo=S.evform&&S.isOwner;return (fo?backBtn().replace('S.page=null;render()','S.evform=false;S.evf=null;render()'):backBtn())+evBar()+(fo?evForm():events())}
 function postsHtml(){var lst=feedPosts(),h="";if(!lst.length)h='<div class="card"><div class="empty">'+t("noposts")+'</div></div>';lst.forEach(function(p){h+=postHtml(p)});return h}
 function onF(v){S.fq=v;if(S.tab==="comm"){var g=document.getElementById("glist");if(g)g.innerHTML=glist(!!S.gmine)}else{var p=document.getElementById("plist");if(p)p.innerHTML=postsHtml()}}
 function feedSeg(){var g=S.fv==="groups";return '<div class="seg" style="margin:0 0 16px"><button class="'+(!g?'on':'')+'" onclick="S.fv=\'feed\';S.grp=null;S.gcat=null;S.fq=\'\';render()">'+t("feed")+'</button><button class="'+(g?'on':'')+'" onclick="S.fv=\'groups\';S.grp=null;S.gcat=null;S.fq=\'\';render()">'+t("groups")+'</button></div>'}
