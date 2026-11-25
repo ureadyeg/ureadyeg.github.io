@@ -1380,7 +1380,9 @@ function menu(){
  it.push(S.user?['doLogout()',t("logout")]:['openModal()',t("signin")]);
  return '<div class="menu" onclick="S.menu=false;render()"><div class="sheet" onclick="event.stopPropagation()">'+'<div class="prefs">'+lg+'</div>'+top+it.map(function(x){return '<button onclick="'+x[0]+'">'+x[1]+'</button>'}).join("")+'<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);text-align:center;font-size:13px"><a href="terms.html" target="_blank" style="color:var(--mut)">'+t("terms")+'</a><span style="color:var(--mut)"> · </span><a href="privacy.html" target="_blank" style="color:var(--mut)">'+t("privacy")+'</a></div></div></div>';
 }
-function ddHtml(){var h='<div class="ddov" onclick="S.dd=false;render()"></div><div class="dd">';
+function closeDD(){S.dd=false;var w=document.querySelector(".avwrap");if(!w){render();return}var a=w.querySelector(".ddov"),b=w.querySelector(".dd");if(a)a.remove();if(b)b.remove()}
+function toggleDD(){var w=document.querySelector(".avwrap");if(!w||S.menu){S.dd=!S.dd;S.menu=false;render();return}if(S.dd||w.querySelector(".dd")){closeDD()}else{S.dd=true;w.insertAdjacentHTML("beforeend",ddHtml());if(S.roleDb==="admin"&&!window.__pf){window.__pf=1;var l=document.createElement("link");l.rel="prefetch";l.href="admin.html";document.head.appendChild(l)}}}
+function ddHtml(){var h='<div class="ddov" onclick="closeDD()"></div><div class="dd">';
  h+='<div class="ddh" onclick="S.dd=false;openProfile(false)"><div class="av">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div><div style="min-width:0"><b>'+esc(S.user)+'</b><div dir="ltr" style="color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis">'+esc(S.email||"")+'</div></div></div>';
  h+='<button onclick="S.dd=false;openProfile(false)">'+t("profile")+'</button>';
  if(S.roleDb==="admin")h+='<button onclick="location.href=\'admin.html\'">'+t("admc")+'</button>';
@@ -1415,7 +1417,7 @@ function bodyHtml(){
 function render(){
  var d=document.documentElement;d.lang=L;d.dir=L==="ar"?"rtl":"ltr";if(d.setAttribute)d.setAttribute("data-theme",S.theme);
  var body=bodyHtml();
- var who=S.user?'<div class="avwrap"><div class="av" onclick="S.dd=!S.dd;S.menu=false;render()" style="cursor:pointer">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div>'+(S.dd?ddHtml():'')+'</div>':'<button class="pill" onclick="openModal()">'+t("signin")+'</button>';
+ var who=S.user?'<div class="avwrap"><div class="av" onclick="toggleDD()" style="cursor:pointer">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div>'+(S.dd?ddHtml():'')+'</div>':'<button class="pill" onclick="openModal()">'+t("signin")+'</button>';
  var mn0=document.querySelector("main"),sig=[S.tab,S.page,S.view,!!S.adding,S.fv,S.grp,S.pp,S.edit].join("|"),st0=(S.lastSig===sig&&mn0)?mn0.scrollTop:0;S.lastSig=sig;
  app.innerHTML='<header><div class="brandw"><div class="brand"><span style="color:var(--green)">U</span>Ready</div><div class="slg'+(ai()?' slar':'')+'">'+(ai()?"المستقبل للمستعدين":"The future belongs to the Ready")+'</div></div><div class="right">'+sIco()+bell()+who+'<button class="burger" aria-label="Menu" onclick="S.menu=true;S.dd=false;render()"><i></i><i></i><i></i></button></div></header>'+
  '<main>'+body+'</main><nav>'+TABS.map(function(k){return '<button class="'+(S.tab===k?'on':'')+'" onclick="S.tab=\''+k+'\';S.view=null;S.adding=null;S.page=null;S.editing=null;S.fq=\'\';S.srch=false;S.grp=null;S.gcat=null;render()"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span class="nl">'+t(k)+'</span></button>'}).join("")+'</nav>'+(S.menu?menu():'')+(S.modal?modal():'')+(S.cm?cmSheet():'');
