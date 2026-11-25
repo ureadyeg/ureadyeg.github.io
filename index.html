@@ -286,8 +286,8 @@ main:has(.phead)>.backb,main:has(.phead)>button:first-child{margin-left:16px}
 .dc .band{height:96px}.dc .band .av{width:38px;height:38px;font-size:15px;bottom:10px;inset-inline-start:14px}.dc .pillt{top:10px;inset-inline-end:10px;padding:3px 9px;font-size:10.5px}.dc .bd{padding:12px 14px 14px}.dc .lab{font-size:10.5px;margin-bottom:5px}.dc .ttl{font-size:16.5px;margin-bottom:6px}.dc .mt{font-size:12.5px;line-height:1.45}.dc .ba{margin-top:12px;gap:8px}.dc .lb{padding:8px 14px;font-size:11.5px}.dc{margin-bottom:12px}
 .dc .mts{display:flex;flex-wrap:wrap;align-items:center;column-gap:7px;row-gap:2px}.dc .bd{padding:10px 14px 12px}.dc .ttl{font-size:15.5px;margin-bottom:4px}.dc .ba{margin-top:8px;gap:6px;justify-content:flex-start}.dc .lb{padding:5px 11px;font-size:10.5px;letter-spacing:.3px}
 .dc .ba2{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px}.dc .rb{display:flex;flex-direction:column;align-items:flex-end;gap:3px}.dc .rb .rate{font-size:12px}
-</style>
-</head>
+.brandw{display:flex;flex-direction:column;gap:3px}.slg{font-family:"Poppins",sans-serif;font-weight:400;font-size:10px;letter-spacing:.04em;color:var(--navy);line-height:1;white-space:nowrap;direction:ltr;text-align:start}</style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap" rel="stylesheet"></head>
 <body>
 <div id="app"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1411,7 +1411,7 @@ function render(){
  var body=bodyHtml();
  var who=S.user?'<div class="avwrap"><div class="av" onclick="S.dd=!S.dd;S.menu=false;render()" style="cursor:pointer">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div>'+(S.dd?ddHtml():'')+'</div>':'<button class="pill" onclick="openModal()">'+t("signin")+'</button>';
  var mn0=document.querySelector("main"),sig=[S.tab,S.page,S.view,!!S.adding,S.fv,S.grp,S.pp,S.edit].join("|"),st0=(S.lastSig===sig&&mn0)?mn0.scrollTop:0;S.lastSig=sig;
- app.innerHTML='<header><div class="brand"><span style="color:var(--green)">U</span>Ready</div><div class="right">'+sIco()+bell()+who+'<button class="burger" aria-label="Menu" onclick="S.menu=true;S.dd=false;render()"><i></i><i></i><i></i></button></div></header>'+
+ app.innerHTML='<header><div class="brandw"><div class="brand"><span style="color:var(--green)">U</span>Ready</div><div class="slg">The future belongs to the Ready</div></div><div class="right">'+sIco()+bell()+who+'<button class="burger" aria-label="Menu" onclick="S.menu=true;S.dd=false;render()"><i></i><i></i><i></i></button></div></header>'+
  '<main>'+body+'</main><nav>'+TABS.map(function(k){return '<button class="'+(S.tab===k?'on':'')+'" onclick="S.tab=\''+k+'\';S.view=null;S.adding=null;S.page=null;S.editing=null;S.fq=\'\';S.srch=false;S.grp=null;S.gcat=null;render()"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span class="nl">'+t(k)+'</span></button>'}).join("")+'</nav>'+(S.menu?menu():'')+(S.modal?modal():'')+(S.cm?cmSheet():'');
  document.body.style.overflow=S.menu?"hidden":"";
  var mn1=document.querySelector("main");if(mn1&&st0)mn1.scrollTop=st0;
