@@ -391,7 +391,7 @@ function sbProfile(){if(!sb)return;try{sb.auth.getSession().then(function(r){var
  if(p.status==="banned"){S.user=null;S.role=null;S.roleDb=null;S.profile=null;try{sb.auth.signOut()}catch(e){}alert(t("banned"));render();return}
  S.uid=se.user.id;setTimeout(function(){sbBookings(true)},400);S.user=p.full_name||se.user.email;S.email=p.email;S.roleDb=p.role;S.isOwner=!!p.is_owner;S.role=(p.role==="mentor"||p.role==="expert"||p.role==="admin")?"expert":"learner";S.modal=false;S.mustComplete=null;
  if(p.role==="learner"&&S.pick==="expert"&&!p.linkedin_url){S.role="expert";S.mustComplete="mentor"}
- S.needCommon=(p.role!=="admin"&&(!p.age||+p.age<1950||!String(p.country||"").trim()||!p.uni||!p.major||!p.terms_accepted_at));if(S.needCommon&&!S.mustComplete&&p.role!=="admin"){S.mustComplete="common"}
+ S.needCommon=(p.role!=="admin"&&(!p.age||+p.age<1950||!String(p.country||"").trim()||!p.uni||!p.major||!p.terms_accepted_at));if(S.needCommon&&!S.mustComplete&&p.role!=="admin"&&(!p.age||+p.age<1950||!String(p.country||"").trim()||!p.terms_accepted_at)){S.mustComplete="common"}
  S.interests=p.interests||[];S.interestsSet=!!p.interests_set;if(!S.mustComplete&&!S.interestsSet)S.mustComplete="interests";sbDwell();
  render();sbProfileExtras();sbReactions()})})}catch(e){}}
 if(sb){try{sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN")sbProfile()})}catch(e){}}
