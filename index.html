@@ -962,6 +962,10 @@ function mine(v){return v.db&&(v.oid===S.uid||v.mgr===S.uid)&&!v.deleted}
 function hasSl(v){return !(v[0]==='work'&&v[1]>0)&&!(v[0]==='mentor'&&v[1]===1)}
 function rate(v,n){if(!n)return '<span class="rate"><small>'+t("newt")+'</small></span>';return '<span class="rate">★ '+v.toFixed(1)+' <small>('+n+')</small></span>'}
 function ownGo(v){return v.db&&v.oid?"viewPub('"+v.oid+"')":(v[2]>=0?"openPerson("+v[2]+")":"")}
+var OC={};
+function ownLoad(v){if(!v||!v.db||!v.oid||!sb)return;if(OC[v.oid]!==undefined)return;OC[v.oid]=null;try{sb.rpc("get_public_profile",{p_id:v.oid}).then(function(r){var p=r&&r.data&&r.data[0];OC[v.oid]=p||{};if(S.view!=null||S.page==="manage")render()}).catch(function(){OC[v.oid]={}})}catch(e){OC[v.oid]={}}}
+function ownSub(v){var p=v.db&&v.oid?OC[v.oid]:null;if(!p||!p.full_name)return null;if(p.kind==="company"){var ci=p.cinfo||{};return ci["industry_"+(ai()?"ar":"en")]||ci["tagline_"+(ai()?"ar":"en")]||""}var x=[p.title].filter(Boolean).join("");return x}
+function ownSubHtml(v){ownLoad(v);var x=ownSub(v);if(x===null)return provBlock(v);return x?'<div class="hl" style="margin-bottom:8px">'+esc(jt(x))+'</div>':provBlock(v)}
 function personOf(v){return v[2]>=0?(PEOPLE[v[2]]||["Guest","","Marketing","ضيف",""]):v[11]}
 function svcCard(i){var v=SV[i],p=personOf(v),n=L==="ar"?p[3]:p[0],d=detailsOf(v);
  var l2=d.freelancer?(jt(d.title||"")+" · "+t("freelancer")):(jt(d.title||"")+(d.company?" "+t("at")+" "+d.company:""));
@@ -1005,7 +1009,7 @@ function detail(i){
  var cl=v.tr?(S.clang||L):L,ci2=cl==="ar"?1:0,txt=v.tr?v[7+ci2]:v[7+ai()]+" "+GEN[key==="work2"?"workc":kind][ai()],open=S.more&&S.more[i];
  var h='<button class="back" onclick="S.view=null;S.clang=null;render()"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'+t("back")+'</button>';
  if(v.cover)h+='<img src="'+esc(v.cover)+'" alt="" style="width:100%;display:block;border-radius:14px;margin:0 0 14px">';
- h+='<div class="card person"'+(ownGo(v)?' onclick="'+ownGo(v)+'" style="cursor:pointer"':'')+'>'+avOf(v,n,"lg")+'<div class="info"><b>'+esc(n)+'</b>'+((v[2]>=0||v.sample)?'<span class="tag">'+t("sample")+'</span>':'')+provBlock(v)+rate(v[9],v[10])+'</div></div>';
+ h+='<div class="card person"'+(ownGo(v)?' onclick="'+ownGo(v)+'" style="cursor:pointer"':'')+'>'+avOf(v,n,"lg")+'<div class="info"><b>'+esc(n)+'</b>'+((v[2]>=0||v.sample)?'<span class="tag">'+t("sample")+'</span>':'')+ownSubHtml(v)+rate(v[9],v[10])+'</div></div>';
   h+='<h2>'+esc(v[3+ci2])+'</h2>'+(v.tr?'<button class="mini" style="margin-bottom:8px" onclick="S.clang=\''+(cl==="ar"?"en":"ar")+'\';render()">'+(cl==="ar"?"English":"عربي")+'</button>':'')+'<div class="line" style="font-weight:800;color:var(--navy);margin:4px 0 6px">'+pfmt(i)+'</div><button class="mini" style="margin-bottom:10px" onclick="saveS('+i+')">'+ICB+' '+t(S.savedS&&S.savedS[i]?"savedb":"saveb")+'</button><p class="sub" style="margin-top:6px">'+NOTE[key][v.tr?ci2:ai()]+'</p><h3 style="margin-top:18px">'+t("about")+'</h3><div class="'+(open?'':'clamp')+'" style="line-height:1.65;font-size:14.5px">'+esc(txt)+'</div>';
  h+='<button class="link" onclick="S.more=S.more||{};S.more['+i+']=!S.more['+i+'];render()">'+t(open?"less":"more")+'</button>';
  if(hasSl(v)&&!(v.db&&bkActive(bk))){
