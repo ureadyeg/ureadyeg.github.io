@@ -1335,7 +1335,7 @@ function modal(){
  '<label class="fl">'+t("age")+' *</label><select id="ag">'+yrOpts(S.fa||"")+'</select>'+
  '<label class="fl">'+t("country")+' *</label><select id="cn" onchange="document.getElementById(\'cno\').style.display=(this.value===\'other\'?\'block\':\'none\')"><option value="">'+t("selcountry")+'</option>'+cOpts(S.fcn&&S.fcn!=="other"?S.fcn:null,S.fcn==="other")+'</select><input id="cno" style="display:'+(S.fcn==="other"?'block':'none')+'" placeholder="'+t("typecountry")+'" value="'+esc(S.fco||"")+'">'+
  '<label class="agree"><input id="tc" type="checkbox"><span>'+t("agree")+'</span></label>'+
- '<button class="btn fill" style="margin-top:4px" onclick="keep();doLogin()">'+t("cont")+'</button><div id="jok" style="margin-top:12px"></div>'+'<div class="or">'+t("or")+'</div><button class="btn" style="width:100%" onclick="keep();socialUp()">'+t("google")+'</button>'+
+ '<button class="btn fill" style="margin-top:4px" onclick="keep();doLogin()">'+t("cont")+'</button><div id="jok" style="margin-top:12px"></div>'+'<div class="or">'+(L==="ar"?"أو":"or")+'</div><button class="btn" style="width:100%" onclick="keep();socialUp()">'+t("google")+'</button>'+
  '</div></div>';
 }
 function doSignin(){var b=document.getElementById("em"),e=b.value.trim(),ok=document.getElementById("sok");if(!valid(e)){b.focus();b.style.borderColor="#b00020";return}if(!sb)return;try{sb.auth.signInWithOtp({email:e,options:{shouldCreateUser:false,emailRedirectTo:location.origin+location.pathname}}).then(function(r){if(r&&r.error){ok.innerHTML='<div class="note">'+t("linkfail")+'</div>';return}ok.innerHTML='<div class="note" style="color:var(--green)">'+t("linksent")+'</div>'})}catch(e){ok.innerHTML='<div class="note">'+t("linkfail")+'</div>'}}
