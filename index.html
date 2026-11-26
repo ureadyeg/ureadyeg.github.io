@@ -247,6 +247,7 @@ html[dir="rtl"] .back svg{transform:scaleX(-1)}
 @keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .dd{position:absolute;top:calc(100% + 10px);inset-inline-end:0;width:240px;background:var(--bg);border:1px solid var(--bd);border-radius:14px;box-shadow:0 14px 40px rgba(15,23,42,.18);padding:7px;z-index:41;animation:pop .18s ease}
 .dd.st{animation:none}
+.pedit textarea{width:100%;font:inherit;font-size:15px;line-height:1.5;border:1.5px solid var(--navy);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--ink);box-sizing:border-box;margin:6px 0 0}
 .ddh{display:flex;gap:10px;align-items:center;padding:9px 9px 11px;border-bottom:1px solid var(--bd);margin-bottom:6px;cursor:pointer}
 .ddh b{font-size:14.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
 .dd button{display:flex;align-items:center;width:100%;padding:11px 10px;border:0;background:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--navy);border-radius:9px;cursor:pointer;text-align:start}
@@ -563,7 +564,7 @@ function feedPosts(){var out=[],l=ai();
  return rankFeed(out)}
 function postHtml(p){var fl=!p.own&&S.follows&&S.follows[p.key],liked=S.likes&&S.likes[p.id],ext=Math.max(0,((S.lkc&&S.lkc[p.id])||0)-(liked?1:0)),lk=p.likes+ext+(liked?1:0),copen=S.cOpen&&S.cOpen[p.id],cl=(S.comments&&S.comments[p.id])||[];
  POSTREG[p.id]=p;var sv=S.savedP&&S.savedP[p.id],oc=p.own?'openProfile(false)':(p.real?(p.aid?'viewPub(\''+p.aid+'\')':''):'openPerson('+p.idx+')'),h='<div class="lp" data-pid="'+p.id+'">'+(p.comm!=null&&GR[p.comm]?'<div class="lpcomm">'+esc(GR[p.comm][ai()])+'</div>':'')+'<div class="lph">'+avBox(p.idx,p.name,"",'onclick="'+oc+'" style="cursor:pointer"',p.aid)+'<div class="lpi"><div class="lpn" onclick="'+oc+'" style="cursor:pointer">'+esc(p.name)+ownB(p.ow)+(p.sample?'<span class="smp">'+t("sample")+'</span>':'')+'</div><div class="lps">'+p.time+(p.hl?' · '+esc(p.hl):'')+'</div></div>'+(p.own?'':'<button class="lfl'+(fl?' on':'')+'" onclick="follow(\''+p.key+'\')">'+(fl?t("following"):'+ '+t("follow"))+'</button>')+'<button class="pmb" aria-label="More" onclick="event.stopPropagation();S.pmenu=(S.pmenu===\''+p.id+'\'?null:\''+p.id+'\');render()">···</button>'+(S.pmenu===p.id?pmenuHtml(p):'')+'</div>';
- h+='<div class="lpt" dir="auto">'+esc(p.text)+'</div>'+(p.img?'<img class="lpimg" src="'+p.img+'" alt="" onclick="viewImg(this.src)">':'');
+ h+=(S.pedit&&S.pedit.id===p.id?'<div class="pedit"><textarea id="pe_'+p.id+'" dir="auto" rows="4" oninput="S.pedit.text=this.value">'+esc(S.pedit.text)+'</textarea><div class="row" style="gap:8px;margin-top:8px"><button class="btn sm" onclick="S.pedit=null;render()">'+t("cancel")+'</button><button class="btn fill sm" onclick="savePE()">'+t("savetxt")+'</button></div></div>':'<div class="lpt" dir="auto">'+esc(p.text)+'</div>')+(p.img?'<img class="lpimg" src="'+p.img+'" alt="" onclick="viewImg(this.src)">':'');
  h+='<div class="acts"><button id="lkb_'+p.id+'" data-b="'+(p.likes+ext)+'" class="lk'+(liked?' on':'')+'" onclick="likePost(\''+p.id+'\')">'+ICL+'<span>'+lk+'</span><em>'+t("likec")+'</em></button><button onclick="openCm(\''+p.id+'\')">'+ICC+'<span>'+(p.cm+cl.length)+'</span><em>'+t("cmtw")+'</em></button><button onclick="sharePost(\''+p.id+'\')">'+ICSH+'<em>'+t("sharew")+'</em></button><button id="svb_'+p.id+'" class="sv'+(sv?' on':'')+'" style="margin-inline-start:auto" onclick="saveP(\''+p.id+'\')">'+ICB+'</button></div>';
  var tc=topCm(p);if(tc)h+='<div class="lpc" onclick="openCm(\''+p.id+'\')" style="cursor:pointer">'+avBox(tc.idx,tc.name,"","",tc.aid)+'<div class="lpi"><div class="cmb"><div class="cmn">'+esc(tc.name)+ownB(tc.ow)+'</div><div class="cmt" dir="auto">'+esc(tc.text)+'</div></div><div class="cmm"><span>'+(tc.ts?relTime(tc.ts):(tc.time||""))+'</span>'+(tc.lk?'<span>'+tc.lk+' '+t("likesw")+'</span>':'')+'</div></div></div>';
  return h+'</div>'}
@@ -910,9 +911,10 @@ function pmenuHtml(p){var h='<div class="ddov" style="z-index:44" onclick="S.pme
  if(p.own){h+='<button onclick="editPost(\''+p.id+'\')">'+t("edit")+'</button><button class="dgr" onclick="delPost(\''+p.id+'\')">'+t("del")+'</button>'}
  else{h+='<button onclick="reportPost(\''+p.id+'\')">'+t("repo")+'</button>';if(S.roleDb==="admin"&&p.dbid)h+='<button class="dgr" onclick="delPost(\''+p.id+'\')">'+t("del")+'</button>'}
  return h+'</div>'}
-function editPost(id){var p=POSTREG[id];S.pmenu=null;if(!p)return;
- if(p.comm!=null){S.tab="comm";S.grp=p.comm;S.editing={comm:p.comm,dbid:p.dbid||null,k:p.k};render();var g=document.getElementById("gt");if(g){g.value=p.text;g.focus();try{g.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}}}
- else{S.tab="feed";S.page=null;S.editing={feed:1,dbid:p.dbid||null,k:p.k};render();var t2=document.getElementById("pt");if(t2){t2.value=p.text;t2.focus();try{t2.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}}}}
+function editPost(id){var p=POSTREG[id];S.pmenu=null;if(!p)return;S.pedit={id:id,dbid:p.dbid||null,k:p.k,comm:p.comm,text:p.text};render();var e=document.getElementById("pe_"+id);if(e){e.focus();try{e.setSelectionRange(e.value.length,e.value.length);e.scrollIntoView({block:"center"})}catch(x){}}}
+function savePE(){var d=S.pedit;if(!d)return;var e=document.getElementById("pe_"+d.id),v=(e?e.value:d.text).trim();if(!v){if(e){e.focus();e.style.borderColor="#b00020"}return}
+ if(d.dbid){if(!sb)return;sb.from("posts").update({text:v}).eq("id",d.dbid).then(function(r){if(r.error){alert(r.error.message);return}S.pedit=null;sbPosts()})}
+ else{if(d.comm!=null){var lp=S.gposts&&S.gposts[d.comm]&&S.gposts[d.comm][d.k];if(lp)lp.text=v}else{var lq=S.posts[d.k];if(lq)lq.t=v}S.pedit=null;render()}}
 function delPost(id){var p=POSTREG[id];S.pmenu=null;if(!p)return;if(!confirm(t("cnfdel")))return;
  if(p.dbid){if(!sb)return;sb.from("posts").delete().eq("id",p.dbid).then(function(r){if(r.error)alert(r.error.message);sbPosts()})}
  else if(p.comm!=null){var a=S.gposts&&S.gposts[p.comm];if(a)a.splice(p.k,1);render()}
