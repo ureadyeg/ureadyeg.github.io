@@ -182,8 +182,8 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;
 
 function approve(id){sb.from("profiles").update({role:"mentor"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Mentor approved.");load()})}
 function setFounding(id,on){sb.rpc("set_founding",{p_id:id,p_on:on}).then(function(r){flash(r.error?r.error.message:(on?"Founding Partner badge granted.":"Badge removed."));load()})}
-function ban(id){if(!confirm("Ban this account? They will be signed out and suspended."))return;sb.from("profiles").update({status:"banned"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account banned.");load()})}
-function unban(id){sb.from("profiles").update({status:"active"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account reinstated.");load()})}
+function ban(id){if(!confirm("Ban this account? They will be signed out and suspended."))return;sb.rpc("admin_set_status",{p_id:id,p_status:"banned"}).then(function(r){flash(r.error?r.error.message:"Account banned.");load()})}
+function unban(id){sb.rpc("admin_set_status",{p_id:id,p_status:"active"}).then(function(r){flash(r.error?r.error.message:"Account reinstated.");load()})}
 function del(id){if(!confirm("Delete this account? They lose access immediately. This cannot be undone."))return;sb.from("profiles").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Account deleted.");load()})}
 function loadMsgs(){
   sb.from("contact_messages").select("*").order("created_at",{ascending:false}).limit(100).then(function(r){
