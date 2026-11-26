@@ -158,10 +158,11 @@ function load(){
       var cls=banned?"ban":(p.role==="mentor_pending"?"pend":"");
       var acts="";
       if(p.role==="mentor_pending")acts+='<button class="act ok" onclick="approve(\''+p.id+'\')">Approve mentor</button>';
+      if(p.role==="mentor"||p.role==="expert")acts+=p.founding?'<button class="act ghost" onclick="setFounding(\''+p.id+'\',false)">Remove Founding Partner</button>':'<button class="act ok" onclick="setFounding(\''+p.id+'\',true)">Make Founding Partner</button>';
       if(p.role!=="admin"){acts+=banned?'<button class="act ghost" onclick="unban(\''+p.id+'\')">Unban</button>':'<button class="act danger" onclick="ban(\''+p.id+'\')">Ban</button>';acts+='<button class="act danger" onclick="del(\''+p.id+'\')">Delete</button>'}
       var li=p.linkedin_url?'<a href="'+p.linkedin_url.replace(/"/g,"")+'" target="_blank" rel="noopener">profile</a>':"";
       var when=p.created_at?new Date(p.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
-      h+='<tr class="'+cls+'"><td><b>'+esc(p.full_name||"-")+'</b></td><td dir="ltr">'+esc(p.email)+'</td><td><span class="pill p-'+p.role+'">'+p.role.replace("_"," ")+'</span></td><td>'+(banned?'<span class="pill p-banned">banned</span>':'active')+'</td><td>'+li+'</td><td>'+esc(p.spec||"-")+'</td><td>'+esc(p.title||"-")+'</td><td dir="auto" style="white-space:normal;min-width:200px;max-width:320px;text-align:start">'+esc(p.expertise||"-")+'</td><td>'+esc(p.freelancer?"Freelancer":(p.company||"-"))+'</td><td>'+esc(p.age||"-")+'</td><td>'+esc(p.country||"-")+'</td><td>'+(p.terms_accepted_at?'<span class="pill p-mentor" title="'+esc(p.terms_accepted_at)+'">✓ '+(p.terms_version||'')+'</span>':'-')+'</td><td class="mut">'+when+'</td><td style="white-space:nowrap">'+acts+'</td></tr>';
+      h+='<tr class="'+cls+'"><td><b>'+esc(p.full_name||"-")+'</b></td><td dir="ltr">'+esc(p.email)+'</td><td><span class="pill p-'+p.role+'">'+p.role.replace("_"," ")+'</span>'+(p.founding?' <span class="pill p-mentor_pending">Founding Partner</span>':'')+'</td><td>'+(banned?'<span class="pill p-banned">banned</span>':'active')+'</td><td>'+li+'</td><td>'+esc(p.spec||"-")+'</td><td>'+esc(p.title||"-")+'</td><td dir="auto" style="white-space:normal;min-width:200px;max-width:320px;text-align:start">'+esc(p.expertise||"-")+'</td><td>'+esc(p.freelancer?"Freelancer":(p.company||"-"))+'</td><td>'+esc(p.age||"-")+'</td><td>'+esc(p.country||"-")+'</td><td>'+(p.terms_accepted_at?'<span class="pill p-mentor" title="'+esc(p.terms_accepted_at)+'">✓ '+(p.terms_version||'')+'</span>':'-')+'</td><td class="mut">'+when+'</td><td style="white-space:nowrap">'+acts+'</td></tr>';
     });
     document.getElementById("rows").innerHTML=h||'<tr><td colspan="14" class="mut" style="text-align:center;padding:24px">No registrations yet.</td></tr>';
   });
@@ -177,6 +178,7 @@ function auditCsv(){var rows=[["When (Cairo)","Event","Booking ID","Service","Le
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 
 function approve(id){sb.from("profiles").update({role:"mentor"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Mentor approved.");load()})}
+function setFounding(id,on){sb.rpc("set_founding",{p_id:id,p_on:on}).then(function(r){flash(r.error?r.error.message:(on?"Founding Partner badge granted.":"Badge removed."));load()})}
 function ban(id){if(!confirm("Ban this account? They will be signed out and suspended."))return;sb.from("profiles").update({status:"banned"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account banned.");load()})}
 function unban(id){sb.from("profiles").update({status:"active"}).eq("id",id).then(function(r){flash(r.error?r.error.message:"Account reinstated.");load()})}
 function del(id){if(!confirm("Delete this account? They lose access immediately. This cannot be undone."))return;sb.from("profiles").delete().eq("id",id).then(function(r){flash(r.error?r.error.message:"Account deleted.");load()})}
