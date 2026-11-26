@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UReady · Owner</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://eqbeswitvmmbazcbgojt.supabase.co" crossorigin><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--navy:#0a1f5c;--mut:#5f6b85;--bd:#e5e7e5;--gray:#f0f1f0;--green:#385235;--ink:#1c211d}
 *{box-sizing:border-box;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
@@ -49,6 +49,7 @@ a{color:var(--navy)}
 <header><div><b>UReady</b> <span class="sub">· Owner console</span></div><span class="live" id="live" style="display:none"><i></i>live</span></header>
 <div class="wrap">
 
+<div id="boot" class="center"><div style="text-align:center;color:#5f6b85;font:600 14px -apple-system,Arial,sans-serif"><div style="width:30px;height:30px;margin:0 auto 12px;border:3px solid #e5e7e5;border-top-color:#385235;border-radius:50%;animation:sp .8s linear infinite"></div>Loading…</div></div><style>@keyframes sp{to{transform:rotate(360deg)}}</style>
 <div id="gate" class="center" style="display:none">
   <div class="panel">
     <h2 style="color:var(--navy);margin:0 0 4px">Owner sign-in</h2>
@@ -131,7 +132,7 @@ a{color:var(--navy)}
 var SB_URL="https://eqbeswitvmmbazcbgojt.supabase.co",SB_KEY="sb_publishable_IONFCnLU-lVo1ijiffRWvg_AtCuOj2w";
 var sb=window.supabase.createClient(SB_URL,SB_KEY);
 
-function show(id){["gate","deny","dash"].forEach(function(x){document.getElementById(x).style.display=(x===id)?(id==="dash"?"block":"grid"):"none"})}
+function show(id){var b=document.getElementById("boot");if(b)b.style.display="none";["gate","deny","dash"].forEach(function(x){document.getElementById(x).style.display=(x===id)?(id==="dash"?"block":"grid"):"none"})}
 function flash(m){var f=document.getElementById("flash");f.textContent=m;f.style.display="block";setTimeout(function(){f.style.display="none"},4000)}
 
 function sendLink(){
@@ -254,14 +255,21 @@ sb.auth.getSession().then(function(r){
 });
 sb.auth.onAuthStateChange(function(ev,se){if(ev==="SIGNED_IN"&&se)check(se)});
 
+var STARTED=false;
+function startAll(){if(STARTED)return;STARTED=true;load();loadMsgs();loadReports();loadEvents();loadAudit();
+  setTimeout(function(){
+    sb.channel("profiles-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},function(){load()}).subscribe();
+    sb.channel("msgs-live").on("postgres_changes",{event:"*",schema:"public",table:"contact_messages"},function(){loadMsgs()}).subscribe();
+    sb.channel("audit-live").on("postgres_changes",{event:"*",schema:"public",table:"bookings"},function(){setTimeout(loadAudit,800)}).subscribe();
+    sb.channel("events-live").on("postgres_changes",{event:"*",schema:"public",table:"events"},function(){loadEvents()}).subscribe();
+  },1500)}
+var HINT=false;try{HINT=JSON.parse(localStorage.getItem("ur_state")||"{}").roleDb==="admin"}catch(e){}
 function check(se){
+  /* Known admin on this device: show the dashboard and start loading data right away, verify the role in parallel. */
+  if(HINT){show("dash");document.getElementById("live").style.display="inline-flex";startAll()}
   sb.from("profiles").select("role").eq("id",se.user.id).single().then(function(r){
     if(r.data&&r.data.role==="admin"){
-      show("dash");document.getElementById("live").style.display="inline-flex";load();loadMsgs();loadReports();loadEvents();loadAudit();
-      sb.channel("profiles-live").on("postgres_changes",{event:"*",schema:"public",table:"profiles"},function(){load()}).subscribe();
-      sb.channel("msgs-live").on("postgres_changes",{event:"*",schema:"public",table:"contact_messages"},function(){loadMsgs()}).subscribe();
-      sb.channel("audit-live").on("postgres_changes",{event:"*",schema:"public",table:"bookings"},function(){setTimeout(loadAudit,800)}).subscribe();
-      sb.channel("events-live").on("postgres_changes",{event:"*",schema:"public",table:"events"},function(){loadEvents()}).subscribe();
+      show("dash");document.getElementById("live").style.display="inline-flex";startAll();
     }else show("deny");
   });
 }
