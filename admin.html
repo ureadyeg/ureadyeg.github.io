@@ -77,6 +77,7 @@ a{color:var(--navy)}
     <div class="stat"><div class="n" id="cMent">0</div><div class="l">Approved mentors</div></div>
     <div class="stat"><div class="n" id="cBan">0</div><div class="l">Banned</div></div>
   </div>
+  <div style="display:flex;gap:10px;align-items:center;margin:0 0 10px"><input id="uq" type="search" placeholder="Search users by name or email" oninput="clearTimeout(window.__uq);window.__uq=setTimeout(load,200)" style="flex:1;max-width:380px;padding:9px 12px;border:1px solid var(--bd,#ccc);border-radius:10px;font:inherit"><span class="mut" id="uqc"></span></div>
   <div style="overflow-x:auto"><table>
     <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>LinkedIn</th><th>Specialty</th><th>Title</th><th>Expertise</th><th>Company</th><th>Age</th><th>Country</th><th>Terms</th><th>Joined</th><th></th></tr></thead>
     <tbody id="rows"></tbody>
@@ -152,7 +153,9 @@ function load(){
     document.getElementById("cPend").textContent=rows.filter(function(p){return p.role==="mentor_pending"}).length;
     document.getElementById("cMent").textContent=rows.filter(function(p){return p.role==="mentor"||p.role==="admin"}).length;
     document.getElementById("cBan").textContent=rows.filter(function(p){return p.status==="banned"}).length;
-    var h="";
+    var h="",q=((document.getElementById("uq")||{}).value||"").trim().toLowerCase(),tot=rows.length;
+    if(q)rows=rows.filter(function(p){return ((p.full_name||"")+" "+(p.email||"")).toLowerCase().indexOf(q)>-1});
+    document.getElementById("uqc").textContent=q?rows.length+" of "+tot:"";
     rows.forEach(function(p){
       var banned=p.status==="banned";
       var cls=banned?"ban":(p.role==="mentor_pending"?"pend":"");
@@ -164,7 +167,7 @@ function load(){
       var when=p.created_at?new Date(p.created_at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):"";
       h+='<tr class="'+cls+'"><td><b>'+esc(p.full_name||"-")+'</b></td><td dir="ltr">'+esc(p.email)+'</td><td><span class="pill p-'+p.role+'">'+p.role.replace("_"," ")+'</span>'+(p.founding?' <span class="pill p-mentor_pending">Founding Partner</span>':'')+'</td><td>'+(banned?'<span class="pill p-banned">banned</span>':'active')+'</td><td>'+li+'</td><td>'+esc(p.spec||"-")+'</td><td>'+esc(p.title||"-")+'</td><td dir="auto" style="white-space:normal;min-width:200px;max-width:320px;text-align:start">'+esc(p.expertise||"-")+'</td><td>'+esc(p.freelancer?"Freelancer":(p.company||"-"))+'</td><td>'+esc(p.age||"-")+'</td><td>'+esc(p.country||"-")+'</td><td>'+(p.terms_accepted_at?'<span class="pill p-mentor" title="'+esc(p.terms_accepted_at)+'">✓ '+(p.terms_version||'')+'</span>':'-')+'</td><td class="mut">'+when+'</td><td style="white-space:nowrap">'+acts+'</td></tr>';
     });
-    document.getElementById("rows").innerHTML=h||'<tr><td colspan="14" class="mut" style="text-align:center;padding:24px">No registrations yet.</td></tr>';
+    document.getElementById("rows").innerHTML=h||'<tr><td colspan="14" class="mut" style="text-align:center;padding:24px">'+(q?"No users match your search.":"No registrations yet.")+'</td></tr>';
   });
 }
 var AUD=[];
