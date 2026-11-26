@@ -908,8 +908,8 @@ function pmenuHtml(p){var h='<div class="ddov" style="z-index:44" onclick="S.pme
  else{h+='<button onclick="reportPost(\''+p.id+'\')">'+t("repo")+'</button>';if(S.roleDb==="admin"&&p.dbid)h+='<button class="dgr" onclick="delPost(\''+p.id+'\')">'+t("del")+'</button>'}
  return h+'</div>'}
 function editPost(id){var p=POSTREG[id];S.pmenu=null;if(!p)return;
- if(p.comm!=null){S.tab="comm";S.grp=p.comm;S.editing={comm:p.comm,dbid:p.dbid||null,k:p.k};render();var g=document.getElementById("gt");if(g){g.value=p.text;g.focus()}}
- else{S.tab="feed";S.page=null;S.editing={feed:1,dbid:p.dbid||null,k:p.k};render();var t2=document.getElementById("pt");if(t2){t2.value=p.text;t2.focus()}}}
+ if(p.comm!=null){S.tab="comm";S.grp=p.comm;S.editing={comm:p.comm,dbid:p.dbid||null,k:p.k};render();var g=document.getElementById("gt");if(g){g.value=p.text;g.focus();try{g.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}}}
+ else{S.tab="feed";S.page=null;S.editing={feed:1,dbid:p.dbid||null,k:p.k};render();var t2=document.getElementById("pt");if(t2){t2.value=p.text;t2.focus();try{t2.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}}}}
 function delPost(id){var p=POSTREG[id];S.pmenu=null;if(!p)return;if(!confirm(t("cnfdel")))return;
  if(p.dbid){if(!sb)return;sb.from("posts").delete().eq("id",p.dbid).then(function(r){if(r.error)alert(r.error.message);sbPosts()})}
  else if(p.comm!=null){var a=S.gposts&&S.gposts[p.comm];if(a)a.splice(p.k,1);render()}
