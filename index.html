@@ -54,7 +54,7 @@ nav button{flex:1;min-width:0;height:auto;min-height:50px;background:none;border
 .nl{display:flex;align-items:center;justify-content:center;min-height:0;max-width:100%;text-align:center;line-height:1.2;overflow-wrap:break-word}
 nav button svg{width:24px;height:24px;padding:2px;box-sizing:border-box;border-radius:9px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--navy);font-weight:700;background:none}
-nav button.on::after{content:"";position:absolute;bottom:2px;inset-inline:26%;height:3px;border-radius:3px;background:var(--navy)}
+nav{position:relative}nav .nbar{position:absolute;top:0;left:0;height:2px;border-radius:0 0 2px 2px;background:var(--navy);pointer-events:none;will-change:transform,width;transition:transform .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1)}@keyframes pgx{from{opacity:0;transform:translateX(calc(var(--pgd,1)*16px))}to{opacity:1;transform:none}}main.pgx{animation:pgx .24s cubic-bezier(.2,.7,.3,1)}
 nav button.on svg{background:var(--navy);stroke:var(--onink);stroke-width:2}
 h2{font-family:"Plus Jakarta Sans",-apple-system,"Segoe UI",Arial,sans-serif;font-size:25px;margin:0 0 6px;letter-spacing:-.3px}
 h3{font-family:"Plus Jakarta Sans",-apple-system,"Segoe UI",Arial,sans-serif;font-size:18px;margin:30px 0 14px}
@@ -1511,8 +1511,15 @@ function render(){
  var who=S.user?'<div class="avwrap"><div class="av" onclick="toggleDD()" style="cursor:pointer">'+(S.photo?'<img src="'+S.photo+'" alt="">':ini(S.user))+'</div>'+(S.dd?ddHtml().replace('class="dd"','class="dd st"'):'')+'</div>':'<button class="pill" onclick="openModal()">'+t("signin")+'</button>';
  var mn0=document.querySelector("main"),sig=[S.tab,S.page,S.view,!!S.adding,S.fv,S.grp,S.pp,S.edit].join("|"),st0=(S.lastSig===sig&&mn0)?mn0.scrollTop:0;S.lastSig=sig;
  app.innerHTML='<header><div class="brandw"><div class="brand"><span style="color:var(--green)">U</span>Ready</div><div class="slg'+(ai()?' slar':'')+'">'+(ai()?"المستقبل للمستعدين":"The future belongs to the Ready")+'</div></div><div class="right">'+sIco()+bell()+who+'<button class="burger" aria-label="Menu" onclick="S.menu=true;S.dd=false;render()"><i></i><i></i><i></i></button></div></header>'+
- '<main>'+body+'</main><nav>'+TABS.map(function(k){return '<button class="'+(S.tab===k?'on':'')+'" onclick="S.tab=\''+k+'\';S.view=null;S.adding=null;S.page=null;S.editing=null;S.fq=\'\';S.srch=false;S.grp=null;S.gcat=null;render()"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span class="nl">'+t(k)+'</span></button>'}).join("")+'</nav>'+(S.menu?menu():'')+(S.modal?modal():'')+(S.cm?cmSheet():'');
+ '<main>'+body+'</main><nav>'+TABS.map(function(k){return '<button class="'+(S.tab===k?'on':'')+'" onclick="S.tab=\''+k+'\';S.view=null;S.adding=null;S.page=null;S.editing=null;S.fq=\'\';S.srch=false;S.grp=null;S.gcat=null;render()"><svg viewBox="0 0 24 24">'+IC[k]+'</svg><span class="nl">'+t(k)+'</span></button>'}).join("")+'<i class="nbar"></i></nav>'+(S.menu?menu():'')+(S.modal?modal():'')+(S.cm?cmSheet():'');
  document.body.style.overflow=S.menu?"hidden":"";
+ try{var nv=document.querySelector("nav"),nb=nv&&nv.querySelector(".nbar"),nk=nv&&nv.querySelector("button.on");
+ if(nb&&nk){var w=Math.round(nk.offsetWidth*.48),x=Math.round(nk.offsetLeft+(nk.offsetWidth-w)/2);
+ if(window.__nbx!=null&&window.__nbx!==x){nb.style.transition="none";nb.style.width=(window.__nbw||w)+"px";nb.style.transform="translateX("+window.__nbx+"px)";void nb.offsetWidth;nb.style.transition=""}
+ nb.style.width=w+"px";nb.style.transform="translateX("+x+"px)";window.__nbx=x;window.__nbw=w}
+ var ti=TABS.indexOf(S.tab),tm=document.querySelector("main");
+ if(tm&&window.__lt!=null&&window.__lt!==S.tab&&ti>=0){var li=TABS.indexOf(window.__lt),dr=(ti>li?1:-1)*(L==="ar"?-1:1);tm.style.setProperty("--pgd",dr);tm.classList.add("pgx")}
+ window.__lt=S.tab}catch(e){}
  var mn1=document.querySelector("main");if(mn1&&st0)mn1.scrollTop=st0;
  if(mn1){mn1.scrollLeft=0;mn1.onscroll=function(){if(mn1.scrollLeft)mn1.scrollLeft=0};document.documentElement.scrollLeft=0}
  if(S.cmFocus){S.cmFocus=false;var ci=document.getElementById("cmi");if(ci&&ci.focus)ci.focus()}
