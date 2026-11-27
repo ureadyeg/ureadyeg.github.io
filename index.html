@@ -12,7 +12,7 @@
 <meta name="robots" content="index,follow">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"UReady","alternateName":["يوريدي","UReady Egypt"],"url":"https://ureadyeg.github.io/"}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23385235'/%3E%3Cpath d='M20 16v20a12 12 0 0 0 24 0V16' fill='none' stroke='%23fff' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
 <style>
 :root{--navy:#0a1f5c;--mut:#5f6b85;--bd:#e5e7e5;--gray:#f0f1f0;--bg:#ffffff;--card:#ffffff;--ln:#d9dcd9;--ink:#1c211d;--onink:#ffffff;--green:#385235;--gdark:#2a3f28;--on:#ffffff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:0;color-scheme:light}
 html[data-theme="dark"]{--navy:#e8ece8;--mut:#9ba39d;--bd:#2a2e2b;--gray:#202422;--bg:#121413;--card:#1a1d1b;--ln:#3a3f3b;--green:#86b57e;--gdark:#a9cfa2;--on:#0c140e;--ink:#e8ece8;--onink:#121413;color-scheme:dark}
@@ -54,7 +54,7 @@ nav button{flex:1;min-width:0;height:auto;min-height:50px;background:none;border
 .nl{display:flex;align-items:center;justify-content:center;min-height:0;max-width:100%;text-align:center;line-height:1.2;overflow-wrap:break-word}
 nav button svg{width:24px;height:24px;padding:2px;box-sizing:border-box;border-radius:9px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--navy);font-weight:700;background:none}
-nav{position:relative}nav .nbar{position:absolute;top:0;left:0;height:2px;border-radius:0 0 2px 2px;background:var(--navy);pointer-events:none;will-change:transform,width;transition:transform .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1)}@keyframes pgx{from{opacity:0;transform:translateX(calc(var(--pgd,1)*16px))}to{opacity:1;transform:none}}main.pgx{animation:pgx .24s cubic-bezier(.2,.7,.3,1)}
+nav{position:relative}nav .nbar{position:absolute;top:0;left:0;height:2px;border-radius:0 0 2px 2px;background:var(--navy);pointer-events:none;will-change:transform,width;transition:transform .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1)}@keyframes pgx{from{opacity:.4;transform:translateX(calc(var(--pgd,1)*10px))}to{opacity:1;transform:none}}main.pgx{animation:pgx .17s cubic-bezier(.2,.7,.3,1)}
 nav button.on svg{background:var(--navy);stroke:var(--onink);stroke-width:2}
 h2{font-family:"Plus Jakarta Sans",-apple-system,"Segoe UI",Arial,sans-serif;font-size:25px;margin:0 0 6px;letter-spacing:-.3px}
 h3{font-family:"Plus Jakarta Sans",-apple-system,"Segoe UI",Arial,sans-serif;font-size:18px;margin:30px 0 14px}
@@ -297,8 +297,8 @@ main:has(.phead)>.backb,main:has(.phead)>button:first-child{margin-left:16px}
 </style>
 <link rel="preconnect" href="https://eqbeswitvmmbazcbgojt.supabase.co" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script>try{window.__PF=fetch("https://eqbeswitvmmbazcbgojt.supabase.co/rest/v1/posts?select=*&order=created_at.desc&limit=200",{headers:{apikey:"sb_publishable_IONFCnLU-lVo1ijiffRWvg_AtCuOj2w"}}).then(function(r){return r.ok?r.json():null}).catch(function(){return null})}catch(e){window.__PF=null}</script><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&family=Playfair+Display:wght@600&family=Amiri:wght@700&display=swap" rel="stylesheet"></head>
 <body>
-<div id="app"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<div id="app"><header><div class="brandw"><div class="brand"><span style="color:var(--green)">U</span>Ready</div></div></header><div style="padding:14px 16px"><div class="skw" style="height:44px;width:100%;border-radius:14px;margin-bottom:18px;background:var(--gray)"></div><div class="skw" style="height:150px;width:100%;border-radius:14px;margin-bottom:12px;background:var(--gray)"></div><div class="skw" style="height:150px;width:100%;border-radius:14px;background:var(--gray)"></div></div></div>
+<script src="/supabase.min.js"></script><script>window.supabase||document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>')</script>
 <script>
 var SPECS=["Marketing","Trade Marketing","Business Development","Supply Chain","Sales","Finance","Banking","Data Analytics","HR","Technology","Design","Operations"];
 var SPEC_AR={"Marketing":"التسويق","Trade Marketing":"تسويق المبيعات (Trade Marketing)","Business Development":"تطوير الأعمال","Supply Chain":"سلاسل الإمداد","Sales":"المبيعات","Finance":"المالية","Banking":"الخدمات المصرفية","Data Analytics":"تحليل البيانات","HR":"الموارد البشرية","Technology":"التكنولوجيا","Design":"التصميم","Operations":"العمليات"};
