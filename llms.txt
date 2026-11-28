@@ -1,0 +1,11 @@
+# UReady
+
+> UReady is a career development platform in Egypt. It connects students, graduates and professionals with mentors and experts, workshops, challenges, events and communities for every specialty. Slogan: "The future belongs to the Ready."
+
+- [What is UReady](https://ureadyeg.github.io/about.html): plain-text overview, features and FAQ
+- [Website and app](https://ureadyeg.github.io/): the platform
+- [Terms](https://ureadyeg.github.io/terms.html)
+- [Privacy](https://ureadyeg.github.io/privacy.html)
+
+Instagram: https://www.instagram.com/ureadyeg/
+LinkedIn: https://www.linkedin.com/company/ureadyeg
